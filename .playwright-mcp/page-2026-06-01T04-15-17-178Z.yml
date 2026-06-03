@@ -1,0 +1,92 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "DiploLife" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e7]:
+          - link "대시보드" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e9]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e12] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e13]
+            - text: AI 어시스턴트
+          - link "AI 일정" [ref=e15] [cursor=pointer]:
+            - /url: /itinerary
+            - img [ref=e16]
+            - text: AI 일정
+          - link "SOS" [ref=e18] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e19]
+            - text: SOS
+          - link "생활비" [ref=e21] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e22]
+            - text: 생활비
+        - generic [ref=e25]:
+          - link "설정" [ref=e26] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e27]
+          - link "프로필" [ref=e30] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e31]
+    - main [ref=e34]:
+      - generic [ref=e35]:
+        - paragraph [ref=e36]: AI Itinerary
+        - heading "AI 맞춤 일정" [level=1] [ref=e37]
+      - generic [ref=e38]:
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - heading "어디로 떠나볼까요?" [level=1] [ref=e42]
+            - paragraph [ref=e43]: 숙소 위치를 기준으로 이동 동선과 식사 시간을 반영한 하루 일정을 생성합니다.
+          - generic [ref=e44]:
+            - generic [ref=e45]:
+              - generic [ref=e46]:
+                - generic [ref=e47]:
+                  - img [ref=e48]
+                  - text: 숙소 위치
+                - button "변경" [ref=e51] [cursor=pointer]
+              - generic [ref=e52]: 숙소 위치를 등록하면 숙소 기준 동선을 지도에 표시합니다.
+            - button "AI 맞춤 일정 생성하기" [disabled] [ref=e53]:
+              - img [ref=e54]
+              - text: AI 맞춤 일정 생성하기
+            - button "상세 일정 설정 (선택사항)" [ref=e58] [cursor=pointer]:
+              - generic [ref=e59]:
+                - img [ref=e60]
+                - generic [ref=e63]: 상세 일정 설정 (선택사항)
+              - img [ref=e64]
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - heading "추천 기준" [level=3] [ref=e69]
+                  - paragraph [ref=e70]: 결과 생성 전 고정 추천 정책
+                - generic [ref=e71]: 추천 기준
+              - generic [ref=e72]:
+                - generic [ref=e73]:
+                  - img [ref=e74]
+                  - generic [ref=e78]: 기본 3km, 확장 5km, 도보형 최대 8km
+                - generic [ref=e79]:
+                  - img [ref=e80]
+                  - generic [ref=e84]: 점수 상위 후보를 동선 효율 순서로 재정렬
+                - generic [ref=e85]:
+                  - img [ref=e86]
+                  - generic [ref=e89]: 임시/영구 폐업, 좌표 없는 장소 제외
+              - generic [ref=e90]:
+                - img [ref=e91]
+                - generic [ref=e92]: 취향 매칭 30점
+                - generic [ref=e93]: 동선 효율 25점
+                - generic [ref=e94]: Google 평점/리뷰 20점
+                - generic [ref=e95]: 영업시간 10점
+                - generic [ref=e96]: 가격대 10점
+                - generic [ref=e97]: 카테고리 다양성 5점
+        - generic [ref=e99]:
+          - img [ref=e100]
+          - paragraph [ref=e103]: 숙소를 등록하거나 AI 맞춤 일정을 생성하면 지도와 동선을 표시합니다.
+    - link "SOS 열기" [ref=e104] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e105]
+  - region "Notifications alt+T"

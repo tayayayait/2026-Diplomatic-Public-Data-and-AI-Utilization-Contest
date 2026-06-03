@@ -1,0 +1,52 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "DiploLife" [ref=e5] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e6]:
+        - button "알림" [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+        - button "메뉴" [ref=e11] [cursor=pointer]:
+          - img [ref=e12]
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - paragraph [ref=e15]: AI Assistant
+        - heading "체류 생활 상담" [level=1] [ref=e16]
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]:
+            - img [ref=e20]
+            - paragraph [ref=e23]: 체류 국가와 비자 정보를 기준으로 답변합니다.
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: 현지 긴급 연락처를 확인하고 싶어요.
+            - img [ref=e26]
+          - generic [ref=e29]:
+            - img [ref=e30]
+            - paragraph [ref=e33]: 확실한 정보 없음 항목은 공공데이터 연결 후 표시합니다.
+        - generic [ref=e34]:
+          - textbox "AI 상담 메시지" [ref=e35]:
+            - /placeholder: 질문 입력…
+          - button "메시지 보내기" [ref=e36] [cursor=pointer]:
+            - img [ref=e37]
+    - link "SOS 열기" [ref=e40] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e41]
+    - navigation "하단 메뉴" [ref=e43]:
+      - link "홈" [ref=e44] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e45]
+        - text: 홈
+      - link "AI" [ref=e48] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e49]
+        - text: AI
+      - link "생활비" [ref=e51] [cursor=pointer]:
+        - /url: /cost
+        - img [ref=e52]
+        - text: 생활비
+      - link "내 정보" [ref=e55] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e56]
+        - text: 내 정보

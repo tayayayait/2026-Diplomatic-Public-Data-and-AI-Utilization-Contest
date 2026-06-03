@@ -1,0 +1,110 @@
+[
+  {
+    "rel": "src/components/diplolife/cards/DailyBudgetCard.tsx",
+    "source": "log 15-01 call 81",
+    "bytes": 6582,
+    "lines": 142
+  },
+  {
+    "rel": "src/components/diplolife/cards/ExchangeRateCard.tsx",
+    "source": "log 13-28 call 89",
+    "bytes": 1623,
+    "lines": 31
+  },
+  {
+    "rel": "src/components/diplolife/cards/ExchangeSimulationDialog.tsx",
+    "source": "log 15-52 call 199",
+    "bytes": 8372,
+    "lines": 205
+  },
+  {
+    "rel": "src/components/diplolife/cards/ExchangeTimingAdvisor.tsx",
+    "source": "log 15-01 calls 82+94",
+    "bytes": 16510,
+    "lines": 423
+  },
+  {
+    "rel": "src/components/diplolife/forms/LocationSearchInput.tsx",
+    "source": "log 15-01 calls 96+107",
+    "bytes": 17458,
+    "lines": 500
+  },
+  {
+    "rel": "src/components/itinerary/ItineraryHistorySheet.tsx",
+    "source": "log 14-26 call 64",
+    "bytes": 8875,
+    "lines": 230
+  },
+  {
+    "rel": "src/components/itinerary/QuickSettings.tsx",
+    "source": "log 13-49 call 62",
+    "bytes": 5016,
+    "lines": 121
+  },
+  {
+    "rel": "src/components/maps/GoogleMapItinerary.tsx",
+    "source": "log 15-01 call 67",
+    "bytes": 13298,
+    "lines": 342
+  },
+  {
+    "rel": "src/lib/diplolife/dashboard.ts",
+    "source": "log 13-28 call 47",
+    "bytes": 8133,
+    "lines": 250
+  },
+  {
+    "rel": "src/lib/diplolife/state.ts",
+    "source": "log 14-12 call 37",
+    "bytes": 33939,
+    "lines": 1007
+  },
+  {
+    "rel": "src/routes/index.tsx",
+    "source": "log 14-37 call 64",
+    "bytes": 9165,
+    "lines": 188
+  },
+  {
+    "rel": "src/routes/itinerary.tsx",
+    "source": "log 14-27 call 48",
+    "bytes": 33463,
+    "lines": 840
+  },
+  {
+    "rel": "src/routes/notices.tsx",
+    "source": "log 14-37 call 95",
+    "bytes": 6453,
+    "lines": 128
+  },
+  {
+    "rel": "src/routes/onboarding.tsx",
+    "source": "log 14-37 call 94",
+    "bytes": 25717,
+    "lines": 635
+  },
+  {
+    "rel": "src/routes/settings.tsx",
+    "source": "log 14-37 call 318",
+    "bytes": 6818,
+    "lines": 137
+  },
+  {
+    "rel": "src/routes/auth.tsx",
+    "source": "log 15-52 calls 295+337+347",
+    "bytes": 10653,
+    "lines": 263
+  },
+  {
+    "rel": "src/routes/chat.tsx",
+    "source": "log 15-52 call 501",
+    "bytes": 5010,
+    "lines": 140
+  },
+  {
+    "rel": "src/routes/visa.tsx",
+    "source": "log 15-52 call 339",
+    "bytes": 5473,
+    "lines": 101
+  }
+]

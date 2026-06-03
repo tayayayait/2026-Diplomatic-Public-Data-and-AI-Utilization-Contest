@@ -1,0 +1,45 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - link "SafeRoute AI" [ref=e4] [cursor=pointer]:
+      - /url: /
+      - img [ref=e5]
+      - generic [ref=e7]: SafeRoute AI
+    - navigation [ref=e8]:
+      - link "새 여행" [ref=e9] [cursor=pointer]:
+        - /url: /trips/new
+        - img [ref=e10]
+        - generic [ref=e11]: 새 여행
+      - link "내 여행" [ref=e12] [cursor=pointer]:
+        - /url: /trips
+        - img [ref=e13]
+        - generic [ref=e16]: 내 여행
+      - link "설정" [ref=e17] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e18]
+        - generic [ref=e21]: 설정
+    - generic [ref=e22]: 외교부 · KOICA 공공데이터 기반
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - heading "설정" [level=1] [ref=e26]
+        - paragraph [ref=e27]: 개인정보·알림·데이터 상태
+      - generic [ref=e29]: 공공데이터 정상
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - heading "개인정보" [level=2] [ref=e34]
+        - paragraph [ref=e35]: 분석 종료 후 업로드 파일을 자동 삭제합니다. 여권/주민번호/보험 번호는 저장하지 않습니다.
+      - generic [ref=e36]:
+        - heading "공유 링크" [level=2] [ref=e37]
+        - paragraph [ref=e38]: 보호자 공유 링크는 기본 7일 만료. 기본 공유 범위는 국가·기간·대사관 연락처·긴급 행동카드.
+      - generic [ref=e39]:
+        - heading "공공데이터 상태" [level=2] [ref=e40]
+        - paragraph [ref=e41]: 외교부 및 KOICA API 5/5 정상 (데모). 운영 환경에서는 실시간 헬스체크를 표시합니다.
+      - generic [ref=e42]:
+        - heading "접근성" [level=2] [ref=e43]
+        - paragraph [ref=e44]: 고대비 모드와 모션 줄이기를 시스템 환경설정에서 자동 반영합니다.
+      - generic [ref=e45]:
+        - heading "데이터 관리" [level=2] [ref=e46]
+        - button "로컬 여행 데이터 초기화" [ref=e47] [cursor=pointer]:
+          - img [ref=e48]
+          - text: 로컬 여행 데이터 초기화
+        - paragraph [ref=e51]: 이 기기에 저장된 분석 결과와 여행 정보를 삭제합니다. (서버 데이터는 유지될 수 있습니다)

@@ -1,0 +1,45 @@
+- generic [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "DiploLife" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e7]:
+          - link "대시보드" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e9]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e12] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e13]
+            - text: AI 어시스턴트
+          - link "AI 일정" [ref=e15] [cursor=pointer]:
+            - /url: /itinerary
+            - img [ref=e16]
+            - text: AI 일정
+          - link "SOS" [ref=e18] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e19]
+            - text: SOS
+          - link "생활비" [ref=e21] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e22]
+            - text: 생활비
+        - generic [ref=e25]:
+          - link "설정" [ref=e26] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e27]
+          - link "프로필" [ref=e30] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e31]
+    - main [active] [ref=e34]:
+      - generic [ref=e35]:
+        - paragraph [ref=e36]: AI Itinerary
+        - heading "AI 맞춤 일정" [level=1] [ref=e37]
+      - img [ref=e39]
+    - link "SOS 열기" [ref=e41] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e42]
+  - region "Notifications alt+T"

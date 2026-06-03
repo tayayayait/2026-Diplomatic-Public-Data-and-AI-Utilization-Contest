@@ -1,0 +1,329 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - link "SafeRoute AI" [ref=e4] [cursor=pointer]:
+      - /url: /
+      - img [ref=e5]
+      - generic [ref=e7]: SafeRoute AI
+    - navigation [ref=e8]:
+      - link "새 여행" [ref=e9] [cursor=pointer]:
+        - /url: /trips/new
+        - img [ref=e10]
+        - generic [ref=e11]: 새 여행
+      - link "내 여행" [ref=e12] [cursor=pointer]:
+        - /url: /trips
+        - img [ref=e13]
+        - generic [ref=e16]: 내 여행
+      - link "설정" [ref=e17] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e18]
+        - generic [ref=e21]: 설정
+    - generic [ref=e22]: 외교부 · KOICA 공공데이터 기반
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - heading "출국 전 안전점검 · 푸켓 가족여행" [level=1] [ref=e32]
+        - paragraph [ref=e33]: 2026-06-10 ~ 2026-06-14
+      - generic [ref=e27]:
+        - generic [ref=e28]: 공공데이터 정상
+        - button "보호자 공유" [ref=e35] [cursor=pointer]:
+          - img [ref=e36]
+          - text: 보호자 공유
+        - link "비상카드" [ref=e42] [cursor=pointer]:
+          - /url: /trips/phase2_demo/emergency
+          - img [ref=e43]
+          - text: 비상카드
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]: 여행 위험 점수
+          - generic [ref=e49]:
+            - generic [ref=e50]: "35"
+            - generic [ref=e51]: 여행유의
+        - generic [ref=e53]:
+          - generic [ref=e54]: 출국 D-Day
+          - generic [ref=e55]:
+            - generic [ref=e56]: D-13
+            - generic [ref=e57]: 2026-06-10
+        - generic [ref=e58]:
+          - generic [ref=e59]: 국가 수
+          - generic [ref=e60]:
+            - generic [ref=e61]: "1"
+            - generic [ref=e62]: TH
+        - generic [ref=e63]:
+          - generic [ref=e64]: 체크리스트
+          - generic [ref=e65]:
+            - generic [ref=e66]: 0/2
+            - link "항목 보기 →" [ref=e67] [cursor=pointer]:
+              - /url: /trips/phase2_demo/checklist
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - generic [ref=e70]:
+            - generic [ref=e71]:
+              - heading "출국 전 안전점검" [level=2] [ref=e72]
+              - paragraph [ref=e73]: 공식 공공데이터 기준으로 출국 전 막힐 수 있는 항목과 현지 비상대응 정보를 확인합니다.
+            - generic [ref=e75]:
+              - generic [ref=e76]:
+                - img [ref=e77]
+                - generic [ref=e81]: "35"
+              - generic [ref=e82]:
+                - generic [ref=e83]: 여행유의
+                - generic [ref=e84]: 위험 점수 (100점 만점)
+                - generic [ref=e85]: 출국 전 일정·지역 확인 권장
+          - generic [ref=e86]:
+            - generic [ref=e87]:
+              - generic [ref=e88]:
+                - heading "공식 여행경보" [level=3] [ref=e89]
+                - generic [ref=e90]: 확인됨
+              - paragraph [ref=e91]: 일부 지역 여행유의
+              - paragraph [ref=e92]: 기준일 2026-05-20
+              - button "외교부_국가·지역별 여행경보 목록 15095500 remark · 기준일 2026-05-20 근거 보기" [ref=e93] [cursor=pointer]:
+                - generic [ref=e94]:
+                  - img [ref=e95]
+                  - generic [ref=e97]: 외교부_국가·지역별 여행경보 목록
+                  - generic [ref=e98]: "15095500"
+                  - generic [ref=e99]: remark
+                  - generic [ref=e100]: · 기준일 2026-05-20
+                  - generic [ref=e101]: 근거 보기
+            - generic [ref=e102]:
+              - generic [ref=e103]:
+                - heading "입국요건" [level=3] [ref=e104]
+                - generic [ref=e105]: 확인됨
+              - paragraph [ref=e106]: 일반여권 단기 관광 무비자 조건 확인 필요
+              - button "외교부_국가·지역별 입국허가요건 15075345 gnrl_pspt_visa_cn 근거 보기" [ref=e107] [cursor=pointer]:
+                - generic [ref=e108]:
+                  - img [ref=e109]
+                  - generic [ref=e111]: 외교부_국가·지역별 입국허가요건
+                  - generic [ref=e112]: "15075345"
+                  - generic [ref=e113]: gnrl_pspt_visa_cn
+                  - generic [ref=e114]: 근거 보기
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - heading "비상연락" [level=3] [ref=e117]
+                - generic [ref=e118]: 확인됨
+              - paragraph [ref=e119]: +66-81-914-5803
+              - paragraph [ref=e120]: 주태국대한민국대사관
+              - link "긴급전화" [ref=e121] [cursor=pointer]:
+                - /url: tel:+66-81-914-5803
+                - img [ref=e122]
+                - text: 긴급전화
+              - button "외교부_국가·지역별 재외공관 정보 15075354 urgency_tel_no 근거 보기" [ref=e124] [cursor=pointer]:
+                - generic [ref=e125]:
+                  - img [ref=e126]
+                  - generic [ref=e128]: 외교부_국가·지역별 재외공관 정보
+                  - generic [ref=e129]: "15075354"
+                  - generic [ref=e130]: urgency_tel_no
+                  - generic [ref=e131]: 근거 보기
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - generic [ref=e134]:
+                - heading "오늘 할 일" [level=3] [ref=e135]:
+                  - img [ref=e136]
+                  - text: 오늘 할 일
+                - generic [ref=e140]: 0/2 완료
+              - list [ref=e141]:
+                - listitem [ref=e142]:
+                  - img [ref=e143]
+                  - generic [ref=e146]: 여권과 입국요건 확인
+                - listitem [ref=e147]:
+                  - img [ref=e148]
+                  - generic [ref=e151]: 비상카드 가족에게 공유
+              - link "체크리스트 열기" [ref=e152] [cursor=pointer]:
+                - /url: /trips/phase2_demo/checklist
+            - generic [ref=e153]:
+              - heading "근거 있는 주의사항" [level=3] [ref=e154]:
+                - img [ref=e155]
+                - text: 근거 있는 주의사항
+              - paragraph [ref=e157]: 공식 여행경보와 입국요건, 긴급연락처를 출국 전 재확인해야 합니다.
+              - list [ref=e158]:
+                - listitem [ref=e159]:
+                  - generic [ref=e160]:
+                    - paragraph [ref=e161]: 공식 여행경보 확인
+                    - generic [ref=e162]: MEDIUM
+                  - paragraph [ref=e163]: 출국 전 외교부 여행경보를 다시 확인하세요.
+                  - button "외교부_국가·지역별 여행경보 목록 15095500 remark 근거 보기" [ref=e164] [cursor=pointer]:
+                    - generic [ref=e165]:
+                      - img [ref=e166]
+                      - generic [ref=e168]: 외교부_국가·지역별 여행경보 목록
+                      - generic [ref=e169]: "15095500"
+                      - generic [ref=e170]: remark
+                      - generic [ref=e171]: 근거 보기
+        - complementary [ref=e172]:
+          - generic [ref=e173]:
+            - heading "비상 카드 요약" [level=2] [ref=e174]:
+              - img [ref=e175]
+              - text: 비상 카드 요약
+            - paragraph [ref=e177]: 대사관 긴급전화 +66-81-914-5803
+            - paragraph [ref=e178]: 주태국대한민국대사관
+            - link "긴급전화 +66-81-914-5803" [ref=e179] [cursor=pointer]:
+              - /url: tel:+66-81-914-5803
+              - img [ref=e180]
+              - text: 긴급전화 +66-81-914-5803
+            - link "오프라인 비상카드 보기" [ref=e182] [cursor=pointer]:
+              - /url: /trips/phase2_demo/emergency
+            - button "보호자 공유" [ref=e185] [cursor=pointer]:
+              - img [ref=e186]
+              - text: 보호자 공유
+          - link "체크리스트 0/2 완료" [ref=e192] [cursor=pointer]:
+            - /url: /trips/phase2_demo/checklist
+            - generic [ref=e193]:
+              - generic [ref=e194]:
+                - img [ref=e195]
+                - generic [ref=e198]: 체크리스트
+              - generic [ref=e199]: 0/2 완료
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - generic [ref=e203]:
+                - heading "현지 날씨 리스크" [level=2] [ref=e204]:
+                  - img [ref=e205]
+                  - text: 현지 날씨 리스크
+                - paragraph [ref=e210]: 여행일 기준 비, 바람, 자외선 변수를 확인합니다.
+              - button "현지 날씨 새로고침" [ref=e211] [cursor=pointer]:
+                - img [ref=e212]
+            - generic [ref=e217]:
+              - generic [ref=e218]:
+                - generic [ref=e219]: 푸켓
+                - generic [ref=e220]: 여행자제
+                - generic [ref=e222]: 일부 날짜만 확인됨
+              - paragraph [ref=e223]: 비 가능성 최대 58%·자외선 최대 8 수준입니다.
+              - generic [ref=e224]:
+                - generic [ref=e225]:
+                  - generic [ref=e226]:
+                    - img [ref=e227]
+                    - text: 강수
+                  - generic [ref=e230]: 43%
+                - generic [ref=e231]:
+                  - generic [ref=e232]:
+                    - img [ref=e233]
+                    - text: 바람
+                  - generic [ref=e237]: 9km/h
+                - generic [ref=e238]:
+                  - generic [ref=e239]:
+                    - img [ref=e240]
+                    - text: UV
+                  - generic [ref=e246]: "8"
+              - generic [ref=e247]:
+                - generic [ref=e248]:
+                  - generic [ref=e249]:
+                    - paragraph [ref=e250]: 2026-06-10
+                    - paragraph [ref=e251]: 이슬비
+                  - generic [ref=e252]:
+                    - paragraph [ref=e253]: 25° / 31°
+                    - paragraph [ref=e254]: 비 43%
+                - generic [ref=e255]:
+                  - generic [ref=e256]:
+                    - paragraph [ref=e257]: 2026-06-11
+                    - paragraph [ref=e258]: 이슬비
+                  - generic [ref=e259]:
+                    - paragraph [ref=e260]: 25° / 28°
+                    - paragraph [ref=e261]: 비 53%
+                - generic [ref=e262]:
+                  - generic [ref=e263]:
+                    - paragraph [ref=e264]: 2026-06-12
+                    - paragraph [ref=e265]: 이슬비
+                  - generic [ref=e266]:
+                    - paragraph [ref=e267]: 26° / 31°
+                    - paragraph [ref=e268]: 비 58%
+              - generic [ref=e269]: 일부 여행일만 예보 범위에 포함됩니다. 현재 확인 가능 마지막 날짜는 2026-06-12입니다.
+          - generic [ref=e270]:
+            - generic [ref=e271]:
+              - generic [ref=e272]:
+                - heading "현지 필수 장소" [level=2] [ref=e273]:
+                  - img [ref=e274]
+                  - text: 현지 필수 장소
+                - paragraph [ref=e277]: 병원, 약국, 경찰서를 도시 기준으로 확인합니다.
+              - button "현지 필수 장소 새로고침" [ref=e278] [cursor=pointer]:
+                - img [ref=e279]
+            - generic [ref=e284]:
+              - generic [ref=e285]:
+                - generic [ref=e286]: 푸켓
+                - generic [ref=e287]: 지도 검색 링크
+              - generic [ref=e288]:
+                - link "푸켓, 태국 병원 검색 병원 검색 링크" [ref=e289] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/search/?api=1&query=hospital%20in%20%ED%91%B8%EC%BC%93%2C%20%ED%83%9C%EA%B5%AD
+                  - generic [ref=e290]:
+                    - img [ref=e291]
+                    - generic [ref=e295]:
+                      - generic [ref=e296]:
+                        - paragraph [ref=e297]: 푸켓, 태국 병원 검색
+                        - img [ref=e298]
+                      - generic [ref=e302]:
+                        - generic [ref=e303]: 병원
+                        - generic [ref=e304]: 검색 링크
+                - link "푸켓, 태국 약국 검색 약국 검색 링크" [ref=e305] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/search/?api=1&query=pharmacy%20in%20%ED%91%B8%EC%BC%93%2C%20%ED%83%9C%EA%B5%AD
+                  - generic [ref=e306]:
+                    - img [ref=e307]
+                    - generic [ref=e310]:
+                      - generic [ref=e311]:
+                        - paragraph [ref=e312]: 푸켓, 태국 약국 검색
+                        - img [ref=e313]
+                      - generic [ref=e317]:
+                        - generic [ref=e318]: 약국
+                        - generic [ref=e319]: 검색 링크
+                - link "푸켓, 태국 경찰서 검색 경찰서 검색 링크" [ref=e320] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/search/?api=1&query=police%20in%20%ED%91%B8%EC%BC%93%2C%20%ED%83%9C%EA%B5%AD
+                  - generic [ref=e321]:
+                    - img [ref=e322]
+                    - generic [ref=e324]:
+                      - generic [ref=e325]:
+                        - paragraph [ref=e326]: 푸켓, 태국 경찰서 검색
+                        - img [ref=e327]
+                      - generic [ref=e331]:
+                        - generic [ref=e332]: 경찰서
+                        - generic [ref=e333]: 검색 링크
+              - generic [ref=e334]: 실시간 장소 상세정보는 아직 연결되지 않아 Google Maps 검색 링크를 제공합니다.
+      - generic [ref=e335]:
+        - heading "국가별 카드" [level=2] [ref=e336]
+        - generic [ref=e338]:
+          - generic [ref=e339]:
+            - generic [ref=e340]:
+              - generic [ref=e341]:
+                - generic [ref=e342]: 🇹🇭
+                - heading "태국" [level=3] [ref=e343]
+                - generic [ref=e344]: TH
+                - link "상세 보기 →" [ref=e345] [cursor=pointer]:
+                  - /url: /trips/phase2_demo/countries/TH
+              - paragraph [ref=e346]: 2026-06-10 ~ 2026-06-14 · 푸켓
+            - generic [ref=e347]: 안전
+          - generic [ref=e349]:
+            - paragraph [ref=e350]: 일부 지역 여행유의
+            - button "외교부_국가·지역별 여행경보 목록 15095500 remark · 기준일 2026-05-20 근거 보기" [ref=e351] [cursor=pointer]:
+              - generic [ref=e352]:
+                - img [ref=e353]
+                - generic [ref=e355]: 외교부_국가·지역별 여행경보 목록
+                - generic [ref=e356]: "15095500"
+                - generic [ref=e357]: remark
+                - generic [ref=e358]: · 기준일 2026-05-20
+                - generic [ref=e359]: 근거 보기
+          - generic [ref=e360]:
+            - generic [ref=e361]:
+              - img [ref=e362]
+              - link "+66-81-914-5803" [ref=e364] [cursor=pointer]:
+                - /url: tel:+66-81-914-5803
+              - generic [ref=e365]: 긴급전화
+            - generic [ref=e366]:
+              - img [ref=e367]
+              - generic [ref=e370]: Bangkok
+      - generic [ref=e371]:
+        - heading "데이터 한계" [level=2] [ref=e372]
+        - list [ref=e373]:
+          - listitem [ref=e374]: 푸켓 단독 실시간 치안 통계는 공공데이터에서 확인되지 않았습니다.
+      - generic [ref=e376]:
+        - generic [ref=e377]:
+          - heading "공공데이터 조회 상태" [level=2] [ref=e378]:
+            - img [ref=e379]
+            - text: 공공데이터 조회 상태
+          - paragraph [ref=e381]: 실패·빈 응답은 Gemini 판단에서 제외되며, 근거 drawer에서 확인 가능한 항목만 표시합니다.
+        - generic [ref=e382]:
+          - generic [ref=e383]:
+            - generic [ref=e384]: 전체
+            - generic [ref=e385]: "6"
+          - generic [ref=e386]:
+            - generic [ref=e387]: 정상
+            - generic [ref=e388]: "4"
+          - generic [ref=e389]:
+            - generic [ref=e390]: 주의
+            - generic [ref=e391]: "2"
+          - generic [ref=e392]:
+            - generic [ref=e393]: 실패
+            - generic [ref=e394]: "0"

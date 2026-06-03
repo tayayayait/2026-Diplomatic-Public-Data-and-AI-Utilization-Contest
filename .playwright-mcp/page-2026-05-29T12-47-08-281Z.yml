@@ -1,0 +1,36 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - img "해외 체류 안전 확인을 상징하는 산악 도시 풍경" [ref=e5]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "DiploLife" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "대시보드" [ref=e10] [cursor=pointer]:
+            - /url: /dashboard
+        - generic [ref=e12]:
+          - paragraph [ref=e13]: Public Data Living Companion
+          - heading "DiploLife" [level=1] [ref=e14]
+          - paragraph [ref=e15]: 해외 체류 중 필요한 안전, 비자, 환율, 날씨, 공지, SOS 정보를 한 화면에서 확인합니다.
+          - generic [ref=e16]:
+            - link "시작하기" [ref=e17] [cursor=pointer]:
+              - /url: /onboarding
+              - text: 시작하기
+              - img [ref=e18]
+            - link "AI 상담 열기" [ref=e20] [cursor=pointer]:
+              - /url: /chat
+    - generic [ref=e21]:
+      - article [ref=e22]:
+        - img [ref=e23]
+        - heading "안전지수" [level=2] [ref=e26]
+        - paragraph [ref=e27]: 외교부 경보 기반
+      - article [ref=e28]:
+        - img [ref=e29]
+        - heading "체류 알림" [level=2] [ref=e32]
+        - paragraph [ref=e33]: 비자·공지·날씨
+      - article [ref=e34]:
+        - img [ref=e35]
+        - heading "AI 상담" [level=2] [ref=e37]
+        - paragraph [ref=e38]: Gemini 기반

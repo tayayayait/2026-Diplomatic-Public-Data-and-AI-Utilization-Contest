@@ -1,0 +1,89 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e78]:
+    - banner [ref=e79]:
+      - generic [ref=e80]:
+        - link "DiploLife" [ref=e81] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e82]:
+          - link "대시보드" [ref=e83] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e84]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e87] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e88]
+            - text: AI 어시스턴트
+          - link "SOS" [ref=e90] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e91]
+            - text: SOS
+          - link "생활비" [ref=e93] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e94]
+            - text: 생활비
+        - generic [ref=e97]:
+          - link "설정" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+          - link "프로필" [ref=e102] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e103]
+    - main [ref=e106]:
+      - generic [ref=e107]:
+        - paragraph [ref=e108]: Dashboard
+        - heading "안녕하세요, 체류자님" [level=1] [ref=e109]
+      - generic [ref=e110]: 일본 · 유학 · D-367
+      - generic [ref=e111]:
+        - link "확실한 정보 없음 안전지수 확실한 정보 없음 외교부 데이터 연결 대기" [ref=e112] [cursor=pointer]:
+          - /url: /safety
+          - generic [ref=e113]:
+            - img [ref=e114]
+            - generic [ref=e117]: 확실한 정보 없음
+          - heading "안전지수" [level=2] [ref=e118]
+          - paragraph [ref=e119]: 확실한 정보 없음
+          - paragraph [ref=e120]: 외교부 데이터 연결 대기
+        - link "정상 비자 D-day D-367 2027-05-31 만료" [ref=e121] [cursor=pointer]:
+          - /url: /visa
+          - generic [ref=e122]:
+            - img [ref=e123]
+            - generic [ref=e127]: 정상
+          - heading "비자 D-day" [level=2] [ref=e128]
+          - paragraph [ref=e129]: D-367
+          - paragraph [ref=e130]: 2027-05-31 만료
+        - link "확실한 정보 없음 환율 확실한 정보 없음 변동률 없음" [ref=e131] [cursor=pointer]:
+          - /url: /cost
+          - generic [ref=e132]:
+            - img [ref=e133]
+            - generic [ref=e135]: 확실한 정보 없음
+          - heading "환율" [level=2] [ref=e136]
+          - paragraph [ref=e137]: 확실한 정보 없음
+          - paragraph [ref=e138]: 변동률 없음
+        - link "없음 날씨 특보 없음 기상 특보 없음" [ref=e139] [cursor=pointer]:
+          - /url: /safety
+          - generic [ref=e140]:
+            - img [ref=e141]
+            - generic [ref=e146]: 없음
+          - heading "날씨" [level=2] [ref=e147]
+          - paragraph [ref=e148]: 특보 없음
+          - paragraph [ref=e149]: 기상 특보 없음
+        - link "확실한 정보 없음 공지 확실한 정보 없음 외교부 공지 연결 대기" [ref=e150] [cursor=pointer]:
+          - /url: /notices
+          - generic [ref=e151]:
+            - img [ref=e152]
+            - generic [ref=e155]: 확실한 정보 없음
+          - heading "공지" [level=2] [ref=e156]
+          - paragraph [ref=e157]: 확실한 정보 없음
+          - paragraph [ref=e158]: 외교부 공지 연결 대기
+        - link "정상 AI 추천 일본 유학 체류 정보를 기준으로 안전, 비자, 생활비 알림을 준비했습니다. 자세히 보기" [ref=e159] [cursor=pointer]:
+          - /url: /chat
+          - generic [ref=e160]:
+            - img [ref=e161]
+            - generic [ref=e163]: 정상
+          - heading "AI 추천" [level=2] [ref=e164]
+          - paragraph [ref=e165]: 일본 유학 체류 정보를 기준으로 안전, 비자, 생활비 알림을 준비했습니다.
+          - paragraph [ref=e166]: 자세히 보기
+    - link "SOS 열기" [ref=e167] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e168]

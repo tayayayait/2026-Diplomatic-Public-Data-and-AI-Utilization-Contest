@@ -1,0 +1,308 @@
+[
+  {
+    "id": "sh_mpqaa3s0_xynsuntr",
+    "tripId": "phase6_trip",
+    "createdAt": "2026-05-29T02:09:16.704Z",
+    "expiresAt": "2026-06-05T02:09:16.704Z",
+    "snapshot": {
+      "id": "sh_mpqaa3s0_xynsuntr",
+      "tripId": "phase6_trip",
+      "title": "푸켓 가족여행",
+      "createdAt": "2026-05-29T02:09:16.704Z",
+      "expiresAt": "2026-06-05T02:09:16.704Z",
+      "dateRange": "2026-06-10 ~ 2026-06-14",
+      "destinations": [
+        {
+          "countryNm": "태국",
+          "countryIsoAlp2": "TH",
+          "cities": [
+            "푸켓"
+          ],
+          "arrivalDate": "2026-06-10",
+          "departureDate": "2026-06-14"
+        }
+      ],
+      "risk": {
+        "level": "WATCH",
+        "score": 35,
+        "summary": "공식 여행경보와 현지 비상연락처 재확인이 필요합니다."
+      },
+      "checklist": {
+        "total": 2,
+        "required": 2,
+        "done": 1
+      },
+      "emergency": {
+        "primary_contact": "대사관 긴급전화 +66-81-914-5803",
+        "phrases": [
+          {
+            "ko": "도움이 필요합니다.",
+            "en": "I need help."
+          }
+        ],
+        "action_steps": [
+          "안전한 장소로 이동",
+          "대사관 긴급전화로 연락"
+        ]
+      },
+      "unknowns": [
+        "푸켓만의 실시간 치안 통계는 공식 공공데이터 응답에 없습니다."
+      ]
+    }
+  },
+  {
+    "id": "sh_mpqa8jcs_woc5v74u",
+    "tripId": "phase6_trip",
+    "createdAt": "2026-05-29T02:08:03.580Z",
+    "expiresAt": "2026-06-05T02:08:03.580Z",
+    "snapshot": {
+      "id": "sh_mpqa8jcs_woc5v74u",
+      "tripId": "phase6_trip",
+      "title": "푸켓 가족여행",
+      "createdAt": "2026-05-29T02:08:03.580Z",
+      "expiresAt": "2026-06-05T02:08:03.580Z",
+      "dateRange": "2026-06-10 ~ 2026-06-14",
+      "destinations": [
+        {
+          "countryNm": "태국",
+          "countryIsoAlp2": "TH",
+          "cities": [
+            "푸켓"
+          ],
+          "arrivalDate": "2026-06-10",
+          "departureDate": "2026-06-14"
+        }
+      ],
+      "risk": {
+        "level": "WATCH",
+        "score": 35,
+        "summary": "공식 여행경보와 현지 비상연락처 재확인이 필요합니다."
+      },
+      "checklist": {
+        "total": 2,
+        "required": 2,
+        "done": 1
+      },
+      "emergency": {
+        "primary_contact": "대사관 긴급전화 +66-81-914-5803",
+        "phrases": [
+          {
+            "ko": "도움이 필요합니다.",
+            "en": "I need help."
+          }
+        ],
+        "action_steps": [
+          "안전한 장소로 이동",
+          "대사관 긴급전화로 연락"
+        ]
+      },
+      "unknowns": [
+        "푸켓만의 실시간 치안 통계는 공식 공공데이터 응답에 없습니다."
+      ]
+    }
+  },
+  {
+    "id": "sh_mpqa68d9_cz6ekej9",
+    "tripId": "phase6_trip",
+    "createdAt": "2026-05-29T02:06:16.029Z",
+    "expiresAt": "2026-06-05T02:06:16.029Z",
+    "snapshot": {
+      "id": "sh_mpqa68d9_cz6ekej9",
+      "tripId": "phase6_trip",
+      "title": "푸켓 가족여행",
+      "createdAt": "2026-05-29T02:06:16.029Z",
+      "expiresAt": "2026-06-05T02:06:16.029Z",
+      "dateRange": "2026-06-10 ~ 2026-06-14",
+      "destinations": [
+        {
+          "countryNm": "태국",
+          "countryIsoAlp2": "TH",
+          "cities": [
+            "푸켓"
+          ],
+          "arrivalDate": "2026-06-10",
+          "departureDate": "2026-06-14"
+        }
+      ],
+      "risk": {
+        "level": "WATCH",
+        "score": 35,
+        "summary": "공식 여행경보와 현지 비상연락처 재확인이 필요합니다."
+      },
+      "checklist": {
+        "total": 2,
+        "required": 2,
+        "done": 1
+      },
+      "emergency": {
+        "primary_contact": "대사관 긴급전화 +66-81-914-5803",
+        "phrases": [
+          {
+            "ko": "도움이 필요합니다.",
+            "en": "I need help."
+          }
+        ],
+        "action_steps": [
+          "안전한 장소로 이동",
+          "대사관 긴급전화로 연락"
+        ]
+      },
+      "unknowns": [
+        "푸켓만의 실시간 치안 통계는 공식 공공데이터 응답에 없습니다."
+      ]
+    }
+  },
+  {
+    "id": "sh_mppohun6_rve90s1j",
+    "tripId": "phase6_trip",
+    "createdAt": "2026-05-28T15:59:26.562Z",
+    "expiresAt": "2026-06-04T15:59:26.562Z",
+    "snapshot": {
+      "id": "sh_mppohun6_rve90s1j",
+      "tripId": "phase6_trip",
+      "title": "푸켓 가족여행",
+      "createdAt": "2026-05-28T15:59:26.562Z",
+      "expiresAt": "2026-06-04T15:59:26.562Z",
+      "dateRange": "2026-06-10 ~ 2026-06-14",
+      "destinations": [
+        {
+          "countryNm": "태국",
+          "countryIsoAlp2": "TH",
+          "cities": [
+            "푸켓"
+          ],
+          "arrivalDate": "2026-06-10",
+          "departureDate": "2026-06-14"
+        }
+      ],
+      "risk": {
+        "level": "WATCH",
+        "score": 35,
+        "summary": "공식 여행경보와 현지 비상연락처 재확인이 필요합니다."
+      },
+      "checklist": {
+        "total": 2,
+        "required": 2,
+        "done": 1
+      },
+      "emergency": {
+        "primary_contact": "대사관 긴급전화 +66-81-914-5803",
+        "phrases": [
+          {
+            "ko": "도움이 필요합니다.",
+            "en": "I need help."
+          }
+        ],
+        "action_steps": [
+          "안전한 장소로 이동",
+          "대사관 긴급전화로 연락"
+        ]
+      },
+      "unknowns": [
+        "푸켓만의 실시간 치안 통계는 공식 공공데이터 응답에 없습니다."
+      ]
+    }
+  },
+  {
+    "id": "sh_mppofr4y_453n5co8",
+    "tripId": "phase6_trip",
+    "createdAt": "2026-05-28T15:57:48.706Z",
+    "expiresAt": "2026-06-04T15:57:48.706Z",
+    "snapshot": {
+      "id": "sh_mppofr4y_453n5co8",
+      "tripId": "phase6_trip",
+      "title": "푸켓 가족여행",
+      "createdAt": "2026-05-28T15:57:48.706Z",
+      "expiresAt": "2026-06-04T15:57:48.706Z",
+      "dateRange": "2026-06-10 ~ 2026-06-14",
+      "destinations": [
+        {
+          "countryNm": "태국",
+          "countryIsoAlp2": "TH",
+          "cities": [
+            "푸켓"
+          ],
+          "arrivalDate": "2026-06-10",
+          "departureDate": "2026-06-14"
+        }
+      ],
+      "risk": {
+        "level": "WATCH",
+        "score": 35,
+        "summary": "공식 여행경보와 현지 비상연락처 재확인이 필요합니다."
+      },
+      "checklist": {
+        "total": 2,
+        "required": 2,
+        "done": 1
+      },
+      "emergency": {
+        "primary_contact": "대사관 긴급전화 +66-81-914-5803",
+        "phrases": [
+          {
+            "ko": "도움이 필요합니다.",
+            "en": "I need help."
+          }
+        ],
+        "action_steps": [
+          "안전한 장소로 이동",
+          "대사관 긴급전화로 연락"
+        ]
+      },
+      "unknowns": [
+        "푸켓만의 실시간 치안 통계는 공식 공공데이터 응답에 없습니다."
+      ]
+    }
+  },
+  {
+    "id": "sh_mppodnz8_b5xugbrm",
+    "tripId": "phase6_trip",
+    "createdAt": "2026-05-28T15:56:11.300Z",
+    "expiresAt": "2026-06-04T15:56:11.300Z",
+    "snapshot": {
+      "id": "sh_mppodnz8_b5xugbrm",
+      "tripId": "phase6_trip",
+      "title": "푸켓 가족여행",
+      "createdAt": "2026-05-28T15:56:11.300Z",
+      "expiresAt": "2026-06-04T15:56:11.300Z",
+      "dateRange": "2026-06-10 ~ 2026-06-14",
+      "destinations": [
+        {
+          "countryNm": "태국",
+          "countryIsoAlp2": "TH",
+          "cities": [
+            "푸켓"
+          ],
+          "arrivalDate": "2026-06-10",
+          "departureDate": "2026-06-14"
+        }
+      ],
+      "risk": {
+        "level": "WATCH",
+        "score": 35,
+        "summary": "공식 여행경보와 현지 비상연락처 재확인이 필요합니다."
+      },
+      "checklist": {
+        "total": 2,
+        "required": 2,
+        "done": 1
+      },
+      "emergency": {
+        "primary_contact": "대사관 긴급전화 +66-81-914-5803",
+        "phrases": [
+          {
+            "ko": "도움이 필요합니다.",
+            "en": "I need help."
+          }
+        ],
+        "action_steps": [
+          "안전한 장소로 이동",
+          "대사관 긴급전화로 연락"
+        ]
+      },
+      "unknowns": [
+        "푸켓만의 실시간 치안 통계는 공식 공공데이터 응답에 없습니다."
+      ]
+    }
+  }
+]

@@ -1,0 +1,40 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - link "SafeRoute AI" [ref=e4] [cursor=pointer]:
+      - /url: /
+      - img [ref=e5]
+      - generic [ref=e7]: SafeRoute AI
+    - navigation [ref=e8]:
+      - link "새 여행" [ref=e9] [cursor=pointer]:
+        - /url: /trips/new
+        - img [ref=e10]
+        - generic [ref=e11]: 새 여행
+      - link "내 여행" [ref=e12] [cursor=pointer]:
+        - /url: /trips
+        - img [ref=e13]
+        - generic [ref=e16]: 내 여행
+      - link "설정" [ref=e17] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e18]
+        - generic [ref=e21]: 설정
+    - generic [ref=e22]: 외교부 · KOICA 공공데이터 기반
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - heading "공공데이터로 분석 중입니다" [level=1] [ref=e26]
+        - paragraph [ref=e27]: 외교부 · KOICA 데이터를 조회하고 Gemini가 브리핑을 생성합니다
+      - generic [ref=e29]: 공공데이터 정상
+    - list [ref=e33]:
+      - listitem [ref=e34]:
+        - img [ref=e36]
+        - generic [ref=e38]: 1. 일정 정보 정리 중
+      - listitem [ref=e39]:
+        - generic [ref=e42]: 2. 여행경보 조회 중
+      - listitem [ref=e43]:
+        - generic [ref=e46]: 3. 재외공관·현지 연락처 조회 중
+      - listitem [ref=e47]:
+        - generic [ref=e50]: 4. 입국요건 확인 중
+      - listitem [ref=e51]:
+        - generic [ref=e54]: 5. 의료·치안 정보 보강 중
+      - listitem [ref=e55]:
+        - generic [ref=e58]: 6. Gemini 브리핑 생성 중

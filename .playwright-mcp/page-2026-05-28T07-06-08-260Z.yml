@@ -1,0 +1,115 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - link "SafeRoute AI" [ref=e4] [cursor=pointer]:
+      - /url: /
+      - img [ref=e5]
+      - generic [ref=e7]: SafeRoute AI
+    - navigation [ref=e8]:
+      - link "새 여행" [ref=e9] [cursor=pointer]:
+        - /url: /trips/new
+        - img [ref=e10]
+        - generic [ref=e11]: 새 여행
+      - link "내 여행" [ref=e12] [cursor=pointer]:
+        - /url: /trips
+        - img [ref=e13]
+        - generic [ref=e16]: 내 여행
+      - link "설정" [ref=e17] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e18]
+        - generic [ref=e21]: 설정
+    - generic [ref=e22]: 외교부 · KOICA 공공데이터 기반
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - heading "일정을 확인하고 분석을 시작하세요" [level=1] [ref=e26]
+        - paragraph [ref=e27]: 외교부·KOICA 공공데이터와 Gemini가 결합된 개인화 안전 브리핑
+      - generic [ref=e29]: 공공데이터 정상
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - heading "일정 문서 또는 텍스트" [level=2] [ref=e35]
+          - paragraph [ref=e36]: 항공권 메일, 일정표, 초청장 내용을 붙여넣으세요. Gemini가 국가·도시·날짜를 추출합니다.
+          - generic [ref=e38] [cursor=pointer]:
+            - button "일정표 업로드 PDF, JPG, PNG, TXT, DOCX · 최대 5개 · 파일당 10MB" [ref=e39]
+            - img [ref=e40]
+            - generic [ref=e43]: 일정표 업로드
+            - generic [ref=e44]: PDF, JPG, PNG, TXT, DOCX · 최대 5개 · 파일당 10MB
+          - textbox "일정 텍스트" [ref=e45]:
+            - /placeholder: 예) 6월 14일 인천에서 출발하여 방콕 3박 후 푸켓으로 이동…
+          - generic [ref=e46]:
+            - button "Gemini로 일정 추출" [disabled] [ref=e47]:
+              - img [ref=e48]
+              - text: Gemini로 일정 추출
+            - button "예시 문구 사용" [ref=e51] [cursor=pointer]
+        - generic [ref=e52]:
+          - heading "직접 입력" [level=2] [ref=e53]
+          - generic [ref=e54]:
+            - text: 목적지 국가
+            - combobox [ref=e55] [cursor=pointer]:
+              - generic [ref=e56]: "국가 검색... (예: 일본)"
+              - img
+          - generic [ref=e57]:
+            - text: 도시 (쉼표로 구분)
+            - textbox "도시 (쉼표로 구분)" [ref=e58]:
+              - /placeholder: 도쿄, 오사카
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - text: 출국일
+              - textbox "출국일" [ref=e61]
+            - generic [ref=e62]:
+              - text: 귀국일
+              - textbox "귀국일" [ref=e63]
+          - group "여행 목적" [ref=e64]:
+            - generic [ref=e65]: 여행 목적
+            - generic [ref=e66]:
+              - button "여행" [pressed] [ref=e67] [cursor=pointer]
+              - button "출장" [ref=e68] [cursor=pointer]
+              - button "유학" [ref=e69] [cursor=pointer]
+              - button "봉사" [ref=e70] [cursor=pointer]
+              - button "경유" [ref=e71] [cursor=pointer]
+          - group "동행 여부" [ref=e72]:
+            - generic [ref=e73]: 동행 여부
+            - generic [ref=e74]:
+              - button "혼자" [pressed] [ref=e75] [cursor=pointer]
+              - button "가족" [ref=e76] [cursor=pointer]
+              - button "단체" [ref=e77] [cursor=pointer]
+              - button "미정" [ref=e78] [cursor=pointer]
+          - button "공공데이터로 위험 분석" [ref=e79] [cursor=pointer]
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - heading "사용되는 공공데이터" [level=2] [ref=e82]
+          - list [ref=e83]:
+            - listitem [ref=e84]:
+              - generic [ref=e85]: "15095500"
+              - generic [ref=e86]: 외교부 여행경보 목록
+            - listitem [ref=e87]:
+              - generic [ref=e88]: "15076237"
+              - generic [ref=e89]: 외교부 국가·지역별 여행경보
+            - listitem [ref=e90]:
+              - generic [ref=e91]: "15076242"
+              - generic [ref=e92]: 외교부 국가·지역별 현지연락처
+            - listitem [ref=e93]:
+              - generic [ref=e94]: "15075354"
+              - generic [ref=e95]: 외교부 국가·지역별 재외공관
+            - listitem [ref=e96]:
+              - generic [ref=e97]: "15075345"
+              - generic [ref=e98]: 외교부 국가·지역별 입국허가요건
+            - listitem [ref=e99]:
+              - generic [ref=e100]: "15099529"
+              - generic [ref=e101]: 외교부 의료환경
+            - listitem [ref=e102]:
+              - generic [ref=e103]: "15099207"
+              - generic [ref=e104]: KOICA 현지 안전정보
+          - paragraph [ref=e105]: 위험·입국·연락처 정보는 위 API 근거가 있을 때만 단정합니다. 근거 없는 항목은 “확실한 정보 없음”으로 표시됩니다.
+        - generic [ref=e106]:
+          - heading "분석 결과 예시" [level=2] [ref=e107]
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - generic [ref=e110]: 🇯🇵 일본 · 도쿄
+              - generic [ref=e111]: 2026-06-14 ~ 2026-06-18
+            - generic [ref=e112]: 여행유의
+          - generic [ref=e114]:
+            - generic [ref=e115]:
+              - generic [ref=e116]: 🇵🇭 필리핀 · 마닐라
+              - generic [ref=e117]: 2026-07-02 ~ 2026-07-09
+            - generic [ref=e118]: 출국권고

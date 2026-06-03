@@ -1,0 +1,226 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "DiploLife" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e7]:
+          - link "대시보드" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e9]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e12] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e13]
+            - text: AI 어시스턴트
+          - link "AI 일정" [ref=e15] [cursor=pointer]:
+            - /url: /itinerary
+            - img [ref=e16]
+            - text: AI 일정
+          - link "SOS" [ref=e18] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e19]
+            - text: SOS
+          - link "생활비" [ref=e21] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e22]
+            - text: 생활비
+        - generic [ref=e25]:
+          - link "설정" [ref=e26] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e27]
+          - link "프로필" [ref=e30] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e31]
+    - main [ref=e34]:
+      - generic [ref=e35]:
+        - paragraph [ref=e36]: Cost Insight
+        - heading "현지 생활비 인사이트" [level=1] [ref=e37]
+      - generic [ref=e38]:
+        - generic [ref=e39]: "생활비 마지막 갱신: 미조회"
+        - button "갱신" [ref=e40] [cursor=pointer]:
+          - img
+          - text: 갱신
+      - generic [ref=e41]:
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - generic [ref=e45]:
+              - generic [ref=e46]:
+                - img [ref=e47]
+                - text: 환율 예측·환전 타이밍
+              - generic [ref=e51]: 백테스트 기반 · 참고용
+            - generic [ref=e52]:
+              - generic [ref=e53]:
+                - text: 기준 통화
+                - combobox "기준 통화" [ref=e54]:
+                  - option "KRW 원" [selected]
+                  - option "USD 미국 달러"
+                  - option "JPY 일본 엔"
+                  - option "EUR 유로"
+                  - option "GBP 영국 파운드"
+                  - option "AUD 호주 달러"
+                  - option "CAD 캐나다 달러"
+                  - option "CNY 중국 위안"
+                  - option "HKD 홍콩 달러"
+                  - option "SGD 싱가포르 달러"
+                  - option "THB 태국 바트"
+                  - option "VND 베트남 동"
+                  - option "PHP 필리핀 페소"
+                  - option "TWD 대만 달러"
+              - img [ref=e56]
+              - generic [ref=e59]:
+                - text: 대상 통화
+                - combobox "대상 통화" [ref=e60]:
+                  - option "KRW 원"
+                  - option "USD 미국 달러" [selected]
+                  - option "JPY 일본 엔"
+                  - option "EUR 유로"
+                  - option "GBP 영국 파운드"
+                  - option "AUD 호주 달러"
+                  - option "CAD 캐나다 달러"
+                  - option "CNY 중국 위안"
+                  - option "HKD 홍콩 달러"
+                  - option "SGD 싱가포르 달러"
+                  - option "THB 태국 바트"
+                  - option "VND 베트남 동"
+                  - option "PHP 필리핀 페소"
+                  - option "TWD 대만 달러"
+          - generic [ref=e61]:
+            - generic [ref=e62]: 환율 추이와 예측값을 계산하는 중입니다.
+            - generic [ref=e63]:
+              - img [ref=e64]
+              - paragraph [ref=e66]: 환율 예측은 과거 환율 패턴을 백테스트한 참고용 추정치입니다. 실제 환율은 금리, 정책, 시장 변동으로 달라질 수 있으며 확정적인 금융 조언이 아닙니다.
+        - generic [ref=e68]:
+          - generic [ref=e70]:
+            - img [ref=e71]
+            - text: 빠른 환율 계산기
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - spinbutton [ref=e76]
+                - generic [ref=e77]: USD
+              - generic [ref=e78]: ≈
+              - generic [ref=e79]: 0 원
+            - generic [ref=e80]:
+              - generic [ref=e81]: "팁 추가:"
+              - button "없음" [ref=e82] [cursor=pointer]
+              - button "15%" [ref=e83] [cursor=pointer]
+              - button "18%" [ref=e84] [cursor=pointer]
+              - button "20%" [ref=e85] [cursor=pointer]
+            - generic [ref=e86]:
+              - generic [ref=e87]: 자주 쓰는 단위
+              - button "100 USD" [ref=e88] [cursor=pointer]
+              - button "500 USD" [ref=e89] [cursor=pointer]
+              - button "1,000 USD" [ref=e90] [cursor=pointer]
+              - button "5,000 USD" [ref=e91] [cursor=pointer]
+              - button "10,000 USD" [ref=e92] [cursor=pointer]
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - img [ref=e97]
+            - text: 현지 물가 체감표
+          - generic [ref=e101]: 데이터를 불러오는 중입니다...
+        - generic [ref=e103]:
+          - generic [ref=e104]:
+            - generic [ref=e105]:
+              - img [ref=e106]
+              - text: 일일 예산 분배기
+            - generic [ref=e109]:
+              - generic [ref=e110]: "총 체류 예산: 80만원"
+              - generic [ref=e111]:
+                - generic [ref=e112]: ~ 미정 (총 7일)
+                - generic [ref=e113]: "|"
+                - generic [ref=e114]:
+                  - text: "하루 가용 예산:"
+                  - strong [ref=e115]: 114,286원
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - generic [ref=e119]:
+                - generic [ref=e120]: 총 예산 (KRW) 직접 입력
+                - generic [ref=e121]:
+                  - spinbutton [ref=e122]: "800000"
+                  - generic [ref=e123]: 원
+              - button "설정한 예산으로 AI 재분석하기" [ref=e124] [cursor=pointer]
+            - generic [ref=e125]: 예산 분석 결과가 없습니다.
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - heading "구글맵 기반 현지 맞춤 일정 추천" [level=2] [ref=e129]
+            - generic [ref=e130]: AI Beta
+          - generic [ref=e131]:
+            - generic [ref=e132]:
+              - heading "나만의 맞춤 코스 만들기" [level=3] [ref=e133]
+              - paragraph [ref=e134]: 숙소, 역, 학교처럼 실제 출발할 위치를 기준점으로 잡으면 이동 시간을 더 현실적으로 계산합니다.
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - generic [ref=e137]: 출발 기준 위치
+                - generic [ref=e138]:
+                  - generic [ref=e139]:
+                    - generic [ref=e140]:
+                      - generic:
+                        - img
+                      - textbox "출발 기준 위치" [ref=e141]:
+                        - /placeholder: "예: 런던 킹스크로스역, Brook St 숙소, 현재 체류지"
+                    - button "지도에서 찾기" [ref=e142] [cursor=pointer]:
+                      - img [ref=e143]
+                      - text: 지도에서 찾기
+                  - generic [ref=e145]:
+                    - button "지도 열기" [ref=e146] [cursor=pointer]:
+                      - img [ref=e147]
+                      - text: 지도 열기
+                    - button "기준점 맞추기" [ref=e149] [cursor=pointer]:
+                      - img [ref=e150]
+                      - text: 기준점 맞추기
+                    - button "현재 위치" [ref=e152] [cursor=pointer]:
+                      - img [ref=e153]
+                      - text: 현재 위치
+                    - button "크게 보기" [ref=e156] [cursor=pointer]:
+                      - img [ref=e157]
+                      - text: 크게 보기
+                    - generic:
+                      - img
+                      - text: Google 지도
+                  - paragraph [ref=e162]: 주소를 검색하면 지도에 출발 기준점이 표시됩니다.
+              - generic [ref=e163]:
+                - generic [ref=e164]: 어떤 음식을 선호하시나요? (다중 선택)
+                - generic [ref=e165]:
+                  - button "현지 로컬 맛집" [ref=e166] [cursor=pointer]:
+                    - img [ref=e167]
+                    - text: 현지 로컬 맛집
+                  - button "트렌디한 카페/디저트" [ref=e170] [cursor=pointer]:
+                    - img [ref=e171]
+                    - text: 트렌디한 카페/디저트
+                  - button "파인 다이닝 / 고급 레스토랑" [ref=e173] [cursor=pointer]:
+                    - img [ref=e174]
+                    - text: 파인 다이닝 / 고급 레스토랑
+                  - button "로컬 펍 & 바 (야간 일정용)" [ref=e177] [cursor=pointer]:
+                    - img [ref=e178]
+                    - text: 로컬 펍 & 바 (야간 일정용)
+                  - button "간편한 길거리 음식 / 패스트푸드" [ref=e182] [cursor=pointer]:
+                    - img [ref=e183]
+                    - text: 간편한 길거리 음식 / 패스트푸드
+              - generic [ref=e189]:
+                - generic [ref=e190]: 어떤 분위기의 장소를 원하시나요? (다중 선택)
+                - generic [ref=e191]:
+                  - button "필수 랜드마크 & 명소" [ref=e192] [cursor=pointer]:
+                    - img [ref=e193]
+                    - text: 필수 랜드마크 & 명소
+                  - button "자연 속 휴식 (공원/바다)" [ref=e195] [cursor=pointer]:
+                    - img [ref=e196]
+                    - text: 자연 속 휴식 (공원/바다)
+                  - button "로컬 시장 & 대형 쇼핑몰" [ref=e199] [cursor=pointer]:
+                    - img [ref=e200]
+                    - text: 로컬 시장 & 대형 쇼핑몰
+                  - button "문화 / 예술 / 박물관" [ref=e203] [cursor=pointer]:
+                    - img [ref=e204]
+                    - text: 문화 / 예술 / 박물관
+                  - button "핫플레이스 / 번화가 걷기" [ref=e206] [cursor=pointer]:
+                    - img [ref=e207]
+                    - text: 핫플레이스 / 번화가 걷기
+              - button "AI 일정 생성하기" [ref=e211] [cursor=pointer]:
+                - img [ref=e212]
+                - text: AI 일정 생성하기
+    - link "SOS 열기" [ref=e215] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e216]
+  - region "Notifications alt+T"

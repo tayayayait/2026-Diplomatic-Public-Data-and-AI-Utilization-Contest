@@ -1,0 +1,68 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "DiploLife" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e7]:
+          - link "대시보드" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e9]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e12] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e13]
+            - text: AI 어시스턴트
+          - link "SOS" [ref=e15] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e16]
+            - text: SOS
+          - link "생활비" [ref=e18] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e19]
+            - text: 생활비
+        - generic [ref=e22]:
+          - link "설정" [ref=e23] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e24]
+          - link "프로필" [ref=e27] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e28]
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - paragraph [ref=e33]: Onboarding
+        - heading "체류 정보를 기준으로 DiploLife를 설정합니다" [level=1] [ref=e34]
+      - generic [ref=e35]:
+        - article [ref=e36]:
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - generic [ref=e43]: "01"
+          - heading "체류 국가" [level=2] [ref=e44]
+          - paragraph [ref=e45]: 대한민국 기준 해외 체류국
+        - article [ref=e46]:
+          - generic [ref=e47]:
+            - img [ref=e48]
+            - generic [ref=e52]: "02"
+          - heading "비자 상태" [level=2] [ref=e53]
+          - paragraph [ref=e54]: 만료일과 체류 자격
+        - article [ref=e55]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e60]: "03"
+          - heading "체류 목적" [level=2] [ref=e61]
+          - paragraph [ref=e62]: 유학·출장·봉사·장기체류
+        - article [ref=e63]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: "04"
+          - heading "알림" [level=2] [ref=e69]
+          - paragraph [ref=e70]: 비자·경보·공지·날씨
+      - link "대시보드로 이동" [ref=e72] [cursor=pointer]:
+        - /url: /dashboard
+        - text: 대시보드로 이동
+        - img [ref=e73]
+    - link "SOS 열기" [ref=e75] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e76]

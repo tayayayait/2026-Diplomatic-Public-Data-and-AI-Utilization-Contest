@@ -1,0 +1,131 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - img [ref=e4]
+    - text: SafeRoute AI
+  - main [ref=e6]:
+    - generic [ref=e8]:
+      - heading "일정을 확인하고 분석을 시작하세요" [level=1] [ref=e9]
+      - paragraph [ref=e10]: 외교부·KOICA 공공데이터와 Gemini가 결합된 개인화 안전 브리핑
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - heading "일정 문서 또는 텍스트" [level=2] [ref=e15]
+          - paragraph [ref=e16]: 항공권 메일, 일정표, 초청장 내용을 붙여넣으세요. Gemini가 국가·도시·날짜를 추출합니다.
+          - generic [ref=e18] [cursor=pointer]:
+            - button "일정표 업로드 PDF, JPG, PNG, TXT, DOCX · 최대 5개 · 파일당 10MB" [ref=e19]
+            - img [ref=e20]
+            - generic [ref=e23]: 일정표 업로드
+            - generic [ref=e24]: PDF, JPG, PNG, TXT, DOCX · 최대 5개 · 파일당 10MB
+          - textbox "일정 텍스트" [ref=e25]:
+            - /placeholder: 예) 6월 14일 인천에서 출발하여 방콕 3박 후 푸켓으로 이동…
+          - generic [ref=e26]:
+            - button "Gemini로 일정 추출" [disabled] [ref=e27]:
+              - img [ref=e28]
+              - text: Gemini로 일정 추출
+            - button "예시 문구 사용" [ref=e31] [cursor=pointer]
+        - generic [ref=e32]:
+          - heading "직접 입력" [level=2] [ref=e33]
+          - generic [ref=e34]:
+            - text: 목적지 국가
+            - combobox [ref=e35] [cursor=pointer]:
+              - generic [ref=e36]: "국가 검색... (예: 일본)"
+              - img
+          - generic [ref=e37]:
+            - text: 도시 (쉼표로 구분)
+            - textbox "도시 (쉼표로 구분)" [ref=e38]:
+              - /placeholder: 도쿄, 오사카
+            - generic [ref=e39]:
+              - button "+ 도쿄" [ref=e40] [cursor=pointer]
+              - button "+ 오사카" [ref=e41] [cursor=pointer]
+              - button "+ 후쿠오카" [ref=e42] [cursor=pointer]
+              - button "+ 삿포로" [ref=e43] [cursor=pointer]
+              - button "+ 오키나와" [ref=e44] [cursor=pointer]
+              - button "+ 교토" [ref=e45] [cursor=pointer]
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - text: 출국일
+              - textbox "출국일" [ref=e48]
+            - generic [ref=e49]:
+              - text: 귀국일
+              - textbox "귀국일" [ref=e50]
+          - group "여행 목적" [ref=e51]:
+            - generic [ref=e52]:
+              - img [ref=e53]
+              - text: 여행 목적
+            - generic [ref=e55]:
+              - button "여행" [pressed] [ref=e56] [cursor=pointer]:
+                - img [ref=e57]
+                - text: 여행
+              - button "출장" [ref=e59] [cursor=pointer]:
+                - img [ref=e60]
+                - text: 출장
+              - button "유학" [ref=e63] [cursor=pointer]:
+                - img [ref=e64]
+                - text: 유학
+              - button "봉사" [ref=e67] [cursor=pointer]:
+                - img [ref=e68]
+                - text: 봉사
+              - button "경유" [ref=e70] [cursor=pointer]:
+                - img [ref=e71]
+                - text: 경유
+          - group "동행 여부" [ref=e74]:
+            - generic [ref=e75]:
+              - img [ref=e76]
+              - text: 동행 여부
+            - generic [ref=e81]:
+              - button "혼자" [pressed] [ref=e82] [cursor=pointer]:
+                - img [ref=e83]
+                - text: 혼자
+              - button "가족" [ref=e86] [cursor=pointer]:
+                - img [ref=e87]
+                - text: 가족
+              - button "단체" [ref=e90] [cursor=pointer]:
+                - img [ref=e91]
+                - text: 단체
+              - button "미정" [ref=e96] [cursor=pointer]:
+                - img [ref=e97]
+                - text: 미정
+          - group "안전 취약 요인 (선택사항)" [ref=e99]:
+            - generic [ref=e100]:
+              - img [ref=e101]
+              - text: 안전 취약 요인
+              - generic [ref=e103]: (선택사항)
+            - generic [ref=e104]:
+              - generic [ref=e105] [cursor=pointer]:
+                - checkbox "노약자 동반" [ref=e106]
+                - generic [ref=e108]: 노약자 동반
+              - generic [ref=e109] [cursor=pointer]:
+                - checkbox "임산부" [ref=e110]
+                - generic [ref=e112]: 임산부
+              - generic [ref=e113] [cursor=pointer]:
+                - checkbox "만성질환 유무" [ref=e114]
+                - generic [ref=e116]: 만성질환 유무
+            - paragraph [ref=e117]: "* 체크 시 공공데이터의 의료/위생 지표(결핵 발생률, 수질 등)를 더 엄격하게 분석합니다."
+          - button "SafeRoute 분석 시작" [ref=e118] [cursor=pointer]:
+            - img [ref=e119]
+            - text: SafeRoute 분석 시작
+      - generic [ref=e123]:
+        - heading "분석 결과 예시" [level=2] [ref=e124]
+        - generic [ref=e125]:
+          - generic [ref=e126]:
+            - generic [ref=e127]: 🇯🇵 일본 · 도쿄
+            - generic [ref=e128]: 2026-06-14 ~ 2026-06-18
+          - generic [ref=e129]: 여행유의
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - generic [ref=e133]: 🇵🇭 필리핀 · 마닐라
+            - generic [ref=e134]: 2026-07-02 ~ 2026-07-09
+          - generic [ref=e135]: 출국권고
+    - navigation [ref=e137]:
+      - link "새 여행" [ref=e138] [cursor=pointer]:
+        - /url: /trips/new
+        - img [ref=e139]
+        - text: 새 여행
+      - link "내 여행" [ref=e140] [cursor=pointer]:
+        - /url: /trips
+        - img [ref=e141]
+        - text: 내 여행
+      - link "설정" [ref=e144] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e145]
+        - text: 설정

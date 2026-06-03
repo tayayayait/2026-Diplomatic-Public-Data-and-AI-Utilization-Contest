@@ -1,0 +1,138 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "DiploLife" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e7]:
+          - link "대시보드" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e9]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e12] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e13]
+            - text: AI 어시스턴트
+          - link "AI 일정" [ref=e15] [cursor=pointer]:
+            - /url: /itinerary
+            - img [ref=e16]
+            - text: AI 일정
+          - link "SOS" [ref=e18] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e19]
+            - text: SOS
+          - link "생활비" [ref=e21] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e22]
+            - text: 생활비
+        - generic [ref=e25]:
+          - link "설정" [ref=e26] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e27]
+          - link "프로필" [ref=e30] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e31]
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - paragraph [ref=e45]: AI Itinerary
+        - heading "AI 맞춤 일정" [level=1] [ref=e46]
+      - generic [ref=e47]:
+        - generic [ref=e49]:
+          - generic [ref=e79]:
+            - heading "어디로 떠나볼까요?" [level=1] [ref=e80]
+            - paragraph [ref=e81]: 숙소 위치를 기준으로 이동 동선과 식사 시간을 반영한 하루 일정을 생성합니다.
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - generic [ref=e84]:
+                - img [ref=e85]
+                - text: 숙소 위치
+              - generic [ref=e88]:
+                - generic [ref=e89]:
+                  - generic [ref=e90]:
+                    - generic:
+                      - img
+                    - textbox "숙소 이름이나 주소를 입력하세요" [ref=e91]: 웰 캐빈 텐진
+                  - button "지도에서 찾기" [ref=e92] [cursor=pointer]:
+                    - img [ref=e93]
+                    - text: 지도에서 찾기
+                - generic [ref=e95]:
+                  - button "지도 열기" [ref=e96] [cursor=pointer]:
+                    - img [ref=e97]
+                    - text: 지도 열기
+                  - button "기준점 맞추기" [ref=e99] [cursor=pointer]:
+                    - img [ref=e100]
+                    - text: 기준점 맞추기
+                  - button "현재 위치" [ref=e102] [cursor=pointer]:
+                    - img [ref=e103]
+                    - text: 현재 위치
+                  - button "크게 보기" [ref=e106] [cursor=pointer]:
+                    - img [ref=e107]
+                    - text: 크게 보기
+                  - link "Google 지도" [ref=e112] [cursor=pointer]:
+                    - /url: https://www.google.com/maps/search/?api=1&query=%EC%9B%B0%20%EC%BA%90%EB%B9%88%20%ED%85%90%EC%A7%84
+                    - img [ref=e113]
+                    - text: Google 지도
+                - paragraph [ref=e117]: 주소를 검색하면 지도에 출발 기준점이 표시됩니다.
+              - generic [ref=e118]:
+                - paragraph [ref=e119]: 주소만 저장해도 지도와 추천 엔진에서 다시 위치를 확인합니다.
+                - button "저장" [ref=e120] [cursor=pointer]
+            - button "AI 맞춤 일정 생성하기" [ref=e121] [cursor=pointer]:
+              - img [ref=e122]
+              - text: AI 맞춤 일정 생성하기
+            - button "상세 일정 설정 (선택사항)" [ref=e126] [cursor=pointer]:
+              - generic [ref=e127]:
+                - img [ref=e128]
+                - generic [ref=e131]: 상세 일정 설정 (선택사항)
+              - img [ref=e132]
+            - generic [ref=e134]:
+              - generic [ref=e135]:
+                - generic [ref=e136]:
+                  - heading "추천 기준" [level=3] [ref=e137]
+                  - paragraph [ref=e138]: 결과 생성 전 고정 추천 정책
+                - generic [ref=e139]: 추천 기준
+              - generic [ref=e140]:
+                - generic [ref=e141]:
+                  - img [ref=e142]
+                  - generic [ref=e146]: 기본 3km, 확장 5km, 도보형 최대 8km
+                - generic [ref=e147]:
+                  - img [ref=e148]
+                  - generic [ref=e152]: 점수 상위 후보를 동선 효율 순서로 재정렬
+                - generic [ref=e153]:
+                  - img [ref=e154]
+                  - generic [ref=e157]: 임시/영구 폐업, 좌표 없는 장소 제외
+              - generic [ref=e158]:
+                - img [ref=e159]
+                - generic [ref=e160]: 취향 매칭 30점
+                - generic [ref=e161]: 동선 효율 25점
+                - generic [ref=e162]: Google 평점/리뷰 20점
+                - generic [ref=e163]: 영업시간 10점
+                - generic [ref=e164]: 가격대 10점
+                - generic [ref=e165]: 카테고리 다양성 5점
+        - generic [ref=e170]:
+          - generic:
+            - button "키보드 단축키"
+          - region "지도" [ref=e171]
+          - generic [ref=e172]:
+            - img "숙소" [ref=e225]:
+              - generic:
+                - generic "숙소"
+            - iframe [ref=e226]:
+              
+            - link "Google 지도에서 이 지역 열기(새 창으로 열림)" [ref=e228] [cursor=pointer]:
+              - /url: https://maps.google.com/maps?ll=33.588,130.402&z=22&t=m&hl=ko-KR&gl=US&mapclient=apiv3
+              - img "Google" [ref=e230]
+            - generic [ref=e231]:
+              - button "키보드 단축키" [ref=e237] [cursor=pointer]
+              - generic [ref=e242]: 지도 데이터 ©2026
+              - link "약관(새 탭에서 열기)" [ref=e247] [cursor=pointer]:
+                - /url: https://www.google.com/intl/ko-KR_US/help/terms_maps.html
+                - text: 약관
+              - link "지도 오류 신고(새 탭에서 열기)" [ref=e252] [cursor=pointer]:
+                - /url: https://www.google.com/maps/@33.588,130.402,22z/data=!10m1!1e1!12b1?source=apiv3&rapsrc=apiv3
+                - text: 지도 오류 신고
+    - link "SOS 열기" [ref=e57] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e58]
+  - region "Notifications alt+T"

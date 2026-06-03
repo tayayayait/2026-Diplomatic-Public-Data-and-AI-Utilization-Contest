@@ -1,0 +1,40 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - img [ref=e9]
+            - generic [ref=e11]: SafeRoute AI
+          - generic [ref=e12]: 공공데이터 기반
+        - generic [ref=e14]:
+          - paragraph [ref=e15]:
+            - img [ref=e16]
+            - text: 해외 일정 안전 분석
+          - heading "출국 전 3분, 일정 기반 안전 브리핑" [level=1] [ref=e19]:
+            - text: 출국 전 3분,
+            - text: 일정 기반 안전 브리핑
+          - paragraph [ref=e20]: 항공권, 초청장, 일정표를 넣고 목적지를 확인하세요. 여행경보, 입국조건, 재외공관 연락처를 실제 공공데이터 근거로 묶어 보여줍니다.
+          - generic [ref=e21]:
+            - link "서비스 시작하기" [ref=e22] [cursor=pointer]:
+              - /url: /trips/new
+              - text: 서비스 시작하기
+              - img [ref=e23]
+            - link "내 여행 보기" [ref=e25] [cursor=pointer]:
+              - /url: /trips
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - term [ref=e32]: 7개 공공데이터
+              - definition [ref=e33]: 외교부·KOICA
+            - generic [ref=e34]:
+              - img [ref=e35]
+              - term [ref=e38]: 문서 또는 직접 입력
+              - definition [ref=e39]: PDF·일정표·초청장
+            - generic [ref=e40]:
+              - img [ref=e41]
+              - term [ref=e44]: 근거 없는 항목
+              - definition [ref=e45]: 확실한 정보 없음
+      - img "출국 전 안전 확인을 상징하는 산악 여행지 풍경" [ref=e47]

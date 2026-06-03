@@ -1,0 +1,295 @@
+- generic [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "DiploLife" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e7]:
+          - link "대시보드" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e9]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e12] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e13]
+            - text: AI 어시스턴트
+          - link "SOS" [ref=e15] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e16]
+            - text: SOS
+          - link "생활비" [ref=e18] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e19]
+            - text: 생활비
+        - generic [ref=e22]:
+          - link "설정" [ref=e23] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e24]
+          - link "프로필" [ref=e27] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e28]
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - paragraph [ref=e33]: Cost Insight
+        - heading "현지 생활비 인사이트" [level=1] [ref=e34]
+      - generic [ref=e35]:
+        - generic [ref=e36]: "생활비 마지막 갱신: 미조회"
+        - button "갱신" [ref=e37] [cursor=pointer]:
+          - img
+          - text: 갱신
+      - generic [ref=e38]:
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]:
+                - img [ref=e44]
+                - text: 환율 예측·환전 타이밍
+              - generic [ref=e48]: 백테스트 기반 · 참고용
+            - generic [ref=e49]:
+              - generic [ref=e50]:
+                - text: 기준 통화
+                - combobox "기준 통화" [ref=e51]:
+                  - option "KRW 원" [selected]
+                  - option "USD 미국 달러"
+                  - option "JPY 일본 엔"
+                  - option "EUR 유로"
+                  - option "GBP 영국 파운드"
+                  - option "AUD 호주 달러"
+                  - option "CAD 캐나다 달러"
+                  - option "CNY 중국 위안"
+                  - option "HKD 홍콩 달러"
+                  - option "SGD 싱가포르 달러"
+                  - option "THB 태국 바트"
+                  - option "VND 베트남 동"
+                  - option "PHP 필리핀 페소"
+                  - option "TWD 대만 달러"
+              - img [ref=e53]
+              - generic [ref=e56]:
+                - text: 대상 통화
+                - combobox "대상 통화" [ref=e57]:
+                  - option "KRW 원"
+                  - option "USD 미국 달러" [selected]
+                  - option "JPY 일본 엔"
+                  - option "EUR 유로"
+                  - option "GBP 영국 파운드"
+                  - option "AUD 호주 달러"
+                  - option "CAD 캐나다 달러"
+                  - option "CNY 중국 위안"
+                  - option "HKD 홍콩 달러"
+                  - option "SGD 싱가포르 달러"
+                  - option "THB 태국 바트"
+                  - option "VND 베트남 동"
+                  - option "PHP 필리핀 페소"
+                  - option "TWD 대만 달러"
+              - button "갱신" [ref=e195] [cursor=pointer]:
+                - img
+                - text: 갱신
+          - generic [ref=e58]:
+            - generic [ref=e196]:
+              - generic [ref=e197]:
+                - paragraph [ref=e198]: 현재 환율
+                - paragraph [ref=e199]: 1 KRW = 0.000663 USD
+                - paragraph [ref=e200]: 최근 데이터 기준 2026-05-31
+              - generic [ref=e201]:
+                - paragraph [ref=e202]: 7일 예측 최고
+                - paragraph [ref=e203]: 1 KRW = 0.000664 USD
+                - paragraph [ref=e204]: 오늘 대비 +0.000001 USD
+              - generic [ref=e205]:
+                - paragraph [ref=e206]:
+                  - img [ref=e207]
+                  - text: 예측상 유리한 날짜
+                - paragraph [ref=e210]: 2026-06-07
+                - paragraph [ref=e211]: 금액별 이득/손해는 시뮬레이션에서 확인
+            - img [ref=e215]:
+              - generic [ref=e219]:
+                - generic [ref=e221]: 05/02
+                - generic [ref=e223]: 05/04
+                - generic [ref=e225]: 05/06
+                - generic [ref=e227]: 05/08
+                - generic [ref=e229]: 05/10
+                - generic [ref=e231]: 05/12
+                - generic [ref=e233]: 05/14
+                - generic [ref=e235]: 05/16
+                - generic [ref=e237]: 05/18
+                - generic [ref=e239]: 05/20
+                - generic [ref=e241]: 05/22
+                - generic [ref=e243]: 05/24
+                - generic [ref=e245]: 05/26
+                - generic [ref=e247]: 05/28
+                - generic [ref=e249]: 05/30
+                - generic [ref=e251]: 06/01
+                - generic [ref=e253]: 06/03
+                - generic [ref=e255]: 06/05
+                - generic [ref=e257]: 06/07
+              - generic [ref=e259]:
+                - generic [ref=e261]: "0.0007"
+                - generic [ref=e263]: "0.0007"
+                - generic [ref=e265]: "0.0007"
+                - generic [ref=e267]: "0.0007"
+            - generic [ref=e280]:
+              - generic [ref=e281]:
+                - paragraph [ref=e282]: 내 금액 기준 이득/손해 계산
+                - paragraph [ref=e283]: 오늘, 1일 뒤, 3일 뒤, 7일 뒤 예상 수령액을 표로 비교합니다.
+              - button "환전 시뮬레이션 보기" [ref=e284] [cursor=pointer]:
+                - img
+                - text: 환전 시뮬레이션 보기
+            - generic [ref=e285]:
+              - generic [ref=e286]:
+                - paragraph [ref=e287]: 예측 범위에서는 오늘 환전이 가장 유리합니다.
+                - paragraph [ref=e288]: 실제 금액 기준 차이는 “환전 시뮬레이션 보기”에서 계산하세요.
+              - generic [ref=e289]:
+                - text: "API: jsDelivr currency-api"
+                - text: "캐시 TTL: 6시간 · 신규 조회"
+            - generic [ref=e60]:
+              - img [ref=e61]
+              - paragraph [ref=e63]: 환율 예측은 과거 환율 패턴을 백테스트한 참고용 추정치입니다. 실제 환율은 금리, 정책, 시장 변동으로 달라질 수 있으며 확정적인 금융 조언이 아닙니다.
+        - generic [ref=e65]:
+          - generic [ref=e67]:
+            - img [ref=e68]
+            - text: 빠른 환율 계산기
+          - generic [ref=e70]:
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - spinbutton [ref=e73]
+                - generic [ref=e74]: USD
+              - generic [ref=e75]: ≈
+              - generic [ref=e76]: 0 원
+            - generic [ref=e77]:
+              - generic [ref=e78]: "팁 추가:"
+              - button "없음" [ref=e79] [cursor=pointer]
+              - button "15%" [ref=e80] [cursor=pointer]
+              - button "18%" [ref=e81] [cursor=pointer]
+              - button "20%" [ref=e82] [cursor=pointer]
+            - generic [ref=e83]:
+              - generic [ref=e84]: 자주 쓰는 단위
+              - button "100 USD" [ref=e85] [cursor=pointer]
+              - button "500 USD" [ref=e86] [cursor=pointer]
+              - button "1,000 USD" [ref=e87] [cursor=pointer]
+              - button "5,000 USD" [ref=e88] [cursor=pointer]
+              - button "10,000 USD" [ref=e89] [cursor=pointer]
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - img [ref=e94]
+            - text: 현지 물가 체감표
+          - generic [ref=e98]: 데이터를 불러오는 중입니다...
+        - generic [ref=e100]:
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - img [ref=e103]
+              - text: 일일 예산 분배기
+            - generic [ref=e106]:
+              - generic [ref=e107]: "총 체류 예산: 80만원"
+              - generic [ref=e108]:
+                - generic [ref=e109]: ~ 미정 (총 7일)
+                - generic [ref=e110]: "|"
+                - generic [ref=e111]:
+                  - text: "하루 가용 예산:"
+                  - strong [ref=e112]: 114,286원
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e116]:
+                - generic [ref=e117]: 총 예산 (KRW) 직접 입력
+                - generic [ref=e118]:
+                  - spinbutton [ref=e119]: "800000"
+                  - generic [ref=e120]: 원
+              - button "설정한 예산으로 AI 재분석하기" [ref=e121] [cursor=pointer]
+            - generic [ref=e122]: 예산 분석 결과가 없습니다.
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - heading "현지 맞춤 일정 추천" [level=2] [ref=e126]
+            - generic [ref=e127]: AI Beta
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - heading "나만의 맞춤 코스 만들기" [level=3] [ref=e130]
+              - paragraph [ref=e131]: 숙소, 역, 학교처럼 실제 출발할 위치를 기준점으로 잡으면 이동 시간을 더 현실적으로 계산합니다.
+            - generic [ref=e132]:
+              - generic [ref=e133]:
+                - generic [ref=e134]: 출발 기준 위치
+                - generic [ref=e135]:
+                  - generic [ref=e136]:
+                    - generic [ref=e137]:
+                      - generic:
+                        - img
+                      - textbox "출발 기준 위치" [ref=e138]:
+                        - /placeholder: "예: 런던 킹스크로스역, Brook St 숙소, 현재 체류지"
+                        - text: Brook St, London W1K 4HR 영국
+                    - button "지도에서 찾기" [active] [ref=e139] [cursor=pointer]:
+                      - img [ref=e140]
+                      - text: 지도에서 찾기
+                  - generic [ref=e142]:
+                    - button "지도 접기" [expanded] [ref=e291] [cursor=pointer]:
+                      - img [ref=e144]
+                      - text: 지도 접기
+                    - button "기준점 맞추기" [ref=e146] [cursor=pointer]:
+                      - img [ref=e147]
+                      - text: 기준점 맞추기
+                    - button "현재 위치" [ref=e149] [cursor=pointer]:
+                      - img [ref=e150]
+                      - text: 현재 위치
+                    - button "크게 보기" [ref=e153] [cursor=pointer]:
+                      - img [ref=e154]
+                      - text: 크게 보기
+                    - link "Google 지도" [ref=e369] [cursor=pointer]:
+                      - /url: https://www.google.com/maps/search/?api=1&query=Brook%20St%2C%20London%20W1K%204HR%20%EC%98%81%EA%B5%AD
+                      - img [ref=e370]
+                      - text: Google 지도
+                  - paragraph [ref=e159]: 입력한 위치를 지도에 표시했습니다.
+                  - generic [ref=e294]:
+                    - generic:
+                      - button "키보드 단축키"
+                    - region "지도" [ref=e295]
+                    - generic [ref=e296]:
+                      - iframe [ref=e340]:
+                        
+                      - generic:
+                        - generic:
+                          - button "지도 카메라 컨트롤" [ref=e342] [cursor=pointer]
+                          - generic [ref=e344] [cursor=pointer]:
+                            - button "확대" [ref=e345]
+                            - button "축소" [ref=e347]
+                      - link "Google 지도에서 이 지역 열기(새 창으로 열림)" [ref=e349] [cursor=pointer]:
+                        - /url: https://maps.google.com/maps?ll=51.512801,-0.147706&z=17&t=m&hl=ko-KR&gl=US&mapclient=apiv3
+                        - img "Google" [ref=e351]
+                      - generic [ref=e352]:
+                        - button "키보드 단축키" [ref=e358] [cursor=pointer]
+                        - generic [ref=e363]: 지도 데이터 ©2026 Google
+                        - link "약관(새 탭에서 열기)" [ref=e368] [cursor=pointer]:
+                          - /url: https://www.google.com/intl/ko-KR_US/help/terms_maps.html
+                          - text: 약관
+                        - link "지도 오류 신고(새 탭에서 열기)" [ref=e428] [cursor=pointer]:
+                          - /url: https://www.google.com/maps/@51.5128006,-0.1477057,17z/data=!10m1!1e1!12b1?source=apiv3&rapsrc=apiv3
+                          - text: 지도 오류 신고
+              - generic [ref=e160]:
+                - generic [ref=e161]: 어떤 음식을 선호하시나요? (다중 선택)
+                - generic [ref=e162]:
+                  - button "현지 로컬 맛집" [ref=e163] [cursor=pointer]:
+                    - img [ref=e164]
+                    - text: 현지 로컬 맛집
+                  - button "인스타 감성 카페" [ref=e167] [cursor=pointer]:
+                    - img [ref=e168]
+                    - text: 인스타 감성 카페
+                  - button "파인 다이닝" [ref=e170] [cursor=pointer]:
+                    - img [ref=e171]
+                    - text: 파인 다이닝
+              - generic [ref=e174]:
+                - generic [ref=e175]: 어떤 분위기의 장소를 원하시나요? (다중 선택)
+                - generic [ref=e176]:
+                  - button "주요 랜드마크" [ref=e177] [cursor=pointer]:
+                    - img [ref=e178]
+                    - text: 주요 랜드마크
+                  - button "쇼핑 핫스폿" [ref=e180] [cursor=pointer]:
+                    - img [ref=e181]
+                    - text: 쇼핑 핫스폿
+                  - button "공원/자연" [ref=e184] [cursor=pointer]:
+                    - img [ref=e185]
+                    - text: 공원/자연
+              - button "AI 일정 생성하기" [ref=e188] [cursor=pointer]:
+                - img [ref=e189]
+                - text: AI 일정 생성하기
+    - link "SOS 열기" [ref=e192] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e193]
+  - region "Notifications alt+T"
+  - generic [ref=e290]: "0.0007"

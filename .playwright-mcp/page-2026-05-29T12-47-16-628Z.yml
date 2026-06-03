@@ -1,0 +1,42 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - paragraph [ref=e7]: Dashboard
+          - heading "오늘의 체류 상태" [level=1] [ref=e8]
+        - link "SOS" [ref=e9] [cursor=pointer]:
+          - /url: /sos
+      - generic [ref=e10]:
+        - link "안전지수 주의" [ref=e11] [cursor=pointer]:
+          - /url: /safety
+          - img [ref=e12]
+          - heading "안전지수" [level=2] [ref=e15]
+          - paragraph [ref=e16]: 주의
+        - link "비자 D-day D-42" [ref=e17] [cursor=pointer]:
+          - /url: /visa
+          - img [ref=e18]
+          - heading "비자 D-day" [level=2] [ref=e22]
+          - paragraph [ref=e23]: D-42
+        - link "환율 1 USD = 확실한 정보 없음" [ref=e24] [cursor=pointer]:
+          - /url: /cost
+          - img [ref=e25]
+          - heading "환율" [level=2] [ref=e27]
+          - paragraph [ref=e28]: 1 USD = 확실한 정보 없음
+        - link "날씨 특보 없음" [ref=e29] [cursor=pointer]:
+          - /url: /safety
+          - img [ref=e30]
+          - heading "날씨" [level=2] [ref=e35]
+          - paragraph [ref=e36]: 특보 없음
+        - link "공지 신규 0건" [ref=e37] [cursor=pointer]:
+          - /url: /notices
+          - img [ref=e38]
+          - heading "공지" [level=2] [ref=e41]
+          - paragraph [ref=e42]: 신규 0건
+        - link "AI 추천 체류국 정보를 먼저 확인" [ref=e43] [cursor=pointer]:
+          - /url: /chat
+          - img [ref=e44]
+          - heading "AI 추천" [level=2] [ref=e46]
+          - paragraph [ref=e47]: 체류국 정보를 먼저 확인

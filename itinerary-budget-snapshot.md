@@ -1,0 +1,66 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "DiploLife" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e7]:
+          - link "대시보드" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e9]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e12] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e13]
+            - text: AI 어시스턴트
+          - link "AI 일정" [ref=e15] [cursor=pointer]:
+            - /url: /itinerary
+            - img [ref=e16]
+            - text: AI 일정
+          - link "SOS" [ref=e18] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e19]
+            - text: SOS
+          - link "생활비" [ref=e21] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e22]
+            - text: 생활비
+        - generic [ref=e25]:
+          - link "설정" [ref=e26] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e27]
+          - link "프로필" [ref=e30] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e31]
+    - main [ref=e34]:
+      - generic [ref=e35]:
+        - paragraph [ref=e36]: AI Itinerary
+        - heading "AI 맞춤 일정" [level=1] [ref=e37]
+      - generic [ref=e51]:
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - heading "어디로 떠나볼까요?" [level=1] [ref=e55]
+            - paragraph [ref=e56]: 숙소 위치를 기준으로 이동 동선과 식사 시간을 반영한 하루 일정을 생성합니다.
+          - generic [ref=e57]:
+            - generic [ref=e58]
+            - generic [ref=e96]
+            - button "AI 맞춤 일정 생성하기" [ref=e130] [cursor=pointer]
+            - button "상세 일정 설정 (선택사항)" [ref=e135] [cursor=pointer]
+            - generic [ref=e143]
+        - generic [ref=e182]:
+          - generic:
+            - button "키보드 단축키"
+          - region "지도" [ref=e183]
+          - generic [ref=e184]:
+            - img "숙소" [ref=e237]
+            - iframe [ref=e238]:
+              
+            - link "Google 지도에서 이 지역 열기(새 창으로 열림)" [ref=e240] [cursor=pointer]:
+              - /url: https://maps.google.com/maps?ll=33.588,130.402&z=22&t=m&hl=ko-KR&gl=US&mapclient=apiv3
+            - generic [ref=e243]
+    - link "SOS 열기" [ref=e48] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e49]
+  - region "Notifications alt+T"

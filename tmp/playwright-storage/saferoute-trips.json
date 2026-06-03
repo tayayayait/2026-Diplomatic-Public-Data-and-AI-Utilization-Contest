@@ -1,0 +1,316 @@
+[
+  {
+    "id": "phase6_trip",
+    "title": "푸켓 가족여행",
+    "userType": "traveler",
+    "purpose": "tourism",
+    "companions": "family",
+    "departureDate": "2026-06-10",
+    "returnDate": "2026-06-14",
+    "analysisState": "ready",
+    "shareState": "link_active",
+    "destinations": [
+      {
+        "id": "phase6_trip_dest_1",
+        "tripId": "phase6_trip",
+        "countryNm": "태국",
+        "countryIsoAlp2": "TH",
+        "cities": [
+          "푸켓"
+        ],
+        "arrivalDate": "2026-06-10",
+        "departureDate": "2026-06-14"
+      }
+    ],
+    "createdAt": "2026-05-29T00:00:00.000Z",
+    "updatedAt": "2026-05-29T02:09:16.819Z",
+    "publicData": {
+      "TH": {
+        "travel_alarm": {
+          "country_nm": "태국",
+          "country_iso_alp2": "TH",
+          "alarm_lvl": 1,
+          "region_ty": "일부 지역",
+          "remark": "일부 지역 여행유의",
+          "written_dt": "2026-05-20",
+          "source_api_id": "15095500"
+        },
+        "embassy": {
+          "embassy_kor_nm": "주태국대한민국대사관",
+          "embassy_addr": "Bangkok, Thailand",
+          "tel_no": "+66-2-247-7537",
+          "urgency_tel_no": "+66-81-914-5803",
+          "center_tel_no": "+82-2-3210-0404"
+        },
+        "local_contact": {
+          "country_nm": "태국",
+          "contact_remark": "경찰 191, 응급 1669",
+          "wrt_dt": "2026-05-19"
+        },
+        "visa": {
+          "have_yn": "Y",
+          "gnrl_pspt_visa_yn": "N",
+          "gnrl_pspt_visa_cn": "단기 관광은 일반적으로 무비자 입국 가능",
+          "nvisa_entry_evdc_cn": "여권과 체류지 확인 필요",
+          "remark": "입국 조건은 출국 전 재확인 필요"
+        },
+        "apiStatuses": {
+          "15075345": "success",
+          "15075354": "success",
+          "15076242": "success",
+          "15095500": "success"
+        }
+      }
+    },
+    "risk": {
+      "tripId": "phase6_trip",
+      "destinationId": "phase6_trip_dest_1",
+      "score": 35,
+      "level": "WATCH",
+      "summary": "공식 여행경보와 현지 비상연락처 재확인이 필요합니다.",
+      "topRisks": [
+        {
+          "title": "공식 여행경보 재확인",
+          "severity": "medium",
+          "action": "출국 전 외교부 여행경보 공지를 다시 확인하세요.",
+          "evidenceApi": "15095500",
+          "evidenceField": "remark"
+        }
+      ]
+    },
+    "summary": "공식 여행경보와 현지 비상연락처 재확인이 필요합니다.",
+    "checklist": [
+      {
+        "id": "ck_1",
+        "category": "출국 7일 전",
+        "label": "대사관 긴급 연락처 저장",
+        "required": true,
+        "done": false,
+        "evidence": {
+          "evidenceApi": "15075354",
+          "evidenceField": "urgency_tel_no"
+        }
+      },
+      {
+        "id": "ck_2",
+        "category": "현지 준비",
+        "label": "숙소 주변 병원 위치 저장",
+        "required": true,
+        "done": true,
+        "evidence": {
+          "evidenceApi": "15076242",
+          "evidenceField": "contact_remark"
+        }
+      }
+    ],
+    "emergency": {
+      "primary_contact": "대사관 긴급전화 +66-81-914-5803",
+      "phrases": [
+        {
+          "ko": "도움이 필요합니다.",
+          "en": "I need help."
+        }
+      ],
+      "action_steps": [
+        "안전한 장소로 이동",
+        "대사관 긴급전화로 연락"
+      ]
+    },
+    "unknowns": [
+      "푸켓만의 실시간 치안 통계는 공식 공공데이터 응답에 없습니다."
+    ],
+    "localPlaces": {
+      "phase6_trip_dest_1": {
+        "destinationId": "phase6_trip_dest_1",
+        "countryIsoAlp2": "TH",
+        "countryNm": "태국",
+        "city": "푸켓",
+        "status": "missing_api_key",
+        "fetchedAt": "2026-05-29T02:09:14.050Z",
+        "places": [
+          {
+            "id": "phase6_trip_dest_1_hospital_search",
+            "category": "hospital",
+            "name": "푸켓, 태국 병원 검색",
+            "googleMapsUri": "https://www.google.com/maps/search/?api=1&query=hospital%20in%20%ED%91%B8%EC%BC%93%2C%20%ED%83%9C%EA%B5%AD",
+            "source": "maps_search"
+          },
+          {
+            "id": "phase6_trip_dest_1_pharmacy_search",
+            "category": "pharmacy",
+            "name": "푸켓, 태국 약국 검색",
+            "googleMapsUri": "https://www.google.com/maps/search/?api=1&query=pharmacy%20in%20%ED%91%B8%EC%BC%93%2C%20%ED%83%9C%EA%B5%AD",
+            "source": "maps_search"
+          },
+          {
+            "id": "phase6_trip_dest_1_police_search",
+            "category": "police",
+            "name": "푸켓, 태국 경찰서 검색",
+            "googleMapsUri": "https://www.google.com/maps/search/?api=1&query=police%20in%20%ED%91%B8%EC%BC%93%2C%20%ED%83%9C%EA%B5%AD",
+            "source": "maps_search"
+          }
+        ],
+        "notices": [
+          "실시간 장소 상세정보는 아직 연결되지 않아 Google Maps 검색 링크를 제공합니다."
+        ]
+      }
+    }
+  },
+  {
+    "id": "phase7_trip",
+    "title": "일본 출장",
+    "userType": "business",
+    "purpose": "business",
+    "companions": "solo",
+    "departureDate": "2026-06-10",
+    "returnDate": "2026-06-14",
+    "analysisState": "ready",
+    "shareState": "private",
+    "destinations": [
+      {
+        "id": "phase7_trip_dest_1",
+        "tripId": "phase7_trip",
+        "countryNm": "일본",
+        "countryIsoAlp2": "JP",
+        "cities": [
+          "도쿄",
+          "요코하마"
+        ],
+        "arrivalDate": "2026-06-10",
+        "departureDate": "2026-06-14"
+      }
+    ],
+    "createdAt": "2026-05-28T00:00:00.000Z",
+    "updatedAt": "2026-05-29T02:06:16.210Z",
+    "publicData": {
+      "JP": {
+        "travel_alarm": {
+          "country_nm": "일본",
+          "country_iso_alp2": "JP",
+          "alarm_lvl": 1,
+          "region_ty": "일부 지역",
+          "remark": "일부 지역은 여행 전 최신 안전 공지를 확인해야 합니다.",
+          "written_dt": "2026-05-20"
+        },
+        "embassy": {
+          "embassy_kor_nm": "주일본대한민국대사관",
+          "embassy_addr": "東京都港区南麻布",
+          "tel_no": "+81-3-3452-7611",
+          "urgency_tel_no": "+81-90-4544-6602",
+          "free_tel_no": "0120-123-456"
+        },
+        "local_contact": {
+          "country_nm": "일본",
+          "contact_remark": "경찰 110, 소방·구급 119",
+          "wrt_dt": "2026-05-19"
+        },
+        "visa": {
+          "have_yn": "Y",
+          "gnrl_pspt_visa_yn": "N",
+          "gnrl_pspt_visa_cn": "단기 체류는 일반적으로 무비자 입국 가능",
+          "nvisa_entry_evdc_cn": "왕복 항공권과 체류지 확인 필요",
+          "remark": "입국 조건은 출국 전 재확인 필요"
+        },
+        "apiStatuses": {
+          "15075345": "empty",
+          "15075354": "success",
+          "15076242": "schema_error",
+          "15095500": "success"
+        }
+      }
+    },
+    "risk": {
+      "tripId": "phase7_trip",
+      "destinationId": "phase7_trip_dest_1",
+      "score": 41,
+      "level": "WATCH",
+      "summary": "여행 전 최신 공지와 긴급 연락처 확인이 필요합니다.",
+      "topRisks": [
+        {
+          "title": "여행경보 확인 필요",
+          "severity": "medium",
+          "action": "출국 전 외교부 여행경보와 현지 공지를 다시 확인하세요.",
+          "evidenceApi": "15095500",
+          "evidenceField": "remark"
+        }
+      ]
+    },
+    "summary": "여행 전 최신 공지와 긴급 연락처 확인이 필요합니다.",
+    "checklist": [
+      {
+        "id": "ck_1",
+        "category": "출국 7일 전",
+        "label": "재외공관 긴급 연락처 저장",
+        "required": true,
+        "done": false,
+        "evidence": {
+          "evidenceApi": "15075354",
+          "evidenceField": "urgency_tel_no"
+        }
+      },
+      {
+        "id": "ck_2",
+        "category": "현지 도착",
+        "label": "현지 긴급번호 확인",
+        "required": true,
+        "done": true,
+        "evidence": {
+          "evidenceApi": "15076242",
+          "evidenceField": "contact_remark"
+        }
+      }
+    ],
+    "emergency": {
+      "primary_contact": "대사관 긴급전화 +81-90-4544-6602",
+      "phrases": [
+        {
+          "ko": "도움이 필요합니다.",
+          "en": "I need help."
+        }
+      ],
+      "action_steps": [
+        "안전한 장소로 이동",
+        "대사관 긴급전화로 연락"
+      ]
+    },
+    "unknowns": [
+      "일부 API 응답이 비어 있어 확실한 정보 없음으로 처리했습니다."
+    ],
+    "localPlaces": {
+      "phase7_trip_dest_1": {
+        "destinationId": "phase7_trip_dest_1",
+        "countryIsoAlp2": "JP",
+        "countryNm": "일본",
+        "city": "도쿄",
+        "status": "missing_api_key",
+        "fetchedAt": "2026-05-29T02:06:16.047Z",
+        "places": [
+          {
+            "id": "phase7_trip_dest_1_hospital_search",
+            "category": "hospital",
+            "name": "도쿄, 일본 병원 검색",
+            "googleMapsUri": "https://www.google.com/maps/search/?api=1&query=hospital%20in%20%EB%8F%84%EC%BF%84%2C%20%EC%9D%BC%EB%B3%B8",
+            "source": "maps_search"
+          },
+          {
+            "id": "phase7_trip_dest_1_pharmacy_search",
+            "category": "pharmacy",
+            "name": "도쿄, 일본 약국 검색",
+            "googleMapsUri": "https://www.google.com/maps/search/?api=1&query=pharmacy%20in%20%EB%8F%84%EC%BF%84%2C%20%EC%9D%BC%EB%B3%B8",
+            "source": "maps_search"
+          },
+          {
+            "id": "phase7_trip_dest_1_police_search",
+            "category": "police",
+            "name": "도쿄, 일본 경찰서 검색",
+            "googleMapsUri": "https://www.google.com/maps/search/?api=1&query=police%20in%20%EB%8F%84%EC%BF%84%2C%20%EC%9D%BC%EB%B3%B8",
+            "source": "maps_search"
+          }
+        ],
+        "notices": [
+          "실시간 장소 상세정보는 아직 연결되지 않아 Google Maps 검색 링크를 제공합니다."
+        ]
+      }
+    }
+  }
+]

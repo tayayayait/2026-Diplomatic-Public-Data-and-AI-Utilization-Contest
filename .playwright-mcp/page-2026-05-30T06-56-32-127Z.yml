@@ -1,0 +1,159 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "DiploLife" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+        - navigation "주요 메뉴" [ref=e7]:
+          - link "대시보드" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e9]
+            - text: 대시보드
+          - link "AI 어시스턴트" [ref=e12] [cursor=pointer]:
+            - /url: /chat
+            - img [ref=e13]
+            - text: AI 어시스턴트
+          - link "SOS" [ref=e15] [cursor=pointer]:
+            - /url: /sos
+            - img [ref=e16]
+            - text: SOS
+          - link "생활비" [ref=e18] [cursor=pointer]:
+            - /url: /cost
+            - img [ref=e19]
+            - text: 생활비
+        - generic [ref=e22]:
+          - link "설정" [ref=e23] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e24]
+          - link "프로필" [ref=e27] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e28]
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - paragraph [ref=e33]: Safety Info
+        - heading "현지 안전 상세" [level=1] [ref=e34]
+        - paragraph [ref=e35]: 외교부 공공데이터 기준으로 경보, 사건·사고, 긴급 연락처를 즉시 확인할 수 있게 정리했습니다.
+      - region "안전 요약" [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]: 여행경보
+            - img [ref=e40]
+          - paragraph [ref=e43]: Level 1
+          - paragraph [ref=e44]: 1단계 (여행유의)
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - generic [ref=e47]: 최근 업데이트
+            - img [ref=e48]
+          - paragraph [ref=e50]: 확실한 정보 없음
+          - paragraph [ref=e51]: 사건·사고 기준일
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e54]: 즉시 연락
+            - img [ref=e55]
+          - paragraph [ref=e59]: +82-2-3210-0404
+          - paragraph [ref=e60]: 영사콜센터 24시간
+      - generic [ref=e61]:
+        - article [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - generic [ref=e65]:
+                - img [ref=e66]
+                - heading "외교부 여행경보" [level=2] [ref=e69]
+              - paragraph [ref=e70]: 선택 국가 지역에 발령된 공식 여행경보입니다.
+            - generic [ref=e71]: 확실한 정보 없음
+          - generic [ref=e72]:
+            - generic [ref=e76]:
+              - generic [ref=e77]: Level 1
+              - generic [ref=e78]: 여행유의
+            - generic [ref=e79]:
+              - heading "1단계 (여행유의)" [level=3] [ref=e80]
+              - list [ref=e81]:
+                - listitem [ref=e82]:
+                  - img [ref=e83]
+                  - generic [ref=e86]: 외교부 공지 확인
+                - listitem [ref=e87]:
+                  - img [ref=e88]
+                  - generic [ref=e91]: 현지 이동 동선 사전 확인
+                - listitem [ref=e92]:
+                  - img [ref=e93]
+                  - generic [ref=e96]: 야간 단독 이동 자제
+        - article [ref=e97]:
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - img [ref=e100]
+              - generic [ref=e102]:
+                - heading "최근 사건·사고 동향" [level=2] [ref=e103]
+                - paragraph [ref=e104]: 외교부 사건·사고 유형 원문을 읽기 쉽게 요약했습니다.
+            - generic [ref=e105]: 확실한 정보 없음
+          - generic [ref=e106]:
+            - generic [ref=e107]:
+              - generic [ref=e108]:
+                - img [ref=e109]
+                - heading "핵심 요약" [level=3] [ref=e112]
+              - paragraph [ref=e113]: 최근 등록된 사건·사고 원문 데이터가 없습니다.
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - img [ref=e116]
+                - heading "주요 내용" [level=3] [ref=e119]
+              - paragraph [ref=e120]: 표시할 추가 문장이 없습니다. 원문 전체를 확인하세요.
+          - generic [ref=e121]: 최근 등록된 사건·사고 데이터가 없습니다.
+      - generic [ref=e122]:
+        - article [ref=e123]:
+          - generic [ref=e125]:
+            - img [ref=e126]
+            - generic [ref=e128]:
+              - heading "긴급 연락처" [level=2] [ref=e129]
+              - paragraph [ref=e130]: 전화 가능한 연락처를 우선 배치했습니다.
+          - generic [ref=e131]:
+            - link "영사콜센터 24시간 +82-2-3210-0404 해외 사건·사고, 체포·구금, 실종 등 긴급 상담" [ref=e132] [cursor=pointer]:
+              - /url: tel:+82232100404
+              - img [ref=e134]
+              - generic [ref=e138]:
+                - paragraph [ref=e139]: 영사콜센터 24시간
+                - paragraph [ref=e140]: +82-2-3210-0404
+                - paragraph [ref=e141]: 해외 사건·사고, 체포·구금, 실종 등 긴급 상담
+            - generic [ref=e142]:
+              - img [ref=e144]
+              - generic [ref=e148]:
+                - paragraph [ref=e149]: 재외공관 긴급전화
+                - paragraph [ref=e150]: 확실한 정보 없음
+            - generic [ref=e151]:
+              - img [ref=e153]
+              - generic [ref=e157]:
+                - paragraph [ref=e158]: 재외공관 대표전화
+                - paragraph [ref=e159]: 확실한 정보 없음
+            - generic [ref=e160]:
+              - img [ref=e162]
+              - generic [ref=e164]:
+                - paragraph [ref=e165]: 무료·온라인 상담
+                - paragraph [ref=e166]: 카카오톡 '영사콜센터'
+                - paragraph [ref=e167]: 카카오톡에서 영사콜센터 채널 검색
+          - generic [ref=e168]:
+            - generic [ref=e169]:
+              - img [ref=e170]
+              - heading "현지 연락처 안내" [level=3] [ref=e172]
+            - paragraph [ref=e173]: 외교부 현지 연락처 원문 데이터가 아직 없습니다.
+        - article [ref=e174]:
+          - generic [ref=e175]:
+            - img [ref=e176]
+            - generic [ref=e180]:
+              - heading "의료·위생 참고" [level=2] [ref=e181]
+              - paragraph [ref=e182]: 의료환경 데이터가 있을 때만 수치를 표시합니다.
+          - generic [ref=e183]:
+            - generic [ref=e186]:
+              - img [ref=e188]
+              - generic [ref=e191]:
+                - paragraph [ref=e192]: 식수 사용률
+                - paragraph [ref=e193]: 확실한 정보 없음
+            - generic [ref=e196]:
+              - img [ref=e198]
+              - generic [ref=e202]:
+                - paragraph [ref=e203]: 결핵 발병률
+                - paragraph [ref=e204]: 확실한 정보 없음
+          - generic [ref=e205]: 해외 의료비는 국가별 편차가 큽니다. 장기 체류자는 보험 가입 여부와 인근 응급실 위치를 별도로 확인해야 합니다.
+    - link "SOS 열기" [ref=e206] [cursor=pointer]:
+      - /url: /sos
+      - img [ref=e207]
+  - region "Notifications alt+T"

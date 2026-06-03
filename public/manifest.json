@@ -1,0 +1,16 @@
+{
+  "name": "SafeRoute AI",
+  "short_name": "SafeRoute",
+  "description": "공공데이터 기반 여행 안전 비서",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#18181b",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

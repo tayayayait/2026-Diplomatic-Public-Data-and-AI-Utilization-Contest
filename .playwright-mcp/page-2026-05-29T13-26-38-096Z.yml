@@ -1,0 +1,11 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - main [ref=e78]:
+    - generic [ref=e79]:
+      - heading "This page didn't load" [level=1] [ref=e80]
+      - paragraph [ref=e81]: Something went wrong on our end. You can try refreshing or head back home.
+      - generic [ref=e82]:
+        - button "Try again" [ref=e83] [cursor=pointer]
+        - link "Go home" [ref=e84] [cursor=pointer]:
+          - /url: /
