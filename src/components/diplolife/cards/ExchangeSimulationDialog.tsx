@@ -57,6 +57,22 @@ const judgmentClassNames: Record<ExchangeSimulationRow["judgment"], string> = {
   Loss: "bg-danger/10 text-danger",
 };
 
+const labelTranslations: Record<ExchangeSimulationRow["label"], string> = {
+  Today: "오늘",
+  "1 day": "1일 후",
+  "3 days": "3일 후",
+  "7 days": "7일 후",
+};
+
+const judgmentTranslations: Record<ExchangeSimulationRow["judgment"], string> = {
+  Current: "현재",
+  "No change": "변동 없음",
+  "Slight gain": "소폭 이익",
+  Gain: "이익",
+  "Slight loss": "소폭 손실",
+  Loss: "손실",
+};
+
 export function ExchangeSimulationDialog({
   baseCurrency,
   data,
@@ -82,22 +98,22 @@ export function ExchangeSimulationDialog({
   const bestRow = rows.find((row) => row.isBest);
   const summary =
     bestRow && bestRow.label !== "Today"
-      ? `${bestRow.date} has the best projected amount: ${formatAmount(bestRow.targetAmount, targetCurrency)}.`
-      : "The current point is the best projected option in this simulation.";
+      ? `${labelTranslations[bestRow.label]}의 예상 금액이 가장 높습니다: ${formatAmount(bestRow.targetAmount, targetCurrency)}.`
+      : "이 시뮬레이션에서는 현재 시점이 가장 유리한 옵션입니다.";
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button type="button" className="min-h-11 gap-2" disabled={!data}>
           <Calculator className="h-4 w-4" aria-hidden="true" />
-          Simulate timing
+          환전 타이밍 시뮬레이션
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto p-0">
         <DialogHeader className="border-b border-border px-5 py-5 sm:px-6">
-          <DialogTitle className="text-xl">Exchange timing simulation</DialogTitle>
+          <DialogTitle className="text-xl">환전 시기 시뮬레이션</DialogTitle>
           <DialogDescription>
-            Compare today, 1 day, 3 days, and 7 days using the current forecast data.
+            현재 예측 데이터를 기반으로 오늘, 1일 후, 3일 후, 7일 후의 환율을 비교합니다.
           </DialogDescription>
         </DialogHeader>
 
@@ -110,7 +126,7 @@ export function ExchangeSimulationDialog({
             }}
           >
             <label className="space-y-1.5 text-sm font-medium">
-              Amount to exchange
+              환전할 금액
               <Input
                 inputMode="decimal"
                 value={amountInput}
@@ -124,13 +140,13 @@ export function ExchangeSimulationDialog({
               <span>{targetCurrency}</span>
             </div>
             <Button type="submit" className="h-11" disabled={parsedAmount === null}>
-              Update
+              업데이트
             </Button>
           </form>
 
           {parsedAmount === null && (
             <div className="rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm font-medium text-danger">
-              Enter an amount greater than 0.
+              0보다 큰 금액을 입력하세요.
             </div>
           )}
 
@@ -139,11 +155,11 @@ export function ExchangeSimulationDialog({
               <table className="w-full min-w-[720px] border-collapse text-sm">
                 <thead className="bg-surface-alt text-left text-xs font-semibold uppercase text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3">Timing</th>
-                    <th className="px-4 py-3 text-right">Rate</th>
-                    <th className="px-4 py-3 text-right">Projected amount</th>
-                    <th className="px-4 py-3 text-right">Difference</th>
-                    <th className="px-4 py-3 text-center">Judgment</th>
+                    <th className="px-4 py-3">시점</th>
+                    <th className="px-4 py-3 text-right">환율</th>
+                    <th className="px-4 py-3 text-right">예상 금액</th>
+                    <th className="px-4 py-3 text-right">차액</th>
+                    <th className="px-4 py-3 text-center">평가</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -155,7 +171,7 @@ export function ExchangeSimulationDialog({
                       }`}
                     >
                       <td className="px-4 py-3">
-                        <div className="font-semibold text-foreground">{row.label}</div>
+                        <div className="font-semibold text-foreground">{labelTranslations[row.label]}</div>
                         <div className="mt-0.5 text-xs text-muted-foreground">{row.date}</div>
                       </td>
                       <td className="px-4 py-3 text-right font-mono text-foreground">
@@ -177,7 +193,7 @@ export function ExchangeSimulationDialog({
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${judgmentClassNames[row.judgment]}`}>
-                          {row.judgment}
+                          {judgmentTranslations[row.judgment]}
                         </span>
                       </td>
                     </tr>
@@ -190,7 +206,7 @@ export function ExchangeSimulationDialog({
           <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground">
             <p className="font-semibold">{summary}</p>
             <p className="mt-1 text-muted-foreground">
-              Forecasts are estimates. Confirm rates with your bank or exchange provider before transferring money.
+              예측치는 추정치입니다. 송금하기 전에 은행이나 환전 서비스 제공업체의 환율을 확인하세요.
             </p>
           </div>
         </div>

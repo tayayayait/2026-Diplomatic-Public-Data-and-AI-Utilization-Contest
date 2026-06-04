@@ -17,12 +17,12 @@ export async function generateAccidentSummary(
   const prompt = `
 Analyze the following overseas incident and accident information for ${country}.
 
-Return only JSON in this shape:
+Return only JSON in this shape. ALL string values (title, content) MUST BE IN KOREAN (한국어). Do NOT use English:
 {
   "sections": [
     {
-      "title": "Main risks",
-      "content": ["paragraph"]
+      "title": "주요 위험 사항",
+      "content": ["문단 내용 (반드시 한국어로 작성)"]
     }
   ]
 }
@@ -32,6 +32,7 @@ Requirements:
 - Use paragraph-style explanations, not numbered instructions.
 - Stay within the provided source text and do not invent facts.
 - Focus on what a Korean traveler or long-stay resident should understand quickly.
+- ALL OUTPUT MUST BE IN KOREAN.
 
 Source text:
 ${rawText}

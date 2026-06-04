@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import type { GooglePlaceSearchIntent, LocalItineraryRecommendationRequest } from "./recommendation-policy";
 import { fetchNearbyGooglePlaces, fetchTextGooglePlaces, type Fetcher } from "./google-places-api";

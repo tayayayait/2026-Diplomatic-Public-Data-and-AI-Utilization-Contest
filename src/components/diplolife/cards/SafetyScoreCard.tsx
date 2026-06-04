@@ -1,11 +1,11 @@
-﻿import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { ShieldAlert, ShieldCheck } from "lucide-react";
 import type { DashboardCardViewModel } from "@/lib/diplolife/dashboard";
 import { cn } from "@/lib/utils";
 
 export function SafetyScoreCard({ card }: { card: DashboardCardViewModel }) {
-  // Extract level from value "85/100 쨌 1?④퀎"
-  const isHighRisk = card.value.includes("3?④퀎") || card.value.includes("4?④퀎");
+  // Extract level from value "85/100 · 1단계"
+  const isHighRisk = card.value.includes("3단계") || card.value.includes("4단계");
   const Icon = isHighRisk ? ShieldAlert : ShieldCheck;
   
   return (
@@ -32,11 +32,11 @@ export function SafetyScoreCard({ card }: { card: DashboardCardViewModel }) {
       </div>
       
       <div className="mt-8 pl-2">
-        <div className="text-[48px] font-bold tracking-tight text-foreground">{card.value.split(" 쨌 ")[0]}</div>
-        <div className="mt-1 text-[18px] font-semibold text-muted-foreground">{card.value.split(" 쨌 ")[1] || card.value}</div>
+        <div className="text-[48px] font-bold tracking-tight text-foreground">{card.value.split(" · ")[0]}</div>
+        <div className="mt-1 text-[18px] font-semibold text-muted-foreground">{card.value.split(" · ")[1] || card.value}</div>
         
         <div className="mt-8 rounded-xl bg-surface-alt p-4">
-          <p className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">理쒓렐 ?뺣낫</p>
+          <p className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">최근 정보</p>
           <p className="mt-1 text-[15px] font-medium text-foreground line-clamp-2">{card.meta}</p>
         </div>
       </div>

@@ -1,4 +1,4 @@
-﻿export const LONG_TERM_TRIP_THRESHOLD = 4;
+export const LONG_TERM_TRIP_THRESHOLD = 4;
 
 export function calculateTripDuration(startDate: Date | string, endDate: Date | string): number {
   const start = new Date(startDate);

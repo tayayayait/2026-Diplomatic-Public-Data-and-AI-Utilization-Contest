@@ -1,15 +1,16 @@
 import type { DiploLifeStore, UserProfile } from "@/lib/diplolife/state";
+import type { BudgetStrategy } from "@/lib/itinerary/budget-plan";
+import type { ItineraryIntensity, TravelMode } from "@/lib/itinerary/recommendation-policy";
 
 export type MealPreference = "local" | "quick" | "fine_dining";
 
 export interface ItineraryGenerationSettings {
-  durationMinutes: number;
+  durationMinutes?: number;
   startTime: string;
-  includeMeals: boolean;
-  mealPreference: MealPreference;
-  vibeThemes: string[];
-  foodThemes: string[];
   budget: string;
+  budgetStrategy: BudgetStrategy;
+  itineraryIntensity: ItineraryIntensity;
+  travelModes: TravelMode[];
 }
 
 interface AccommodationProfilePatchInput {
@@ -39,11 +40,10 @@ export const getSmartDefaults = (
 ): ItineraryGenerationSettings => ({
   durationMinutes: profile?.stayPurpose === "TRAVEL" ? 480 : 360,
   startTime: "09:00",
-  includeMeals: true,
-  mealPreference: "local",
-  vibeThemes: profile?.placeInterests?.length ? [...profile.placeInterests] : [...fallbackVibeThemes],
-  foodThemes: profile?.foodPreferences?.length ? [...profile.foodPreferences] : [...fallbackFoodThemes],
   budget: profile?.stayPurpose === "STUDY" ? "저렴" : "보통",
+  budgetStrategy: "balanced",
+  itineraryIntensity: "normal",
+  travelModes: ["WALK", "TRANSIT"],
 });
 
 export const applyBudgetKrwToItinerarySettings = (
@@ -109,3 +109,30 @@ export const canRequestItinerary = ({
   country?: string | null;
   isPending: boolean;
 }) => Boolean(country) && !isPending;
+
+export const getItineraryPrerequisiteState = (
+  profile: UserProfile | null | undefined,
+) => {
+  if (!profile) {
+    return {
+      canGenerate: false,
+      ctaHref: "/onboarding",
+      message: "체류 국가 등 기본 프로필을 먼저 설정해야 AI 일정을 생성할 수 있습니다.",
+      status: "missing_profile",
+    };
+  }
+  if (!profile.country) {
+    return {
+      canGenerate: false,
+      ctaHref: "/onboarding",
+      message: "체류 국가 등 기본 프로필을 먼저 설정해야 AI 일정을 생성할 수 있습니다.",
+      status: "missing_country",
+    };
+  }
+  return {
+    canGenerate: true,
+    ctaHref: null,
+    message: null,
+    status: "ready",
+  };
+};

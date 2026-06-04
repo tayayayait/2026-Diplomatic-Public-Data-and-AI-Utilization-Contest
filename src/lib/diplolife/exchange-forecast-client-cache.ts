@@ -1,4 +1,4 @@
-﻿import {
+import {
   EXCHANGE_CACHE_TTL_MS,
   EXCHANGE_HISTORY_DAYS,
   type ExchangeRateForecastResult,

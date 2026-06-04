@@ -1,4 +1,4 @@
-﻿import { useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 
@@ -14,7 +14,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
     void navigate({
       replace: true,
-      search: { redirectTo: pathname },
+      search: { redirectTo: pathname, mode: "signin" as const },
       to: "/auth",
     });
   }, [navigate, pathname, status]);
@@ -28,7 +28,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
       >
         <div className="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-semibold shadow-sm">
           <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden="true" />
-          ?몄뀡 ?뺤씤 以?        </div>
+          세션 확인 중...
+        </div>
       </main>
     );
   }

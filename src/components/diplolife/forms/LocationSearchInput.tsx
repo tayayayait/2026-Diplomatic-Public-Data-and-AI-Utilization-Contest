@@ -204,7 +204,7 @@ export function LocationSearchInput({
       if (resolved.lat !== undefined && resolved.lng !== undefined) {
         setMarkerAndCenter({ lat: resolved.lat, lng: resolved.lng });
       }
-      setStatusText("Location selected from Google Places.");
+      setStatusText("Google Places에서 위치가 선택되었습니다.");
     });
   }, [isPlacesReady, onChange, onResolvedLocation, setMarkerAndCenter, value]);
 
@@ -239,7 +239,7 @@ export function LocationSearchInput({
 
     if (!canUseGoogleMapsCore(window.google)) {
       onResolvedLocation?.({ address: query });
-      setStatusText("Saved text location. Google Maps is not available.");
+      setStatusText("텍스트 위치가 저장되었습니다. 구글 지도를 사용할 수 없습니다.");
       return;
     }
 
@@ -247,7 +247,7 @@ export function LocationSearchInput({
     geocoder.geocode({ address: query }, (results: any[], status: string) => {
       if (status !== "OK" || !results?.[0]) {
         onResolvedLocation?.({ address: query });
-        setStatusText("Saved text location. Geocoding did not return coordinates.");
+        setStatusText("텍스트 위치가 저장되었습니다. 주소 변환에서 좌표를 찾지 못했습니다.");
         return;
       }
 
@@ -259,15 +259,49 @@ export function LocationSearchInput({
       if (resolved.lat !== undefined && resolved.lng !== undefined) {
         setMarkerAndCenter({ lat: resolved.lat, lng: resolved.lng });
       }
-      setStatusText("Coordinates resolved.");
+      setStatusText("좌표가 확인되었습니다.");
     });
   }, [onChange, onResolvedLocation, setMarkerAndCenter, value]);
 
-  const handleRecenter = () => {
-    if (selectedLatLngRef.current && mapInstanceRef.current) {
-      mapInstanceRef.current.setCenter(selectedLatLngRef.current);
-      mapInstanceRef.current.setZoom(15);
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setStatusText("브라우저가 위치 정보를 지원하지 않습니다.");
+      return;
     }
+
+    setStatusText("위치 정보를 가져오는 중...");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const latLng = { lat: latitude, lng: longitude };
+
+        if (window.google?.maps?.Geocoder) {
+          const geocoder = new window.google.maps.Geocoder();
+          geocoder.geocode({ location: latLng }, (results: any[], status: string) => {
+            if (status === "OK" && results[0]) {
+              const address = results[0].formatted_address;
+              onChange(address);
+              onResolvedLocation?.({ address, lat: latitude, lng: longitude });
+              setMarkerAndCenter(latLng);
+              setStatusText("현재 위치를 확인했습니다.");
+              if (!showMap) setShowMap(true);
+            } else {
+              setStatusText("현재 위치의 주소를 찾을 수 없습니다.");
+              setMarkerAndCenter(latLng);
+              if (!showMap) setShowMap(true);
+            }
+          });
+        } else {
+          setStatusText("현재 위치를 확인했습니다 (주소 변환 불가).");
+          setMarkerAndCenter(latLng);
+          if (!showMap) setShowMap(true);
+        }
+      },
+      (error) => {
+        setStatusText("위치 정보를 가져올 수 없습니다. 권한을 확인해 주세요.");
+      }
+    );
   };
 
   const mapsSearchHref = value.trim()
@@ -285,7 +319,7 @@ export function LocationSearchInput({
             id={inputId}
             ref={inputRef}
             type="text"
-            placeholder={placeholder || "Enter an address, station, or accommodation"}
+            placeholder={placeholder || "주소, 역, 또는 숙소 이름을 입력하세요"}
             value={value}
             onChange={(event) => {
               onChange(event.target.value);
@@ -307,7 +341,7 @@ export function LocationSearchInput({
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 text-sm font-semibold text-blue-700 shadow-sm hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-200 dark:hover:bg-blue-900/60"
         >
           <LocateFixed className="h-4 w-4" aria-hidden="true" />
-          Resolve
+          확인
         </button>
       </div>
 
@@ -320,17 +354,16 @@ export function LocationSearchInput({
           aria-controls={`${inputId}-map`}
         >
           <MapIcon className="h-4 w-4" aria-hidden="true" />
-          {showMap ? "Hide map" : "Show map"}
+          {showMap ? "지도 숨기기" : "지도 보기"}
         </button>
 
         <button
           type="button"
-          onClick={handleRecenter}
-          disabled={!selectedLatLngRef.current}
-          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-gray-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+          onClick={handleGetCurrentLocation}
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-gray-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
         >
           <Navigation className="h-4 w-4" aria-hidden="true" />
-          Recenter
+          내 위치
         </button>
 
         <a
@@ -340,7 +373,7 @@ export function LocationSearchInput({
           className="inline-flex min-h-11 items-center gap-2 rounded-full border border-gray-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
         >
           <ExternalLink className="h-4 w-4" aria-hidden="true" />
-          Open in Google Maps
+          구글 맵에서 열기
         </a>
       </div>
 
@@ -354,7 +387,7 @@ export function LocationSearchInput({
         >
           {!isMapsReady && (
             <div className="flex h-full items-center justify-center px-4 text-center text-sm text-muted-foreground">
-              Google Maps is not available. The text address will still be saved.
+              구글 지도를 사용할 수 없습니다. 텍스트 주소는 여전히 저장됩니다.
             </div>
           )}
         </div>

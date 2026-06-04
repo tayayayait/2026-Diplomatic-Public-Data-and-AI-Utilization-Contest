@@ -1,4 +1,4 @@
-﻿import type { ItineraryPlace } from "@/lib/gemini/schema";
+import type { ItineraryPlace } from "@/lib/gemini/schema";
 
 import {
   dedupeGooglePlaceCandidates,
@@ -7,9 +7,10 @@ import {
   type GooglePlaceCandidate,
 } from "./google-place-candidates";
 import { fetchTextGooglePlaces, resolveGooglePlaceLocation } from "./google-places-api";
-import { computeRoute, getTravelModeLabel, type RouteSummary } from "./google-routes-api";
+import { getTravelModeLabel } from "./google-routes-api";
 import {
   getRadiusPolicyForTravelModes,
+  getItineraryCompositionPolicy,
   isLodgingType,
   localItineraryRecommendationRequestSchema,
   selectTargetPlaceCount,
@@ -24,9 +25,10 @@ import {
   isSimilarPlaceName,
   normalizePlaceIdentifier,
 } from "./place-deduplication";
-import { selectBestRouteOption } from "./google-first-place-builder";
+import { categoryByPrimaryType } from "./google-first-place-builder";
 import { resolvePhotoUrl } from "./place-photo-proxy";
 import { attachAccommodationReturnRoute } from "./return-route";
+import { optimizeItineraryPlaceOrderByRoute } from "./route-order-optimizer";
 
 type ParsedRequest = ReturnType<typeof localItineraryRecommendationRequestSchema.parse>;
 
@@ -172,24 +174,7 @@ const selectMatchedCandidate = (
     .map((candidate) => createScoredCandidate(request, draftPlace, candidate, currentLocation))
     .sort((left, right) => right.score - left.score)[0] ?? null;
 
-const uniqueTravelModes = (allowedModes: TravelMode[]) =>
-  [...new Set(allowedModes.length > 0 ? allowedModes : ["WALK"])] as TravelMode[];
 
-const computeBestRoute = async (
-  origin: { lat: number; lng: number },
-  destination: { lat: number; lng: number },
-  options: GoogleFirstItineraryOptions,
-  allowedModes: TravelMode[],
-) => {
-  const routeOptions = await Promise.all(
-    uniqueTravelModes(allowedModes).map(async (mode) => ({
-      mode,
-      route: await computeRoute(origin, destination, { ...options, travelMode: mode }),
-    })),
-  );
-
-  return selectBestRouteOption(routeOptions);
-};
 
 const parseTimeToMinutes = (time: string) => {
   const [hours = 0, minutes = 0] = time.split(":").map(Number);
@@ -220,6 +205,14 @@ const createEstimatedCost = (candidate: ScoredCandidate) => {
   return "Google Places price unavailable";
 };
 
+const getLastPlaceLocation = (places: ItineraryPlace[], fallback: { lat: number; lng: number }) => {
+  const lastPlace = places.at(-1);
+
+  return lastPlace && Number.isFinite(lastPlace.lat) && Number.isFinite(lastPlace.lng)
+    ? { lat: lastPlace.lat, lng: lastPlace.lng }
+    : fallback;
+};
+
 const normalizeMealSlot = (category: ItineraryPlace["category"]): ItineraryPlace["mealSlot"] => {
   if (category === "restaurant") return "meal";
   if (category === "cafe") return "snack";
@@ -240,44 +233,40 @@ const createDescription = (draftPlace: ItineraryPlace, candidate: ScoredCandidat
   return `${draftPlace.description} Matched with Google Places: ${candidate.name}.${rating}${reviewCount}${opening}`;
 };
 
-const createPlaceFromMatch = ({
-  bestRoute,
+const createPlaceWithoutRoute = ({
   candidate,
   draftPlace,
-  endMinutes,
   googleApiKey,
   index,
   request,
-  startMinutes,
 }: {
-  bestRoute: { mode: TravelMode; route: RouteSummary };
   candidate: ScoredCandidate;
   draftPlace: ItineraryPlace;
-  endMinutes: number;
   googleApiKey: string;
   index: number;
   request: LocalItineraryRecommendationRequest;
-  startMinutes: number;
 }): ItineraryPlace => {
   const radiusPolicy = getRadiusPolicyForTravelModes(request.travelModes);
-  const routeDistanceMeters =
-    bestRoute.route.distanceMeters || Math.round(candidate.distanceMetersFromDeparture);
+  const routeDistanceMeters = Math.round(candidate.distanceMetersFromDeparture);
+  const category = categoryByPrimaryType(candidate.primaryType, candidate.name);
 
   return {
     ...draftPlace,
+    category,
     description: createDescription(draftPlace, candidate),
-    endTime: formatMinutesToTime(endMinutes),
+    endTime: "",
     estimatedCost: createEstimatedCost(candidate),
     googlePlaceId: candidate.id,
-    koName: draftPlace.koName,
+    koName: draftPlace.koName?.trim() || candidate.name,
     lat: candidate.location.lat,
     lng: candidate.location.lng,
-    mealSlot: normalizeMealSlot(draftPlace.category),
+    mealSlot: normalizeMealSlot(category),
     order: index + 1,
     photoUrl: candidate.photoName
       ? resolvePhotoUrl(candidate.photoName, 400, googleApiKey)
       : draftPlace.photoUrl,
-    placeName: draftPlace.placeName,
+    placeIntroduction: `[AI 추천: ${draftPlace.koName}] ${draftPlace.placeIntroduction ?? draftPlace.description}`,
+    placeName: candidate.name,
     recommendationContext: {
       businessStatus: candidate.businessStatus,
       distanceFromDepartureMeters: Math.round(candidate.distanceMetersFromDeparture),
@@ -291,8 +280,8 @@ const createPlaceFromMatch = ({
       priceRangeText: candidate.priceRangeText,
       rating: candidate.rating,
       routeDistanceMeters,
-      routeDurationMinutes: bestRoute.route.durationMinutes,
-      routeTravelMode: bestRoute.mode,
+      routeDurationMinutes: 0,
+      routeTravelMode: "WALK",
       score: candidate.score,
       searchRadiusMeters: request.searchRadiusMeters,
       sortMode: request.sortMode,
@@ -300,11 +289,11 @@ const createPlaceFromMatch = ({
       travelModes: request.travelModes,
       userRatingCount: candidate.userRatingCount,
     },
-    startTime: formatMinutesToTime(startMinutes),
+    startTime: "",
     theme: draftPlace.theme || candidate.sourceTheme,
-    travelFromPrevDistance: formatDistanceMeters(routeDistanceMeters),
-    travelFromPrevMinutes: bestRoute.route.durationMinutes,
-    travelMode: getTravelModeLabel(bestRoute.mode),
+    travelFromPrevDistance: "",
+    travelFromPrevMinutes: 0,
+    travelMode: "도보",
   };
 };
 
@@ -321,14 +310,23 @@ export const createGeminiGuidedGoogleItinerary = async (
   const selectedNames = [...request.excludedPlaceNames];
   const places: ItineraryPlace[] = [];
   const orderedDraftPlaces = [...draftPlaces].sort((left, right) => left.order - right.order);
+  
+  // Phase 1: Fetch all Google Places candidates in parallel
+  const allCandidates = await Promise.all(
+    orderedDraftPlaces.map((draftPlace) => collectMatchedCandidates(request, draftPlace, options))
+  );
+
   let currentLocation = request.departure as { lat: number; lng: number };
   let currentMinutes = parseTimeToMinutes(request.startTime);
   const targetPlaceCount = selectTargetPlaceCount(request);
+  const composition = getItineraryCompositionPolicy(request);
+  let mealCount = 0;
+  let snackCount = 0;
 
-  for (const draftPlace of orderedDraftPlaces) {
+  for (const [index, draftPlace] of orderedDraftPlaces.entries()) {
     if (places.length >= targetPlaceCount) break;
 
-    const candidates = await collectMatchedCandidates(request, draftPlace, options);
+    const candidates = allCandidates[index];
     const candidate = selectMatchedCandidate(
       request,
       draftPlace,
@@ -339,41 +337,44 @@ export const createGeminiGuidedGoogleItinerary = async (
     );
     if (!candidate) continue;
 
-    const bestRoute = await computeBestRoute(
-      currentLocation,
-      candidate.location,
-      options,
-      request.travelModes,
-    );
-    const startMinutes = currentMinutes + bestRoute.route.durationMinutes;
     const stayMinutes = clampStayMinutes(draftPlace.estimatedMinutes);
-    const endMinutes = startMinutes + stayMinutes;
 
-    const place = createPlaceFromMatch({
-      bestRoute,
+    const place = createPlaceWithoutRoute({
       candidate,
       draftPlace: { ...draftPlace, estimatedMinutes: stayMinutes },
-      endMinutes,
       googleApiKey: options.googleApiKey,
       index: places.length,
       request,
-      startMinutes,
     });
-
+    
+    if (place.category === "restaurant" && mealCount >= composition.mealCount) continue;
+    if (place.category === "cafe" && snackCount >= composition.snackCount) continue;
+    
     places.push(place);
+
+    if (place.category === "restaurant") mealCount += 1;
+    if (place.category === "cafe") snackCount += 1;
     if (candidate.id) selectedIds.add(normalizePlaceIdentifier(candidate.id));
     selectedNames.push(candidate.name);
     if (draftPlace.placeName) selectedNames.push(draftPlace.placeName);
     if (draftPlace.koName) selectedNames.push(draftPlace.koName);
     currentLocation = candidate.location;
-    currentMinutes = endMinutes;
   }
+
+  const optimizedPlaces = await optimizeItineraryPlaceOrderByRoute({
+    departure: request.departure as { lat: number; lng: number },
+    options,
+    places,
+    startTime: request.startTime,
+    travelModes: request.travelModes,
+  });
+  const returnOrigin = getLastPlaceLocation(optimizedPlaces, currentLocation);
 
   return attachAccommodationReturnRoute({
     departure: request.departure as { lat: number; lng: number },
     options,
-    places,
-    returnOrigin: currentLocation,
+    places: optimizedPlaces,
+    returnOrigin,
     travelModes: request.travelModes,
   });
 };

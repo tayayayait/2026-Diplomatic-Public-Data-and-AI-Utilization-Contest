@@ -8,13 +8,21 @@ import {
   type ItineraryPlace,
 } from "./schema";
 import { buildItineraryPrompt } from "./itinerary-prompt";
-import { createGoogleFirstItinerary } from "@/lib/itinerary/google-first-itinerary";
+import { createGoogleFirstItinerary } from "../itinerary/google-first-itinerary";
+import { collectGooglePlaceCandidates } from "../itinerary/google-place-candidates";
+import { selectGoogleFirstCandidates } from "../itinerary/google-itinerary-scoring";
+import { categoryByPrimaryType } from "../itinerary/google-first-place-builder";
 import { createGeminiGuidedGoogleItinerary } from "@/lib/itinerary/gemini-guided-google-itinerary";
 import {
+  getItineraryCompositionPolicy,
   getRadiusPolicyForTravelModes,
   selectTargetPlaceCount,
   travelModeSchema,
 } from "@/lib/itinerary/recommendation-policy";
+import {
+  isSimilarPlaceName,
+  normalizePlaceIdentifier,
+} from "@/lib/itinerary/place-deduplication";
 
 const BudgetPlanSchema = z.object({
   dailyBudgetKrw: z.number().optional(),
@@ -47,9 +55,13 @@ const ItineraryInputSchema = z.object({
   durationMinutes: z.number(),
   excludedGooglePlaceIds: z.array(z.string()).default([]),
   excludedPlaceNames: z.array(z.string()).default([]),
+  foodThemes: z.array(z.string()).default([]),
+  includeMeals: z.boolean().default(true),
   startTime: z.string().default("09:00"),
+  targetPlaceCount: z.number().int().min(3).max(7).optional(),
   travelModes: z.array(travelModeSchema).min(1).default(["WALK", "TRANSIT"]),
   tripDurationDays: z.number().int().min(1).optional(),
+  vibeThemes: z.array(z.string()).default([]),
 });
 
 type ItineraryInput = z.infer<typeof ItineraryInputSchema>;
@@ -123,11 +135,97 @@ const createGoogleFirstRequest = (data: ItineraryInput) => {
     durationMinutes: data.durationMinutes,
     excludedGooglePlaceIds: data.excludedGooglePlaceIds,
     excludedPlaceNames: data.excludedPlaceNames,
+    foodThemes: data.foodThemes,
+    includeMeals: data.includeMeals,
     searchRadiusMeters: radiusPolicy.default,
     sortMode: "route_optimized" as const,
     startTime: data.startTime,
+    targetPlaceCount: data.targetPlaceCount,
     travelModes: data.travelModes,
+    vibeThemes: data.vibeThemes,
   };
+};
+
+const uniqueStrings = (values: Array<string | undefined>) => [
+  ...new Set(values.map((value) => value?.trim()).filter((value): value is string => Boolean(value))),
+];
+
+const createReplenishmentRequest = (
+  request: ReturnType<typeof createGoogleFirstRequest>,
+  existingPlaces: ItineraryPlace[],
+) => ({
+  ...request,
+  excludedGooglePlaceIds: uniqueStrings([
+    ...request.excludedGooglePlaceIds,
+    ...existingPlaces.map((place) => place.googlePlaceId),
+  ]),
+  excludedPlaceNames: uniqueStrings([
+    ...request.excludedPlaceNames,
+    ...existingPlaces.flatMap((place) => [place.placeName, place.koName]),
+  ]),
+});
+
+const hasPlaceIdentityMatch = (left: ItineraryPlace, right: ItineraryPlace) => {
+  const leftId = left.googlePlaceId ? normalizePlaceIdentifier(left.googlePlaceId) : "";
+  const rightId = right.googlePlaceId ? normalizePlaceIdentifier(right.googlePlaceId) : "";
+
+  if (leftId && rightId && leftId === rightId) return true;
+  if (leftId && rightId) return false;
+
+  return [right.placeName, right.koName]
+    .filter(Boolean)
+    .some((rightName) =>
+      [left.placeName, left.koName]
+        .filter(Boolean)
+        .some((leftName) => isSimilarPlaceName(leftName, rightName)),
+    );
+};
+
+const getFoodCompositionKind = (place: ItineraryPlace): "meal" | "none" | "snack" => {
+  if (
+    place.category === "restaurant" ||
+    place.mealSlot === "breakfast" ||
+    place.mealSlot === "lunch" ||
+    place.mealSlot === "dinner" ||
+    place.mealSlot === "meal"
+  ) {
+    return "meal";
+  }
+
+  if (place.category === "cafe" || place.mealSlot === "snack") {
+    return "snack";
+  }
+
+  return "none";
+};
+
+const mergeItineraryPlaces = (
+  preferredPlaces: ItineraryPlace[],
+  fallbackPlaces: ItineraryPlace[],
+  policyInput: { durationMinutes?: number; includeMeals?: boolean; targetPlaceCount?: number },
+) => {
+  const composition = getItineraryCompositionPolicy(policyInput);
+  const merged: ItineraryPlace[] = [];
+  let mealCount = 0;
+  let snackCount = 0;
+
+  for (const place of [...preferredPlaces, ...fallbackPlaces]) {
+    if (merged.length >= composition.targetPlaceCount) break;
+    if (merged.some((existingPlace) => hasPlaceIdentityMatch(existingPlace, place))) continue;
+
+    const foodKind = getFoodCompositionKind(place);
+    if (foodKind === "meal" && mealCount >= composition.mealCount) continue;
+    if (foodKind === "snack" && snackCount >= composition.snackCount) continue;
+
+    merged.push({
+      ...place,
+      order: merged.length + 1,
+    });
+    if (foodKind === "meal") mealCount += 1;
+    if (foodKind === "snack") snackCount += 1;
+  }
+
+  return merged;
 };
 
 const attachGeminiRecommendationContext = (
@@ -163,7 +261,7 @@ Rules:
 - Use Gemini's internal travel and place knowledge.
 - Explain what each exact place is and why a traveler may want to visit.
 - Write 1-2 concise Korean sentences per place.
-- Avoid generic category templates such as "도시의 대표적인 볼거리", "지역 분위기를 확인하기 좋은 방문지", or "여행지의 인상을 잡기 좋은 장소".
+- Avoid generic category templates such as "도시의 대표적인 볼거리", "지역 분위기를 확인하기 좋은 방문지", 또는 "여행지의 인상을 잡기 좋은 장소".
 - Do not mention recommendation scores, ratings, review counts, opening hours, prices, route time, or unverifiable live facts.
 - Return only valid JSON array.
 - Preserve each input order.
@@ -244,7 +342,10 @@ export const generateItineraryOnServer = async (
   const config = deps.config ?? getServerConfig();
   const geminiApiKey = config.geminiApiKey || process.env.VITE_GEMINI_API_KEY;
   const googleFirstRequest = createGoogleFirstRequest(data);
-  const targetPlaceCount = selectTargetPlaceCount(data.durationMinutes);
+  const targetPlaceCount = selectTargetPlaceCount({
+    durationMinutes: data.durationMinutes,
+    targetPlaceCount: data.targetPlaceCount,
+  });
   let geminiGuidedPlaces: ItineraryPlace[] = [];
 
   if (canUseGoogleFirstItinerary(data, config) && geminiApiKey) {
@@ -256,27 +357,68 @@ export const generateItineraryOnServer = async (
       googleApiKey: config.googlePlacesApiKey!,
     });
 
-    const isLongDurationUnderfilled =
-      targetPlaceCount > 5 && geminiGuidedPlaces.length <= 5;
-
-    if (geminiGuidedPlaces.length > 0 && !isLongDurationUnderfilled) {
-      return geminiGuidedPlaces;
+    const uniqueGeminiGuidedPlaces = mergeItineraryPlaces(geminiGuidedPlaces, [], {
+      includeMeals: data.includeMeals,
+      targetPlaceCount,
+    });
+    if (uniqueGeminiGuidedPlaces.length >= targetPlaceCount) {
+      return uniqueGeminiGuidedPlaces;
     }
+    geminiGuidedPlaces = uniqueGeminiGuidedPlaces;
   }
 
   if (canUseGoogleFirstItinerary(data, config)) {
-    const googleFirst = deps.createGoogleFirstItinerary ?? createGoogleFirstItinerary;
-    const places = await googleFirst(googleFirstRequest, {
+    const replenishmentRequest = createReplenishmentRequest(googleFirstRequest, geminiGuidedPlaces);
+    
+    const candidates = await collectGooglePlaceCandidates(replenishmentRequest, {
       googleApiKey: config.googlePlacesApiKey!,
+    });
+    const selected = selectGoogleFirstCandidates(replenishmentRequest, candidates);
+
+    const dummyPlaces: ItineraryPlace[] = [
+      ...geminiGuidedPlaces,
+      ...selected.map(
+        (c, i) =>
+          ({
+            koName: c.name,
+            placeName: c.name,
+            category: categoryByPrimaryType(c.primaryType, c.name),
+            theme: c.sourceTheme,
+            order: geminiGuidedPlaces.length + i,
+            placeIntroduction: "",
+          }) as ItineraryPlace,
+      ),
+    ];
+
+    const placeIntroductionGenerator =
+      deps.generateGeminiPlaceIntroductions ?? generateGeminiPlaceIntroductions;
+
+    const introPromise = geminiApiKey
+      ? placeIntroductionGenerator(dummyPlaces, data, geminiApiKey)
+      : Promise.resolve([]);
+
+    const googleFirst = deps.createGoogleFirstItinerary ?? createGoogleFirstItinerary;
+    const routesPromise = googleFirst(replenishmentRequest, {
+      googleApiKey: config.googlePlacesApiKey!,
+    });
+
+    const [introResult, googleFirstPlaces] = await Promise.all([introPromise, routesPromise]);
+
+    const introMap = new Map(
+      introResult.map((p) => [p.koName || p.placeName, p.placeIntroduction] as const),
+    );
+
+    const places = mergeItineraryPlaces(geminiGuidedPlaces, googleFirstPlaces, {
+      includeMeals: data.includeMeals,
+      targetPlaceCount,
     });
 
     if (places.length > 0) {
       if (!geminiApiKey) return places;
-
-      const placeIntroductionGenerator =
-        deps.generateGeminiPlaceIntroductions ?? generateGeminiPlaceIntroductions;
-
-      return placeIntroductionGenerator(places, data, geminiApiKey);
+      return places.map((p) => ({
+        ...p,
+        placeIntroduction: introMap.get(p.koName || p.placeName) ?? p.placeIntroduction,
+      }));
     }
   }
 
@@ -290,7 +432,13 @@ export const generateItineraryOnServer = async (
 
   const gemini = deps.generateGeminiItinerary ?? generateGeminiItinerary;
 
-  return attachGeminiRecommendationContext(await gemini(data, geminiApiKey), data);
+  return attachGeminiRecommendationContext(
+    mergeItineraryPlaces(await gemini(data, geminiApiKey), [], {
+      includeMeals: data.includeMeals,
+      targetPlaceCount,
+    }),
+    data,
+  );
 };
 
 export const generateItineraryFn = createServerFn({ method: "POST" })

@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { validateServerConfig } from "./config.server";
 
 describe("server config validation", () => {

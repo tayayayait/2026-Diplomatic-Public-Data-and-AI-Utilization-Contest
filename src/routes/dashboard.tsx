@@ -1,4 +1,4 @@
-﻿import { useMemo, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/diplolife/AppShell";
 import { createDashboardViewModel } from "@/lib/diplolife/dashboard";
@@ -11,7 +11,7 @@ import { NoticeCard } from "@/components/diplolife/cards/NoticeCard";
 import { AiRecommendationCard } from "@/components/diplolife/cards/AiRecommendationCard";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "??쒕낫????DiploLife" }] }),
+  head: () => ({ meta: [{ title: "대시보드 | DiploLife" }] }),
   component: DashboardPage,
 });
 

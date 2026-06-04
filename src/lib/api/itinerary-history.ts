@@ -1,4 +1,4 @@
-﻿import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import type { ItineraryPlace } from "@/lib/gemini/schema";
 import type { ItineraryDay } from "@/store/itineraryStore";
 

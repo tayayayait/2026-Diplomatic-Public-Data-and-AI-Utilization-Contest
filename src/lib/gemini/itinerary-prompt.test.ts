@@ -4,7 +4,7 @@ import { buildItineraryPrompt } from "./itinerary-prompt";
 const baseInput = {
   country: "JP",
   city: "Fukuoka",
-  budget: "蹂댄넻",
+  budget: "보통",
   budgetPlan: {
     dailyBudgetKrw: 72727,
     dailyLocalBudget: {
@@ -52,17 +52,20 @@ describe("itinerary prompt builder", () => {
 
     expect(prompt).toContain("cluster-based route");
     expect(prompt).toContain("cluster-based route");
-    expect(prompt).toContain("For a 3-place relaxed itinerary, include only 1 restaurant meal");
-    expect(prompt).toContain("maximum of 2 restaurant meals per day");
+    expect(prompt).toContain("include exactly 1 restaurant meal stop(s)");
+    expect(prompt).toContain("exactly 1 cafe/snack stop(s)");
+    expect(prompt).toContain("Fill the remaining 3 places");
+    expect(prompt).toContain("Classify shopping malls and mixed-use complexes such as Canal City Hakata as shopping or attraction, not cafe");
     expect(prompt).toContain("Use 'meal' for restaurant stops and 'snack' for cafe stops");
     expect(prompt).toContain("Do not use breakfast, lunch, or dinner");
     expect(prompt).toContain("starting at 09:00");
-    expect(prompt).toContain("Target place count: Recommend around 5 places.");
+    expect(prompt).toContain("Target place count: Recommend exactly 5 places.");
     expect(prompt).toContain("Do not pad or stretch places to match a fixed end time");
     expect(prompt).not.toContain("Total available time");
     expect(prompt).not.toContain("Target End Time");
     expect(prompt).not.toContain("MUST span exactly");
     expect(prompt).toContain("Return only valid JSON");
+    expect(prompt).toContain("Return exactly 5 places.");
     expect(prompt).toContain("placeIntroduction");
   });
 
@@ -79,13 +82,13 @@ describe("itinerary prompt builder", () => {
   it("includes structured budget allocation constraints", () => {
     const prompt = buildItineraryPrompt(baseInput);
 
-    expect(prompt).toContain("Budget level: 蹂댄넻");
+    expect(prompt).toContain("Budget level: 보통");
     expect(prompt).toContain("Total trip budget: 800,000 KRW");
     expect(prompt).toContain("Daily trip budget: 72,727 KRW");
     expect(prompt).toContain("Daily local allocation: food 2,500 JPY, transport 700 JPY, activity 659 JPY");
     expect(prompt).toContain("Use the daily budget as planning context, not as a strict spending cap");
     expect(prompt).toContain("Prioritize famous or high-value places");
-    expect(prompt).toContain("Budget strategy: 洹좏삎");
+    expect(prompt).toContain("Budget strategy: 균형");
   });
   it("includes previous places to avoid when provided", () => {
     const prompt = buildItineraryPrompt({

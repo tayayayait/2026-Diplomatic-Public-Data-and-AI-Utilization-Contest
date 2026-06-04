@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { Info, Wallet } from "lucide-react";
+import { Info, Lightbulb, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,10 +44,10 @@ export function DailyBudgetCard() {
     if (!analysis) return [];
 
     return [
-      { name: "Food", value: Number(analysis.dailyBudget.food) || 0 },
-      { name: "Accommodation", value: Number(analysis.dailyBudget.accommodation) || 0 },
-      { name: "Transport", value: Number(analysis.dailyBudget.transport) || 0 },
-      { name: "Activity", value: Number(analysis.dailyBudget.activity) || 0 },
+      { name: "식비", value: Number(analysis.dailyBudget.food) || 0 },
+      { name: "숙박비", value: Number(analysis.dailyBudget.accommodation) || 0 },
+      { name: "교통비", value: Number(analysis.dailyBudget.transport) || 0 },
+      { name: "활동비", value: Number(analysis.dailyBudget.activity) || 0 },
     ]
       .filter((item) => item.value > 0)
       .map((item, index) => ({ ...item, color: COLORS[index % COLORS.length] }));
@@ -63,19 +63,19 @@ export function DailyBudgetCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <Wallet className="h-5 w-5 text-primary" aria-hidden="true" />
-          Daily budget planner
+          일일 예산 분배기
         </CardTitle>
         <CardDescription>
           <div className="font-semibold text-primary">
-            Total budget: {(localBudget || 0).toLocaleString("ko-KR")} KRW
+            총 예산: {(localBudget || 0).toLocaleString("ko-KR")} KRW
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span>
-              {userProfile?.stayStartDate || "Start date"} - {userProfile?.stayEndDate || "End date"} ({stayDays} days)
+              {userProfile?.stayStartDate || "시작일"} - {userProfile?.stayEndDate || "종료일"} ({stayDays}일)
             </span>
             <span>|</span>
             <span>
-              Daily average: <strong>{dailyBudgetKrw.toLocaleString("ko-KR")} KRW</strong>
+              일일 평균: <strong>{dailyBudgetKrw.toLocaleString("ko-KR")} KRW</strong>
             </span>
           </div>
         </CardDescription>
@@ -83,7 +83,7 @@ export function DailyBudgetCard() {
       <CardContent className="space-y-6">
         <div className="rounded-xl border border-border bg-surface-alt p-4">
           <label className="mb-2 block text-xs font-semibold text-muted-foreground" htmlFor="daily-budget-input">
-            Total budget in KRW
+            총 예산 (KRW)
           </label>
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
             <div className="relative">
@@ -99,7 +99,7 @@ export function DailyBudgetCard() {
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">KRW</span>
             </div>
             <Button type="button" onClick={handleApply} disabled={costInsight.status === "loading"}>
-              {costInsight.status === "loading" ? "Analyzing..." : "Apply budget"}
+              {costInsight.status === "loading" ? "분석 중..." : "예산 적용"}
             </Button>
           </div>
         </div>
@@ -119,7 +119,7 @@ export function DailyBudgetCard() {
                       <Cell key={entry.name} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => [`${value.toLocaleString("ko-KR")} ${currency}`, "Budget"]} />
+                  <Tooltip formatter={(value: number) => [`${value.toLocaleString("ko-KR")} ${currency}`, "예산"]} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -139,13 +139,13 @@ export function DailyBudgetCard() {
             </div>
 
             <div className="flex items-start gap-3 rounded-lg bg-surface-alt p-3 text-sm">
-              <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-              <p className="leading-6">{analysis.budgetComment}</p>
+              <Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+              <p className="leading-6 whitespace-pre-wrap">{analysis.budgetComment}</p>
             </div>
           </div>
         ) : (
           <p className="rounded-lg border border-dashed border-border bg-surface-alt p-4 text-center text-sm text-muted-foreground">
-            Run the cost analysis to see a daily budget breakdown.
+            비용 분석을 실행하면 일일 예산 내역을 볼 수 있습니다.
           </p>
         )}
       </CardContent>

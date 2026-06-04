@@ -1,4 +1,4 @@
-﻿import type { ItineraryPlace } from "@/lib/gemini/schema";
+import type { ItineraryPlace } from "@/lib/gemini/schema";
 import { getTravelModeLabel } from "./google-routes-api";
 
 export type TimelineCategory = ItineraryPlace["category"];
@@ -27,22 +27,22 @@ export interface ReturnHomeStepViewModel {
 }
 
 const mealLabels: Record<TimelineMealSlot, string> = {
-  breakfast: "Meal",
-  lunch: "Meal",
-  dinner: "Meal",
-  snack: "Snack",
-  meal: "Meal",
-  none: "General stop",
+  breakfast: "식사",
+  lunch: "식사",
+  dinner: "식사",
+  snack: "간식",
+  meal: "식사",
+  none: "일반 장소",
 };
 
 const categoryLabels: Record<TimelineCategory, string> = {
-  accommodation: "Accommodation",
-  attraction: "Attraction",
-  cafe: "Cafe",
-  culture: "Culture",
-  nature: "Nature",
-  restaurant: "Restaurant",
-  shopping: "Shopping",
+  accommodation: "숙소",
+  attraction: "명소",
+  cafe: "카페",
+  culture: "문화",
+  nature: "자연",
+  restaurant: "식당",
+  shopping: "쇼핑",
 };
 
 export const getMealSlotLabel = (mealSlot: TimelineMealSlot) => mealLabels[mealSlot];
@@ -67,26 +67,26 @@ export const createReturnHomeStep = (
   if (typeof returnMinutes === "number" && returnMinutes > 0) {
     const distance =
       typeof context?.returnRouteDistanceMeters === "number"
-        ? ` 쨌 ${formatDistanceMeters(context.returnRouteDistanceMeters)}`
+        ? ` · ${formatDistanceMeters(context.returnRouteDistanceMeters)}`
         : "";
     const travelMode = getTravelModeLabel(context?.returnRouteTravelMode);
 
     return {
-      description: `${travelMode} ${returnMinutes} min${distance} back to accommodation`,
-      title: "Return to accommodation",
+      description: `${travelMode} ${returnMinutes}분${distance} 소요 (숙소로 복귀)`,
+      title: "숙소로 복귀",
     };
   }
 
   if (lastPlace) {
     return {
-      description: "Return to accommodation after the last stop. Route time is unavailable.",
-      title: "Return to accommodation",
+      description: "마지막 장소에서 숙소로 복귀합니다. 경로 시간 정보는 제공되지 않습니다.",
+      title: "숙소로 복귀",
     };
   }
 
   return {
-    description: "End of today's itinerary.",
-    title: "Return to accommodation",
+    description: "오늘의 일정이 끝났습니다.",
+    title: "숙소로 복귀",
   };
 };
 

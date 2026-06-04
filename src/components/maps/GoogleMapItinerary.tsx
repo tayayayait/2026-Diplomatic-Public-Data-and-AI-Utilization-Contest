@@ -120,7 +120,7 @@ export function GoogleMapItinerary({
     () =>
       routePoints.map((point) =>
         point.kind === "accommodation"
-          ? "?숈냼"
+          ? "숙소"
           : String(places[point.placeIndex]?.order || point.placeIndex + 1),
       ),
     [places, routePoints],
@@ -258,7 +258,7 @@ export function GoogleMapItinerary({
                     !isSelected && "border-slate-200/70 bg-white/95 text-slate-700 opacity-0 group-hover:opacity-100",
                   )}
                 >
-                  {isSelected ? `?좏깮??/ 吏??留덉빱 ${marker.markerNumber}` : `吏??留덉빱 ${marker.markerNumber}`}
+                  {isSelected ? `선택됨 / 지도 마커 ${marker.markerNumber}` : `지도 마커 ${marker.markerNumber}`}
                   <span className="ml-1 font-semibold">{marker.title}</span>
                 </div>
               </div>
@@ -270,11 +270,11 @@ export function GoogleMapItinerary({
         <div className="absolute left-3 right-3 top-3 rounded-xl border border-border bg-background/95 p-3 text-xs shadow-lg backdrop-blur">
           <div className="mb-2 flex items-center gap-2 font-bold text-foreground">
             <Route className="h-3.5 w-3.5 text-primary" />
-            諛⑸Ц ?쒖꽌? ?대룞 寃쎈줈
+            방문 순서 및 이동 경로
           </div>
           <div className="flex items-center gap-1.5 overflow-x-auto">
             {visitOrderLabels.map((label, index) => {
-              const isAccommodation = label === "?숈냼";
+              const isAccommodation = label === "숙소";
 
               return (
                 <div key={`${label}-${index}`} className="flex shrink-0 items-center gap-1.5">
@@ -302,9 +302,9 @@ export function GoogleMapItinerary({
       {visibleRouteSummaries.length > 0 && (
         <div className="absolute bottom-3 left-3 right-3 rounded-lg border border-border bg-background/95 p-3 text-xs shadow-lg backdrop-blur">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="font-bold text-foreground">?대룞 援ш컙</span>
+            <span className="font-bold text-foreground">이동 구간</span>
             <span className="text-muted-foreground">
-              {selectedRouteSummary ? "?좏깮 援ш컙" : "二쇱슂 援ш컙"}
+              {selectedRouteSummary ? "선택 구간" : "주요 구간"}
             </span>
           </div>
           <div className="flex gap-2 overflow-x-auto">
@@ -329,7 +329,7 @@ export function GoogleMapItinerary({
                     #{markerNumber} {label}
                   </span>
                   <span className="text-muted-foreground">
-                    {segment.minutes ?? "-"}遺?/ {segment.distance ?? "嫄곕━ ?뺣낫 ?놁쓬"}
+                    {segment.minutes ?? "-"}분 / {segment.distance ?? "거리 정보 없음"}
                   </span>
                 </button>
               );

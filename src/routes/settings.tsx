@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Bell, LogOut, ChevronRight, UserRoundX, Globe, Building } from "lucide-react";
+import { Bell, LogOut, ChevronRight, UserRoundX, Globe, Building, MapPin } from "lucide-react";
 import { AppShell } from "@/components/diplolife/AppShell";
 import { useSupabaseAuth } from "@/lib/auth-context";
 import { useDiploLifeStore } from "@/lib/diplolife/state";
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function SettingsPage() {
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate();
   const { signOut, user } = useSupabaseAuth();
   const profile = useDiploLifeStore((state) => state.userProfile);
   const updateSettings = useDiploLifeStore((state) => state.updateNotificationSettings);
@@ -67,6 +67,14 @@ function SettingsPage() {
               </div>
             </div>
           </div>
+          
+          <button
+            onClick={() => navigate({ to: "/onboarding" })}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary/10 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
+          >
+            <MapPin className="h-4 w-4" />
+            다른 국가 / 도시 선택하기
+          </button>
         </section>
 
         {/* Preferences List */}

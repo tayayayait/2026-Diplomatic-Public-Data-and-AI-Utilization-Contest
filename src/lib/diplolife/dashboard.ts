@@ -200,7 +200,7 @@ export const createDashboardViewModel = (state: DashboardPresenterState): Dashbo
       statusLabel: statusBadgeLabels[dashboard.exchangeRate.status],
       value:
         dashboard.exchangeRate.status === "success" && dashboard.exchangeRate.rate !== null
-          ? `1 ${dashboard.exchangeRate.fromCurrency} = ₩${formatKrw(dashboard.exchangeRate.rate)}`
+          ? `₩1,000 = ${new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 2 }).format(1000 / dashboard.exchangeRate.rate)} ${dashboard.exchangeRate.fromCurrency}`
           : statusLabels[dashboard.exchangeRate.status],
     },
     {

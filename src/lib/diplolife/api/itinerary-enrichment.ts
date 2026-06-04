@@ -453,6 +453,7 @@ function applyPlaceData(place: PlaceRecommendation, googlePlace: GooglePlace | n
     ...place,
     ...cost,
     ...duration,
+    name: googlePlace.displayName?.text ?? place.name,
     address: googlePlace.formattedAddress ?? place.address,
     googleMapsUri: googlePlace.googleMapsUri ?? place.googleMapsUri,
     googlePlaceId: googlePlace.id ?? place.googlePlaceId,

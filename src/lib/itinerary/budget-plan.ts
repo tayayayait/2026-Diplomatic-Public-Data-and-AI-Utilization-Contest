@@ -1,4 +1,4 @@
-﻿import type { CostAnalysisResult } from "@/lib/diplolife/api/gemini-cost";
+import type { CostAnalysisResult } from "@/lib/diplolife/api/gemini-cost";
 import type { StayPurpose, UserProfile } from "@/lib/diplolife/state";
 
 export type BudgetStrategy = "saving" | "balanced" | "experience";
@@ -24,9 +24,9 @@ export interface ItineraryBudgetPlan {
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const strategyLabels: Record<BudgetStrategy, string> = {
-  balanced: "Balanced",
-  experience: "Experience first",
-  saving: "Saving first",
+  balanced: "균형",
+  experience: "경험 우선",
+  saving: "절약 우선",
 };
 
 const travelDistribution = {
@@ -78,8 +78,22 @@ export function resolveBudgetStrategy(
 ): BudgetStrategy {
   if (budgetPlan?.strategy) return budgetPlan.strategy;
   const normalizedBudget = budgetLabel.toLowerCase();
-  if (normalizedBudget.includes("saving") || normalizedBudget.includes("budget")) return "saving";
-  if (normalizedBudget.includes("experience") || normalizedBudget.includes("premium")) return "experience";
+  if (
+    normalizedBudget.includes("saving") ||
+    normalizedBudget.includes("budget") ||
+    normalizedBudget.includes("저렴") ||
+    normalizedBudget.includes("절약")
+  ) {
+    return "saving";
+  }
+  if (
+    normalizedBudget.includes("experience") ||
+    normalizedBudget.includes("premium") ||
+    normalizedBudget.includes("경험") ||
+    normalizedBudget.includes("여유")
+  ) {
+    return "experience";
+  }
 
   return "balanced";
 }
@@ -134,7 +148,7 @@ export function formatBudgetPlanForPrompt(plan?: ItineraryBudgetPlan): string {
   const parts = [
     plan.totalBudgetKrw !== undefined ? `total ${plan.totalBudgetKrw.toLocaleString("ko-KR")} KRW` : null,
     plan.dailyBudgetKrw !== undefined ? `daily ${plan.dailyBudgetKrw.toLocaleString("ko-KR")} KRW` : null,
-    `strategy ${strategyLabels[plan.strategy]}`,
+    `strategy ${getBudgetStrategyLabel(plan.strategy)}`,
   ].filter((part): part is string => Boolean(part));
 
   return parts.join(", ");

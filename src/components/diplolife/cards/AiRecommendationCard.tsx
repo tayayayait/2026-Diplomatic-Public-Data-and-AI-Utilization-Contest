@@ -1,4 +1,4 @@
-﻿import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Sparkles, X } from "lucide-react";
 import type { DashboardCardViewModel } from "@/lib/diplolife/dashboard";
 

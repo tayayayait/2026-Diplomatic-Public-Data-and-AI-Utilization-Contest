@@ -29,14 +29,37 @@ const geminiPlace: ItineraryPlace = {
   placeName: "Gemini Place",
 };
 
+const categorySequenceByCount: Record<number, ItineraryPlace["category"][]> = {
+  2: ["restaurant", "attraction"],
+  3: ["restaurant", "attraction", "culture"],
+  4: ["restaurant", "cafe", "attraction", "culture"],
+  5: ["restaurant", "cafe", "attraction", "culture", "shopping"],
+  6: ["restaurant", "cafe", "attraction", "culture", "shopping", "nature"],
+  7: ["restaurant", "cafe", "attraction", "culture", "shopping", "nature", "restaurant"],
+};
+
 const makePlaces = (count: number, prefix: string): ItineraryPlace[] =>
-  Array.from({ length: count }, (_, index) => ({
-    ...googlePlace,
-    googlePlaceId: `${prefix.toLowerCase().replaceAll(" ", "-")}-${index + 1}`,
-    koName: `${prefix} Place ${index + 1}`,
-    order: index + 1,
-    placeName: `${prefix} Place ${index + 1}`,
-  }));
+  Array.from({ length: count }, (_, index) =>
+    makeTypedPlace(
+      `${prefix} Place ${index + 1}`,
+      categorySequenceByCount[count]?.[index] ?? "attraction",
+      index + 1,
+    ),
+  );
+
+const makeTypedPlace = (
+  placeName: string,
+  category: ItineraryPlace["category"],
+  order: number,
+): ItineraryPlace => ({
+  ...googlePlace,
+  category,
+  googlePlaceId: `${placeName.toLowerCase().replaceAll(" ", "-")}-id`,
+  koName: placeName,
+  mealSlot: category === "restaurant" ? "meal" : category === "cafe" ? "snack" : "none",
+  order,
+  placeName,
+});
 
 const input = {
   accommodationAddress: "Watanabedori, Fukuoka",
@@ -85,7 +108,10 @@ describe("itinerary generation source selection", () => {
     } as any);
 
     expect(result).toEqual(guidedPlaces);
-    expect(generateGeminiItinerary).toHaveBeenCalledWith(normalIntensityInput, "gemini-key");
+    expect(generateGeminiItinerary).toHaveBeenCalledWith(
+      expect.objectContaining(normalIntensityInput),
+      "gemini-key",
+    );
     expect(createGeminiGuidedGoogleItinerary).toHaveBeenCalledWith(
       expect.objectContaining({
         departure: {
@@ -315,7 +341,7 @@ describe("itinerary generation source selection", () => {
       expect.objectContaining({
         excludedGooglePlaceIds: expect.arrayContaining([
           "day-1-place-id",
-          "guided-normal-1",
+          "guided-normal-place-1-id",
         ]),
         excludedPlaceNames: expect.arrayContaining([
           "Day 1 Landmark",
@@ -327,6 +353,48 @@ describe("itinerary generation source selection", () => {
     );
     expect(result).toHaveLength(5);
     expect(result.slice(0, 4)).toEqual(guidedPlaces);
+  });
+
+  it("keeps replenished normal-intensity results within the one-meal and one-cafe caps", async () => {
+    const guidedPlaces = [
+      makeTypedPlace("Guided Ramen", "restaurant", 1),
+      makeTypedPlace("Guided Cafe", "cafe", 2),
+      makeTypedPlace("Guided Museum", "culture", 3),
+      makeTypedPlace("Guided Market", "shopping", 4),
+    ];
+    const googleFirstPlaces = [
+      makeTypedPlace("Extra Sushi", "restaurant", 1),
+      makeTypedPlace("Extra Tower", "attraction", 2),
+      makeTypedPlace("Extra Garden", "nature", 3),
+      makeTypedPlace("Extra Gallery", "culture", 4),
+    ];
+    const createGoogleFirstItinerary = vi.fn().mockResolvedValue(googleFirstPlaces);
+    const generateGeminiItinerary = vi.fn().mockResolvedValue(makePlaces(5, "Gemini Draft"));
+    const createGeminiGuidedGoogleItinerary = vi.fn().mockResolvedValue(guidedPlaces);
+    const generateGeminiPlaceIntroductions = vi.fn(async (places: ItineraryPlace[]) => places);
+
+    const result = await generateItineraryOnServer(
+      {
+        ...input,
+        targetPlaceCount: 5,
+      },
+      {
+        config: {
+          geminiApiKey: "gemini-key",
+          googlePlacesApiKey: "google-key",
+        },
+        createGoogleFirstItinerary,
+        createGeminiGuidedGoogleItinerary,
+        generateGeminiItinerary,
+        generateGeminiPlaceIntroductions,
+      } as any,
+    );
+
+    expect(result).toHaveLength(5);
+    expect(result.filter((place) => place.category === "restaurant")).toHaveLength(1);
+    expect(result.filter((place) => place.category === "cafe")).toHaveLength(1);
+    expect(result.map((place) => place.placeName)).toContain("Extra Tower");
+    expect(result.map((place) => place.placeName)).not.toContain("Extra Sushi");
   });
 
   it("falls back to Google-first actual places when Gemini-guided matching returns no usable places", async () => {

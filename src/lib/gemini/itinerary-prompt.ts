@@ -1,5 +1,8 @@
 import { getBudgetStrategyLabel, type ItineraryBudgetPlan } from "@/lib/itinerary/budget-plan";
-import { selectTargetPlaceCount } from "@/lib/itinerary/recommendation-policy";
+import {
+  getItineraryCompositionPolicy,
+  selectTargetPlaceCount,
+} from "@/lib/itinerary/recommendation-policy";
 
 
 export interface ItineraryPromptInput {
@@ -13,6 +16,7 @@ export interface ItineraryPromptInput {
   dayIndex?: number;
   dayThemeHint?: string;
   durationMinutes?: number;
+  includeMeals?: boolean;
   tripDurationDays?: number;
   startTime: string;
   targetPlaceCount?: number;
@@ -105,11 +109,15 @@ const formatDayContext = ({
 export const buildItineraryPrompt = (input: ItineraryPromptInput) => {
   const destination = input.city ? `${input.city}, ${input.country}` : input.country;
   const accommodationContext = formatAccommodationContext(input);
-  const mealInstruction = "Autonomously include meals based on the start time and itinerary intensity. For a 3-place relaxed itinerary, include only 1 restaurant meal. For longer itineraries, include a maximum of 2 restaurant meals per day. You may optionally include 1 cafe. Use 'meal' for restaurant stops and 'snack' for cafe stops. Do not label stops as breakfast, lunch, or dinner.";
   const budgetPlanContext = formatBudgetPlanContext(input.budgetPlan);
   const excludedPlaceContext = formatExcludedPlaceContext(input.excludedPlaceNames);
   const dayContext = formatDayContext(input);
   const targetPlaceCount = selectTargetPlaceCount(input);
+  const composition = getItineraryCompositionPolicy(input);
+  const mealInstruction =
+    composition.mealCount === 0 && composition.snackCount === 0
+      ? `For this ${targetPlaceCount}-place itinerary, do not include restaurant meals, cafes, or snack stops. Fill all ${targetPlaceCount} places with attractions, culture, nature, experiences, shopping, or other non-food activities.`
+      : `For this ${targetPlaceCount}-place itinerary, include exactly ${composition.mealCount} restaurant meal stop(s) and exactly ${composition.snackCount} cafe/snack stop(s). Do not exceed these counts. Fill the remaining ${composition.nonFoodCount} places with attractions, culture, nature, experiences, shopping, or other non-food activities. Use 'meal' for restaurant stops and 'snack' for cafe stops. Do not label stops as breakfast, lunch, or dinner. Classify shopping malls and mixed-use complexes such as Canal City Hakata as shopping or attraction, not cafe.`;
   const travelModeHint = input.travelModes && input.travelModes.length > 0
     ? `- Primary travel modes: ${input.travelModes.join(", ")}. Limit the distance between consecutive places according to these modes to avoid excessively long travel times (e.g., do not suggest an 18km walk).`
     : `- Limit the distance between consecutive places to avoid excessively long travel times.`;
@@ -129,7 +137,7 @@ ${budgetPlanContext}
 - Use the daily budget as planning context, not as a strict spending cap.
 - Prioritize famous or high-value places when they materially improve the itinerary, even if they are not the cheapest option.
 - Timeline starting at ${input.startTime}
-- Target place count: Recommend around ${targetPlaceCount} places.
+- Target place count: Recommend exactly ${targetPlaceCount} places.
 - Use the start time to choose a natural travel rhythm, meal timing, and rest stops. Do not pad or stretch places to match a fixed end time.
 ${travelModeHint}
 ${dayContext}
@@ -144,7 +152,7 @@ ${excludedPlaceContext}
 4. Estimate travel time realistically based on the selected travel modes (${input.travelModes?.join(", ") ?? "WALK"}). If distance is over 2km and TRANSIT is selected, estimate using public transit time instead of walking. Do NOT suggest unreasonably far places that cause massive transit/walking gaps.
 5. Fill travelFromPrevMinutes and travelFromPrevDistance for every place. For the first place, calculate from the accommodation when provided.
 6. Build a loose chronological sequence starting at ${input.startTime}; each place must include startTime and endTime in HH:mm as rough estimates only.
-7. The total number of generated places must match the target place count above unless route constraints make it unrealistic.
+7. The total number of generated places must match the target place count above.
 8. ${mealInstruction}
 9. If this is part of a multi-day trip, choose a different area, theme, food category, and atmosphere from earlier days.
 
@@ -157,7 +165,7 @@ ${excludedPlaceContext}
 ## Output Contract
 - Return only valid JSON.
 - Return a JSON array, not markdown.
-- Return around ${targetPlaceCount} places. Do not add filler places just to occupy time.
+- Return exactly ${targetPlaceCount} places. Do not add filler places just to occupy time.
 - Each item must include: order, placeName, koName, category, theme, placeIntroduction, description, startTime, endTime, estimatedMinutes, estimatedCost, travelFromPrevMinutes, travelFromPrevDistance, mealSlot, lat, lng.
 - category must be one of: attraction, restaurant, cafe, shopping, nature, culture, accommodation.
 - mealSlot must be one of: breakfast, lunch, dinner, snack, meal, none. Use 'meal' for restaurant food stops and 'snack' for cafe stops. Do not use breakfast, lunch, or dinner. For attractions, shopping, culture, nature, and other activities, mealSlot MUST be 'none'.

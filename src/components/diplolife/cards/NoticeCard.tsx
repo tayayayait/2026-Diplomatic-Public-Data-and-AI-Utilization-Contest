@@ -1,4 +1,4 @@
-﻿import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Bell } from "lucide-react";
 import type { DashboardCardViewModel } from "@/lib/diplolife/dashboard";
 
@@ -17,7 +17,7 @@ export function NoticeCard({ card }: { card: DashboardCardViewModel }) {
       
       <div className="mt-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
         <span className="inline-flex w-fit rounded-full bg-primary/10 px-3 py-1 text-[12px] font-semibold text-primary">
-          ?멸탳遺
+          외교부
         </span>
         <p className="text-[16px] font-semibold text-foreground truncate">{card.value}</p>
       </div>

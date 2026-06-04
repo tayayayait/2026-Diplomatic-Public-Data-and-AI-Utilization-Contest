@@ -71,3 +71,50 @@ ${JSON.stringify(cities)}
     }
   });
 
+export const chatFn = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      history: z.array(
+        z.object({
+          role: z.enum(["user", "model"]),
+          text: z.string(),
+        }),
+      ),
+      message: z.string(),
+    }),
+  )
+  .handler(async ({ data: { history, message } }) => {
+    try {
+      const config = getServerConfig();
+      const apiKey = config.geminiApiKey;
+      if (!apiKey) {
+        throw new Error("GEMINI_API_KEY is not set.");
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
+
+      const contents = history.map((msg) => ({
+        role: msg.role,
+        parts: [{ text: msg.text }],
+      }));
+
+      contents.push({
+        role: "user",
+        parts: [{ text: message }],
+      });
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents,
+        config: {
+          systemInstruction: `당신은 'DiploLife'의 체류 생활 상담 AI 어시스턴트입니다. 해외 체류자 및 여행객들의 긴급 상황, 비자, 생활 관련 질문에 대해 친절하고 전문적으로 답변해 주세요. 확실하지 않은 정보는 추측하지 말고 솔직하게 모른다고 답변하거나, 공식 공공데이터(영사콜센터 등)를 확인하라고 안내하세요. **중요: 답변 시 마크다운(Markdown) 기호(예: **굵게**, *기울임*, # 제목 등)를 절대 사용하지 말고 오직 일반 텍스트와 줄바꿈, 이모지만을 사용하여 가독성 좋게 답변해 주세요.**`,
+        },
+      });
+
+      return { text: response.text || "답변을 생성하지 못했습니다." };
+    } catch (error) {
+      console.error("Gemini Chat Error:", error);
+      return { text: "죄송합니다, 답변을 생성하는 중 오류가 발생했습니다. 나중에 다시 시도해주세요." };
+    }
+  });
+

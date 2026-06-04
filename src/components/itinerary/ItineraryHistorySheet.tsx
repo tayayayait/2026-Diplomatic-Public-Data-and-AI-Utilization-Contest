@@ -80,9 +80,9 @@ export function ItineraryHistorySheet({ open, onOpenChange, onSelectHistory }: P
         <SheetHeader className="mb-6 pr-8">
           <div className="flex items-start justify-between gap-3 text-left">
             <div className="min-w-0 space-y-2">
-              <SheetTitle>Itinerary history</SheetTitle>
+              <SheetTitle>이전 생성 일정 기록</SheetTitle>
               <SheetDescription>
-                Review AI-generated itineraries and reopen a previous result.
+                AI가 생성한 일정 기록을 확인하고 다시 열어보세요.
               </SheetDescription>
             </div>
             {hasDeletableHistories && (
@@ -96,12 +96,12 @@ export function ItineraryHistorySheet({ open, onOpenChange, onSelectHistory }: P
                   setDeleteTarget({
                     ids: deleteAllIds,
                     mode: "all",
-                    title: `${deleteAllIds.length} itinerary histories`,
+                    title: `총 ${deleteAllIds.length}개의 일정 기록`,
                   })
                 }
               >
                 <Trash2 className="h-4 w-4" aria-hidden="true" />
-                Delete all
+                모두 삭제
               </Button>
             )}
           </div>
@@ -140,7 +140,7 @@ export function ItineraryHistorySheet({ open, onOpenChange, onSelectHistory }: P
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                      <span>{history.duration_days} days</span>
+                      <span>{history.duration_days}일</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <DollarSign className="h-3.5 w-3.5" aria-hidden="true" />
@@ -157,7 +157,7 @@ export function ItineraryHistorySheet({ open, onOpenChange, onSelectHistory }: P
                   <button
                     type="button"
                     className="absolute right-3 top-3 rounded-md p-1.5 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40 group-hover:opacity-100"
-                    aria-label="Delete itinerary history"
+                    aria-label="일정 기록 삭제"
                     disabled={!history.id || isDeleting}
                     onClick={(event) => {
                       event.stopPropagation();
@@ -179,7 +179,7 @@ export function ItineraryHistorySheet({ open, onOpenChange, onSelectHistory }: P
         ) : (
           <div className="flex h-32 flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
             <Calendar className="h-8 w-8 opacity-20" aria-hidden="true" />
-            <p>No itinerary history is available.</p>
+            <p>저장된 일정 기록이 없습니다.</p>
           </div>
         )}
 
@@ -193,17 +193,17 @@ export function ItineraryHistorySheet({ open, onOpenChange, onSelectHistory }: P
             <AlertDialogHeader>
               <AlertDialogTitle>
                 {deleteTarget?.mode === "all"
-                  ? "Delete all itinerary histories?"
-                  : "Delete itinerary history?"}
+                  ? "모든 일정 기록을 삭제하시겠습니까?"
+                  : "일정 기록을 삭제하시겠습니까?"}
               </AlertDialogTitle>
               <AlertDialogDescription>
                 {deleteTarget?.mode === "all"
-                  ? `This will permanently delete ${deleteTarget.title}. This action cannot be undone.`
-                  : `"${deleteTarget?.title}" will be permanently deleted. This action cannot be undone.`}
+                  ? `${deleteTarget.title} 항목이 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.`
+                  : `"${deleteTarget?.title}" 항목이 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.`}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel disabled={isDeleting}>취소</AlertDialogCancel>
               <AlertDialogAction
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 disabled={isDeleting}
@@ -212,12 +212,12 @@ export function ItineraryHistorySheet({ open, onOpenChange, onSelectHistory }: P
                 {isDeleting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                    Deleting
+                    삭제 중
                   </>
                 ) : deleteTarget?.mode === "all" ? (
-                  "Delete all"
+                  "모두 삭제"
                 ) : (
-                  "Delete"
+                  "삭제"
                 )}
               </AlertDialogAction>
             </AlertDialogFooter>

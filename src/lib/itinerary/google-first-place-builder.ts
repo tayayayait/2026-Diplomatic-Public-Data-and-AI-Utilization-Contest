@@ -1,4 +1,4 @@
-﻿import type { ItineraryPlace } from "@/lib/gemini/schema";
+import type { ItineraryPlace } from "@/lib/gemini/schema";
 
 import {
   getRadiusPolicyForTravelModes,
@@ -11,21 +11,28 @@ import type { ScoredCandidate } from "./google-itinerary-scoring";
 import { resolvePhotoUrl } from "./place-photo-proxy";
 import { resolveEffectiveItineraryBudgetStrategy } from "./budget-plan";
 
-const categoryByPrimaryType = (primaryType?: string, name?: string): ItineraryPlace["category"] => {
+export const categoryByPrimaryType = (primaryType?: string, name?: string): ItineraryPlace["category"] => {
   const type = primaryType?.toLowerCase() ?? "";
   const normalizedName = name?.toLowerCase() ?? "";
 
   const isMarketOrStreet =
-    normalizedName.includes("?쒖옣") ||
+    normalizedName.includes("시장") ||
     normalizedName.includes("market") ||
-    normalizedName.includes("?쇱떆??) ||"
-    normalizedName.includes("嫄곕━") ||
+    normalizedName.includes("야시장") ||
+    normalizedName.includes("거리") ||
     normalizedName.includes("street") ||
-    normalizedName.includes("?몃뱶肄뷀듃") ||
+    normalizedName.includes("푸드코트") ||
     type.includes("food_court") ||
     type.includes("food_truck");
+  const isShoppingComplex =
+    normalizedName.includes("canal city") ||
+    normalizedName.includes("mall") ||
+    normalizedName.includes("shopping") ||
+    normalizedName.includes("department store") ||
+    normalizedName.includes("plaza") ||
+    type.includes("shopping_mall");
 
-  if (isMarketOrStreet) return "shopping";
+  if (isMarketOrStreet || isShoppingComplex) return "shopping";
 
   if (type.includes("restaurant") || type.includes("food")) return "restaurant";
   if (type.includes("cafe") || type.includes("bakery")) return "cafe";
@@ -46,21 +53,21 @@ const durationByCategory: Record<ItineraryPlace["category"], number> = {
 };
 
 const reasonIntroByCategory: Record<ItineraryPlace["category"], string> = {
-  accommodation: "?숈냼瑜?湲곗??쇰줈 ?섎（ ?숈꽑???곌껐?⑸땲??",
-  attraction: "?꾩떆?????遺꾩쐞湲곗? ?쒕뱶留덊겕瑜??뺤씤?섍린 醫뗭? 紐낆냼?낅땲??",
-  cafe: "?쇱젙 以??좎떆 ?щ㈃??遺꾩쐞湲곕? 諛붽씀湲?醫뗭? 移댄럹/?댁떇 ?μ냼?낅땲??",
-  culture: "?꾩떆? 吏??臾명솕瑜?吏㏐쾶 ?뺤씤?섍린 醫뗭? 臾명솕 怨듦컙?낅땲??",
-  nature: "?꾩떖 ?대룞 以??곗콉?섎ŉ ?ш린 醫뗭? ?먯뿰 肄붿뒪?낅땲??",
-  restaurant: "?섎（ ?숈꽑 ?덉뿉???앹궗 ?쒓컙??梨꾩슦湲?醫뗭? ?꾩? ?뚯떇 ?μ냼?낅땲??",
-  shopping: "湲곕뀗?덇낵 ?꾩? ?곴텒???섎윭蹂닿린 醫뗭? ?쇳븨/泥댄뿕 肄붿뒪?낅땲??",
+  accommodation: "숙소를 기준으로 하루 동선을 연결합니다.",
+  attraction: "도시의 대표 분위기와 랜드마크를 확인하기 좋은 명소입니다.",
+  cafe: "일정 중 잠시 쉬며 분위기를 바꾸기 좋은 카페/휴식 장소입니다.",
+  culture: "도시와 지역 문화를 깊게 확인하기 좋은 문화 공간입니다.",
+  nature: "도심 이동 중 산책하며 쉬기 좋은 자연 코스입니다.",
+  restaurant: "하루 동선 안에서 식사 시간을 채우기 좋은 현지 미식 장소입니다.",
+  shopping: "기념품과 현지 상권을 둘러보기 좋은 쇼핑/체험 코스입니다.",
 };
 
 const priceLevelLabels: Record<string, string> = {
-  PRICE_LEVEL_EXPENSIVE: "鍮꾩뙂",
-  PRICE_LEVEL_FREE: "臾대즺",
-  PRICE_LEVEL_INEXPENSIVE: "???",
-  PRICE_LEVEL_MODERATE: "蹂댄넻",
-  PRICE_LEVEL_VERY_EXPENSIVE: "留ㅼ슦 鍮꾩뙂",
+  PRICE_LEVEL_EXPENSIVE: "비쌈",
+  PRICE_LEVEL_FREE: "무료",
+  PRICE_LEVEL_INEXPENSIVE: "저렴",
+  PRICE_LEVEL_MODERATE: "보통",
+  PRICE_LEVEL_VERY_EXPENSIVE: "매우 비쌈",
 };
 
 const formatDistanceMeters = (distanceMeters: number) =>
@@ -72,34 +79,31 @@ const addMinutes = (time: string, minutes: number) => {
   const [hours, mins] = time.split(":").map(Number);
   const date = new Date(Date.UTC(2026, 0, 1, hours, mins + minutes));
 
-  return `${date.getUTCHours().toString().padStart(2, "0")}:${date`
-    .getUTCMinutes()
-    .toString()
-    .padStart(2, "0")}``;
+  return `${date.getUTCHours().toString().padStart(2, "0")}:${date.getUTCMinutes().toString().padStart(2, "0")}`;
 };
 
 const createDescription = (candidate: ScoredCandidate) => {
   const category = categoryByPrimaryType(candidate.primaryType, candidate.name);
-  const ratingText = candidate.rating ? `?됱젏 ${candidate.rating}` : "?됱젏 ?뺣낫 ?놁쓬";
+  const ratingText = candidate.rating ? `평점 ${candidate.rating}` : "평점 정보 없음";
   const reviewText = candidate.userRatingCount
-    ? `由щ럭 ${candidate.userRatingCount.toLocaleString()}媛?`
-    : "由щ럭 ???뺣낫 ?놁쓬";
+    ? `리뷰 ${candidate.userRatingCount.toLocaleString()}개`
+    : "리뷰 수 정보 없음";
   const openingText =
     candidate.openingNow === true
-      ? "?꾩옱 ?곸뾽 以?"
+      ? "현재 영업 중"
       : candidate.openingNow === false
-        ? "?꾩옱 ?곸뾽?쒓컙 ??"
-        : "?곸뾽?쒓컙 ?뺣낫 ?놁쓬";
+        ? "현재 영업시간 외"
+        : "영업시간 정보 없음";
 
-  return `${reasonIntroByCategory[category]} ?좏깮??痍⑦뼢(${candidate.sourceTheme})怨??쇱튂?섎ŉ ${ratingText}, ${reviewText}, ${openingText} 湲곗??쇰줈 異붿쿇?덉뒿?덈떎.`;
+  return `${reasonIntroByCategory[category]} 선택한 취향(${candidate.sourceTheme})과 일치하며 ${ratingText}, ${reviewText}, ${openingText} 기준으로 추천했습니다.`;
 };
 
 const createEstimatedCost = (candidate: ScoredCandidate) => {
   if (candidate.priceRangeText) return candidate.priceRangeText;
   if (candidate.priceLevel) {
-    return `Google 媛寃⑸?: ${priceLevelLabels[candidate.priceLevel] ?? candidate.priceLevel}`;
+    return `Google 가격: ${priceLevelLabels[candidate.priceLevel] ?? candidate.priceLevel}`;
   }
-  return "Google Places 媛寃??꾨뱶 誘몄젣怨?";
+  return "Google Places 가격 정보 미제공";
 };
 
 const resolveMealSlot = (
@@ -185,6 +189,7 @@ export const createGoogleFirstItineraryPlace = async ({
   index,
   options,
   origin,
+  precomputedBestRoute,
   request,
   startTime,
 }: {
@@ -192,13 +197,15 @@ export const createGoogleFirstItineraryPlace = async ({
   index: number;
   options: GoogleFirstItineraryOptions;
   origin: { lat: number; lng: number };
+  precomputedBestRoute?: { mode: TravelMode; route: RouteSummary };
   request: LocalItineraryRecommendationRequest;
   startTime: string;
 }): Promise<{ nextStartTime: string; place: ItineraryPlace }> => {
   const category = categoryByPrimaryType(candidate.primaryType, candidate.name);
   const allowedModes = (request.travelModes as TravelMode[]) ?? ["WALK"];
   const radiusPolicy = getRadiusPolicyForTravelModes(allowedModes);
-  const bestRoute = await computeBestRoute(origin, candidate.location, options, allowedModes);
+  const bestRoute =
+    precomputedBestRoute ?? (await computeBestRoute(origin, candidate.location, options, allowedModes));
   const travel = bestRoute.route;
   const bestMode = bestRoute.mode;
   const start = addMinutes(startTime, travel.durationMinutes);
@@ -220,7 +227,7 @@ export const createGoogleFirstItineraryPlace = async ({
       lng: candidate.location.lng,
       mealSlot: resolveMealSlot(candidate, request, start),
       order: index + 1,
-      placeIntroduction: "Gemini ?μ냼 ?뚭컻瑜??앹꽦?섏? 紐삵뻽?듬땲??",
+      placeIntroduction: "Gemini 장소 소개를 생성하지 못했습니다.",
       placeName: candidate.name,
       recommendationContext: {
         businessStatus: candidate.businessStatus,

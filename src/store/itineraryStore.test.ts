@@ -1,9 +1,10 @@
-﻿import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { useItineraryStore } from './itineraryStore';
 
 describe('useItineraryStore', () => {
   beforeEach(() => {
-    // ?ㅽ넗??珥덇린??    useItineraryStore.setState({
+    // init
+    useItineraryStore.setState({
       tripStartDate: null,
       tripEndDate: null,
       durationDays: 0,
@@ -25,7 +26,8 @@ describe('useItineraryStore', () => {
   it('injectAccommodationReturn???ｌ? 耳?댁뒪(以묐났) ?놁씠 ?쒗뵆由우쓣 ??二쇱엯?섎뒗吏 ?뺤씤', () => {
     useItineraryStore.getState().initializeTrip('2026-06-01', '2026-06-02');
     useItineraryStore.getState().generateDay(1, []); // Day 1 ?쒖꽦??    
-    // 二쇱엯 1??    useItineraryStore.getState().injectAccommodationReturn(1);
+    // inject 1
+    useItineraryStore.getState().injectAccommodationReturn(1);
     let day1 = useItineraryStore.getState().days[1];
     expect(day1.slots.length).toBe(1);
     expect(day1.slots[0].slotType).toBe('accommodation_return');
@@ -33,7 +35,8 @@ describe('useItineraryStore', () => {
     // 二쇱엯 2??(以묐났 諛⑹뼱 濡쒖쭅 ?뺤씤)
     useItineraryStore.getState().injectAccommodationReturn(1);
     day1 = useItineraryStore.getState().days[1];
-    expect(day1.slots.length).toBe(1); // ?ъ쟾??1媛쒖뿬????  });
+    expect(day1.slots.length).toBe(1); 
+  });
 
   it('removeSlot???꾩닔 ?쇱젙??吏?곗? 紐삵븯?꾨줉 諛⑹뼱?섎뒗吏 ?뺤씤', () => {
     useItineraryStore.getState().initializeTrip('2026-06-01', '2026-06-02');

@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import type { GooglePlaceCandidate } from "./google-place-candidates";
 import type { LocalItineraryRecommendationRequest } from "./recommendation-policy";
@@ -227,13 +227,19 @@ describe("Google itinerary budget scoring", () => {
           primaryType: "market",
           sourceTheme: "shopping",
         }),
+        candidate("Observation Deck", undefined, {
+          preferenceKind: "place",
+          primaryType: "tourist_attraction",
+          sourceTheme: "landmark",
+        }),
       ],
     );
 
     const selectedTypes = selected.map((item) => item.primaryType);
 
     expect(selected).toHaveLength(5);
-    expect(selectedTypes.filter((type) => type === "restaurant")).toHaveLength(2);
+    expect(selectedTypes.filter((type) => type === "restaurant")).toHaveLength(1);
+    expect(selectedTypes.filter((type) => type === "cafe")).toHaveLength(1);
     expect(selectedTypes).toEqual(
       expect.arrayContaining(["tourist_attraction", "museum", "cafe"]),
     );
@@ -269,16 +275,23 @@ describe("Google itinerary budget scoring", () => {
           primaryType: "market",
           sourceTheme: "shopping",
         }),
+        candidate("Observation Deck", undefined, {
+          preferenceKind: "place",
+          primaryType: "tourist_attraction",
+          sourceTheme: "landmark",
+        }),
       ],
     );
 
     const restaurantCount = selected.filter((item) => item.primaryType === "restaurant").length;
+    const cafeCount = selected.filter((item) => item.primaryType === "cafe").length;
 
     expect(selected).toHaveLength(3);
     expect(restaurantCount).toBe(1);
+    expect(cafeCount).toBe(0);
   });
 
-  it("allows a tight itinerary to select seven places", () => {
+  it("allows a tight itinerary to select seven places with two meals and one cafe", () => {
     const selected = selectGoogleFirstCandidates(
       {
         ...baseRequest,
@@ -328,6 +341,8 @@ describe("Google itinerary budget scoring", () => {
 
     expect(selected.length).toBeGreaterThan(5);
     expect(selected).toHaveLength(7);
+    expect(selected.filter((item) => item.primaryType === "restaurant")).toHaveLength(2);
+    expect(selected.filter((item) => item.primaryType === "cafe")).toHaveLength(1);
   });
 
 
@@ -335,7 +350,7 @@ describe("Google itinerary budget scoring", () => {
     const selected = selectGoogleFirstCandidates(
       {
         ...baseRequest,
-        durationMinutes: 480,
+        targetPlaceCount: 7,
       },
       [
         candidate("Popular Hakata Ramen", "PRICE_LEVEL_MODERATE", {
@@ -372,5 +387,92 @@ describe("Google itinerary budget scoring", () => {
     expect(selected.map((item) => item.name)).not.toContain("Second Ramen Shop");
   });
 
+  it("limits far places to at most one per day", () => {
+    // 후쿠오카 기준, WALK 모드에서 farThreshold = 5km
+    // 숙소 lat 33.5868 → 0.045도 ≈ 5km
+    const selected = selectGoogleFirstCandidates(
+      {
+        ...baseRequest,
+        durationMinutes: 480,
+        travelModes: ["WALK"],
+      },
+      [
+        // 가까운 장소들 (숙소 근처)
+        candidate("Nearby Ramen", "PRICE_LEVEL_MODERATE", {
+          location: { lat: 33.587, lng: 130.402 },
+          rating: 4.5,
+          userRatingCount: 1000,
+        }),
+        candidate("Nearby Cafe", "PRICE_LEVEL_MODERATE", {
+          location: { lat: 33.588, lng: 130.403 },
+          primaryType: "cafe",
+          rating: 4.3,
+          sourceTheme: "cafe",
+          userRatingCount: 500,
+        }),
+        candidate("Nearby Museum", undefined, {
+          location: { lat: 33.589, lng: 130.401 },
+          preferenceKind: "place",
+          primaryType: "museum",
+          rating: 4.4,
+          sourceTheme: "culture",
+          userRatingCount: 800,
+        }),
+        candidate("Nearby Park", undefined, {
+          location: { lat: 33.586, lng: 130.400 },
+          preferenceKind: "place",
+          primaryType: "park",
+          rating: 4.2,
+          sourceTheme: "nature",
+          userRatingCount: 300,
+        }),
+        // 먼 장소 1 (약 8km 떨어짐 → WALK 기준 far)
+        candidate("Far Temple", undefined, {
+          location: { lat: 33.66, lng: 130.40 },
+          preferenceKind: "place",
+          primaryType: "tourist_attraction",
+          rating: 4.8,
+          sourceTheme: "landmark",
+          userRatingCount: 5000,
+        }),
+        // 먼 장소 2 (약 10km 떨어짐 → WALK 기준 far)
+        candidate("Far Shrine", undefined, {
+          location: { lat: 33.68, lng: 130.40 },
+          preferenceKind: "place",
+          primaryType: "tourist_attraction",
+          rating: 4.7,
+          sourceTheme: "landmark",
+          userRatingCount: 3000,
+        }),
+      ],
+    );
+
+    // 먼 장소는 최대 1개만 선택되어야 함
+    const farPlaces = selected.filter((c) => c.isFar);
+    expect(farPlaces.length).toBeLessThanOrEqual(1);
+    expect(selected.length).toBe(5);
+  });
+
+  it("tags scored candidates with isFar based on distance from departure", () => {
+    const selected = selectGoogleFirstCandidates(
+      {
+        ...baseRequest,
+        durationMinutes: 60,
+        travelModes: ["WALK"],
+      },
+      [
+        candidate("Near Place", undefined, {
+          location: { lat: 33.587, lng: 130.402 },
+          preferenceKind: "place",
+          primaryType: "tourist_attraction",
+          rating: 4.5,
+          sourceTheme: "landmark",
+          userRatingCount: 1000,
+        }),
+      ],
+    );
+
+    expect(selected[0].isFar).toBe(false);
+  });
 
 });

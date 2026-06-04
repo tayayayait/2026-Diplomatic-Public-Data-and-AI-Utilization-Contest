@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { ItineraryPlace } from "@/lib/gemini/schema";
 import {
   createMapMarkerViewModels,
@@ -163,10 +163,10 @@ describe("map route view model", () => {
       {
         id: "accommodation",
         kind: "accommodation",
-        label: "?숈냼",
+        label: "숙소",
         position: { lat: 33.59, lng: 130.42 },
         tone: "lodging",
-        title: "?숈냼",
+        title: "숙소",
       },
       {
         id: "place-0",

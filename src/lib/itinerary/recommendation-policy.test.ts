@@ -3,7 +3,11 @@ import { describe, expect, it } from "vitest";
 import {
   buildGooglePlaceSearchIntents,
   DAILY_ITINERARY_CATEGORY_TARGETS,
+  FAR_PLACE_POLICY,
+  getFarPlacePolicyForTravelModes,
+  getItineraryCompositionPolicy,
   getRecommendationCategoryGroup,
+  isFarPlace,
   isLodgingType,
   localItineraryRecommendationRequestSchema,
   RECOMMENDATION_SCORE_WEIGHTS,
@@ -59,12 +63,49 @@ describe("itinerary recommendation policy", () => {
     expect(
       getRecommendationCategoryGroup({ preferenceKind: "place", primaryType: "market" })
     ).toBe("shoppingOrExperience");
+    expect(
+      getRecommendationCategoryGroup({
+        name: "Canal City Hakata",
+        preferenceKind: "food",
+        primaryType: "shopping_mall",
+      }),
+    ).toBe("shoppingOrExperience");
   });
 
   it("scales target place count with the selected itinerary duration", () => {
     expect(selectTargetPlaceCount(240)).toBe(3);
     expect(selectTargetPlaceCount(480)).toBe(5);
-    expect(selectTargetPlaceCount(720)).toBe(8);
+    expect(selectTargetPlaceCount(720)).toBe(7);
+    expect(selectTargetPlaceCount({ durationMinutes: 480, targetPlaceCount: 3 })).toBe(3);
+    expect(selectTargetPlaceCount({ durationMinutes: 480, targetPlaceCount: 5 })).toBe(5);
+    expect(selectTargetPlaceCount({ durationMinutes: 480, targetPlaceCount: 7 })).toBe(7);
+  });
+
+  it("defines explicit intensity composition rules for meals and snacks", () => {
+    expect(getItineraryCompositionPolicy({ targetPlaceCount: 3 })).toEqual({
+      mealCount: 1,
+      nonFoodCount: 2,
+      snackCount: 0,
+      targetPlaceCount: 3,
+    });
+    expect(getItineraryCompositionPolicy({ targetPlaceCount: 5 })).toEqual({
+      mealCount: 1,
+      nonFoodCount: 3,
+      snackCount: 1,
+      targetPlaceCount: 5,
+    });
+    expect(getItineraryCompositionPolicy({ targetPlaceCount: 7 })).toEqual({
+      mealCount: 2,
+      nonFoodCount: 4,
+      snackCount: 1,
+      targetPlaceCount: 7,
+    });
+    expect(getItineraryCompositionPolicy({ includeMeals: false, targetPlaceCount: 7 })).toEqual({
+      mealCount: 0,
+      nonFoodCount: 7,
+      snackCount: 0,
+      targetPlaceCount: 7,
+    });
   });
 
   it("identifies lodging and accommodation types", () => {
@@ -97,40 +138,40 @@ describe("itinerary recommendation policy", () => {
 
     expect(intents).toEqual([
       {
-        defaultRadiusMeters: 50000,
-        expandedRadiusMeters: 50000,
+        defaultRadiusMeters: 3000,
+        expandedRadiusMeters: 5000,
         includedTypes: ["restaurant"],
-        maxRadiusMeters: 50000,
+        maxRadiusMeters: 8000,
         preferenceKind: "food",
         rankPreference: "POPULARITY",
         searchQueries: ["local restaurant", "regional food"],
         sourceTheme: "현지 로컬 맛집",
       },
       {
-        defaultRadiusMeters: 50000,
-        expandedRadiusMeters: 50000,
+        defaultRadiusMeters: 3000,
+        expandedRadiusMeters: 5000,
         includedTypes: ["cafe", "bakery"],
-        maxRadiusMeters: 50000,
+        maxRadiusMeters: 8000,
         preferenceKind: "food",
         rankPreference: "POPULARITY",
         searchQueries: ["cafe dessert"],
         sourceTheme: "트렌디한 카페/디저트",
       },
       {
-        defaultRadiusMeters: 50000,
-        expandedRadiusMeters: 50000,
+        defaultRadiusMeters: 3000,
+        expandedRadiusMeters: 5000,
         includedTypes: ["park", "tourist_attraction"],
-        maxRadiusMeters: 50000,
+        maxRadiusMeters: 8000,
         preferenceKind: "place",
         rankPreference: "DISTANCE",
         searchQueries: ["park waterfront"],
         sourceTheme: "자연 속 휴식 (공원/바다)",
       },
       {
-        defaultRadiusMeters: 50000,
-        expandedRadiusMeters: 50000,
+        defaultRadiusMeters: 3000,
+        expandedRadiusMeters: 5000,
         includedTypes: ["museum", "art_gallery"],
-        maxRadiusMeters: 50000,
+        maxRadiusMeters: 8000,
         preferenceKind: "place",
         rankPreference: "POPULARITY",
         searchQueries: ["museum art gallery"],
@@ -153,7 +194,8 @@ describe("itinerary recommendation policy", () => {
       startTime: "09:00",
     });
 
-    expect(request.searchRadiusMeters).toBe(50000);
+    // WALK+TRANSIT 기본 요청 → getRadiusPolicyForTravelModes 결과: TRANSIT의 default(8000)
+    expect(request.searchRadiusMeters).toBe(8000);
     expect(request.sortMode).toBe("route_optimized");
     expect(request.departure.lat).toBe(33.5868);
   });
@@ -167,5 +209,38 @@ describe("itinerary recommendation policy", () => {
     });
 
     expect(result.success).toBe(false);
+  });
+
+  describe("far place policy", () => {
+    it("defines per-mode far place thresholds with max 1 per day", () => {
+      expect(FAR_PLACE_POLICY.WALK.farThresholdMeters).toBe(5000);
+      expect(FAR_PLACE_POLICY.TRANSIT.farThresholdMeters).toBe(15000);
+      expect(FAR_PLACE_POLICY.DRIVE.farThresholdMeters).toBe(20000);
+      expect(FAR_PLACE_POLICY.BICYCLE.farThresholdMeters).toBe(8000);
+      expect(FAR_PLACE_POLICY.WALK.maxPerDay).toBe(1);
+      expect(FAR_PLACE_POLICY.TRANSIT.maxPerDay).toBe(1);
+    });
+
+    it("returns the most generous policy when multiple travel modes are given", () => {
+      const policy = getFarPlacePolicyForTravelModes(["WALK", "TRANSIT"]);
+      expect(policy.farThresholdMeters).toBe(15000);
+
+      const drivePolicy = getFarPlacePolicyForTravelModes(["WALK", "DRIVE"]);
+      expect(drivePolicy.farThresholdMeters).toBe(20000);
+    });
+
+    it("falls back to WALK policy when no modes are given", () => {
+      expect(getFarPlacePolicyForTravelModes([]).farThresholdMeters).toBe(5000);
+      expect(getFarPlacePolicyForTravelModes(undefined).farThresholdMeters).toBe(5000);
+    });
+
+    it("correctly classifies places as far or near", () => {
+      expect(isFarPlace(4000, ["WALK"])).toBe(false);
+      expect(isFarPlace(6000, ["WALK"])).toBe(true);
+      expect(isFarPlace(14000, ["TRANSIT"])).toBe(false);
+      expect(isFarPlace(16000, ["TRANSIT"])).toBe(true);
+      expect(isFarPlace(12000, ["WALK", "TRANSIT"])).toBe(false);
+      expect(isFarPlace(16000, ["WALK", "TRANSIT"])).toBe(true);
+    });
   });
 });

@@ -129,3 +129,68 @@ export const createMapRouteSegments = (
     };
   });
 
+export type MapMarkerViewModel =
+  | {
+      id: "accommodation";
+      kind: "accommodation";
+      label: string;
+      position: LatLng;
+      tone: "lodging";
+      title: string;
+    }
+  | {
+      id: string;
+      isMeal: boolean;
+      isSelected: boolean;
+      kind: "place";
+      markerNumber: number;
+      placeIndex: number;
+      position: LatLng;
+      title: string;
+      tone: "meal" | "selected" | "default";
+    };
+
+export const createMapMarkerViewModels = ({
+  accommodationCoords,
+  places,
+  selectedPlaceIndex,
+}: {
+  accommodationCoords: LatLng | null;
+  places: ItineraryPlace[];
+  selectedPlaceIndex?: number | null;
+}): MapMarkerViewModel[] => {
+  const models: MapMarkerViewModel[] = [];
+
+  if (accommodationCoords) {
+    models.push({
+      id: "accommodation",
+      kind: "accommodation",
+      label: "숙소",
+      position: accommodationCoords,
+      tone: "lodging",
+      title: "숙소",
+    });
+  }
+
+  places.forEach((place, index) => {
+    if (!isFiniteNumber(place.lat) || !isFiniteNumber(place.lng)) return;
+
+    const isSelected = index === selectedPlaceIndex;
+    const isMeal = place.mealSlot !== "none";
+    const tone = isSelected ? "selected" : isMeal ? "meal" : "default";
+
+    models.push({
+      id: `place-${index}`,
+      isMeal,
+      isSelected,
+      kind: "place",
+      markerNumber: place.order,
+      placeIndex: index,
+      position: { lat: place.lat, lng: place.lng },
+      title: place.koName || place.placeName,
+      tone,
+    });
+  });
+
+  return models;
+};

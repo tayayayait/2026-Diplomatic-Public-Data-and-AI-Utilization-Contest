@@ -113,6 +113,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
       <head>
+        <meta charSet="utf-8" />
         <HeadContent />
       </head>
       <body>

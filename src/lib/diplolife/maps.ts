@@ -1,4 +1,4 @@
-﻿export interface GoogleMapsPlaceTarget {
+export interface GoogleMapsPlaceTarget {
   name: string;
   address?: string;
   googleMapsUri?: string;

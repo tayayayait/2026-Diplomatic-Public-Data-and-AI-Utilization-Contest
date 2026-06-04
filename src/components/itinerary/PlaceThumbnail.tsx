@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { 
   Home, 
@@ -65,7 +65,7 @@ export const PlaceThumbnail = ({
     )}>
       {photoUrl && !imgError ? (
         <>
-          {/* 濡쒕뵫 以??ㅼ펷?덊넠/釉붾윭 ?④낵 ??븷 */}
+          {/* 로딩 중 스켈레톤/블러 효과 역할 */}
           {!imgLoaded && (
             <div className={cn(
               "absolute inset-0 flex items-center justify-center bg-muted animate-pulse",

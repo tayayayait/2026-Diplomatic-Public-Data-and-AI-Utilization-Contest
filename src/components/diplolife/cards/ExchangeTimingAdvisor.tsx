@@ -3,8 +3,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Area,
   CartesianGrid,
+  ComposedChart,
   Line,
-  LineChart as RechartsLineChart,
   XAxis,
   YAxis,
 } from "recharts";
@@ -13,6 +13,7 @@ import { AlertTriangle, ArrowRightLeft, CalendarClock, RefreshCw, TrendingUp } f
 import {
   ChartContainer,
   ChartTooltip,
+  ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
@@ -42,44 +43,48 @@ import { ExchangeSimulationDialog } from "./ExchangeSimulationDialog";
 
 const chartConfig = {
   actual: {
-    label: "Actual rate",
+    label: "실제 환율",
     color: "var(--primary)",
   },
   predicted: {
-    label: "Forecast",
+    label: "예측 환율",
     color: "var(--warning)",
   },
 } satisfies ChartConfig;
 
 const currencyLabels: Record<string, string> = {
-  AUD: "AUD Australian dollar",
-  CAD: "CAD Canadian dollar",
-  CNY: "CNY Chinese yuan",
-  EUR: "EUR Euro",
-  GBP: "GBP British pound",
-  HKD: "HKD Hong Kong dollar",
-  JPY: "JPY Japanese yen",
-  KRW: "KRW Korean won",
-  PHP: "PHP Philippine peso",
-  SGD: "SGD Singapore dollar",
-  THB: "THB Thai baht",
-  TWD: "TWD Taiwan dollar",
-  USD: "USD US dollar",
-  VND: "VND Vietnamese dong",
+  AUD: "AUD 호주 달러",
+  CAD: "CAD 캐나다 달러",
+  CNY: "CNY 중국 위안",
+  EUR: "EUR 유로",
+  GBP: "GBP 영국 파운드",
+  HKD: "HKD 홍콩 달러",
+  JPY: "JPY 일본 엔",
+  KRW: "KRW 대한민국 원",
+  PHP: "PHP 필리핀 페소",
+  SGD: "SGD 싱가포르 달러",
+  THB: "THB 태국 바트",
+  TWD: "TWD 대만 달러",
+  USD: "USD 미국 달러",
+  VND: "VND 베트남 동",
 };
 
 function formatRate(rate: number, baseCurrency: string, targetCurrency: string) {
-  return `1 ${baseCurrency} = ${new Intl.NumberFormat("ko-KR", {
-    maximumFractionDigits: rate >= 100 ? 2 : 6,
-  }).format(rate)} ${targetCurrency}`;
-}
+  const isJpyKrw = baseCurrency === "JPY" && targetCurrency === "KRW";
+  const isKrwBase = baseCurrency === "KRW";
+  
+  if (isKrwBase) {
+    return `₩1,000 = ${new Intl.NumberFormat("ko-KR", {
+      maximumFractionDigits: rate * 1000 >= 100 ? 2 : 4,
+    }).format(rate * 1000)} ${targetCurrency}`;
+  }
 
-function formatRateDelta(value: number, targetCurrency: string) {
-  const prefix = value > 0 ? "+" : "";
+  const multiplier = isJpyKrw ? 100 : 1;
+  const displayBase = isJpyKrw ? "100" : "1";
 
-  return `${prefix}${new Intl.NumberFormat("ko-KR", {
-    maximumFractionDigits: Math.abs(value) >= 100 ? 2 : 6,
-  }).format(value)} ${targetCurrency}`;
+  return `${displayBase} ${baseCurrency} = ${new Intl.NumberFormat("ko-KR", {
+    maximumFractionDigits: rate * multiplier >= 100 ? 2 : 6,
+  }).format(rate * multiplier)} ${targetCurrency}`;
 }
 
 function useDestinationRefreshDate(timeZone: string) {
@@ -198,9 +203,7 @@ export function ExchangeTimingAdvisor() {
     latestActualDate,
     refreshDate,
   });
-  const bestDateLabel = recommendation?.bestDate === "today" ? "Today" : recommendation?.bestDate ?? "No forecast";
-  const bestRateDelta =
-    recommendation && currentRate !== undefined ? recommendation.bestPredictedRate - currentRate : 0;
+  const bestDateLabel = recommendation?.bestDate === "today" ? "오늘" : recommendation?.bestDate ?? "예측 정보 없음";
   const isForecastBusy = canFetch && (!isClientCacheReady || forecastQuery.isFetching);
 
   return (
@@ -209,15 +212,15 @@ export function ExchangeTimingAdvisor() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <CardTitle className="flex items-center gap-2 text-lg font-bold">
             <CalendarClock className="h-5 w-5 text-primary" aria-hidden="true" />
-            Exchange timing advisor
+            환전 타이밍 어드바이저
           </CardTitle>
           <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-            30-day history + 7-day forecast
+            30일 기록 + 7일 예측
           </span>
         </div>
         <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr_auto] md:items-end">
           <label className="space-y-1.5 text-sm font-medium">
-            Base currency
+            기준 통화
             <select
               value={baseCurrency}
               onChange={(event) => setBaseCurrency(event.target.value)}
@@ -234,7 +237,7 @@ export function ExchangeTimingAdvisor() {
             <ArrowRightLeft className="h-5 w-5" aria-hidden="true" />
           </div>
           <label className="space-y-1.5 text-sm font-medium">
-            Target currency
+            대상 통화
             <select
               value={targetCurrency}
               onChange={(event) => setTargetCurrency(event.target.value)}
@@ -249,7 +252,7 @@ export function ExchangeTimingAdvisor() {
           </label>
           <Button type="button" variant="outline" onClick={() => void forecastQuery.refetch()} disabled={!canFetch}>
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
-            Refresh
+            조회
           </Button>
         </div>
       </CardHeader>
@@ -257,19 +260,19 @@ export function ExchangeTimingAdvisor() {
       <CardContent className="space-y-5 p-5">
         {baseCurrency === targetCurrency && (
           <div className="rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 text-sm font-medium text-warning">
-            Choose different base and target currencies.
+            기준 통화와 대상 통화를 다르게 설정해주세요.
           </div>
         )}
 
         {forecastQuery.isError && (
           <div className="rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm font-medium text-danger">
-            Exchange forecast data could not be loaded.
+            환율 예측 데이터를 불러오지 못했습니다.
           </div>
         )}
 
         {forecastQuery.data && recommendation && currentRate !== undefined ? (
           <>
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-2">
               <div className="rounded-lg border border-border bg-surface-alt p-4">
                 <p className="text-xs font-semibold uppercase text-muted-foreground">
                   {freshness.rateCardTitle}
@@ -279,48 +282,32 @@ export function ExchangeTimingAdvisor() {
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">{freshness.rateCardDescription}</p>
               </div>
-              <div className="rounded-lg border border-border bg-surface-alt p-4">
-                <p className="text-xs font-semibold uppercase text-muted-foreground">Best projected rate</p>
-                <p className="mt-2 text-lg font-bold text-foreground">
-                  {formatRate(recommendation.bestPredictedRate, baseCurrency, targetCurrency)}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Change from today: {formatRateDelta(bestRateDelta, targetCurrency)}
-                </p>
-              </div>
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
                 <p className="flex items-center gap-1 text-xs font-semibold uppercase text-primary">
                   <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
-                  Recommendation
+                  AI 추천
                 </p>
                 <p className="mt-2 text-lg font-bold text-foreground">{bestDateLabel}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {recommendation.action === "WAIT" ? "Waiting may improve the converted amount." : "Today is competitive in this forecast."}
+                  {recommendation.action === "WAIT" ? "기다리면 환전 금액이 유리해질 수 있습니다." : "이 예측에서는 오늘 환전하는 것이 가장 유리합니다."}
                 </p>
               </div>
             </div>
 
-            <ChartContainer config={chartConfig} className="min-h-[320px] w-full">
-              <RechartsLineChart data={chartData} margin={{ left: 12, right: 12, top: 18, bottom: 8 }}>
+            <ChartContainer config={chartConfig} className="h-[320px] w-full">
+              <ComposedChart data={chartData} margin={{ left: 12, right: 12, top: 18, bottom: 8 }}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={18} />
                 <YAxis
                   tickLine={false}
                   axisLine={false}
-                  domain={["dataMin", "dataMax"]}
+                  domain={[(dataMin: number) => dataMin * 0.995, (dataMax: number) => dataMax * 1.005]}
                   tickFormatter={(value) =>
                     new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 4 }).format(Number(value))
                   }
                   width={68}
                 />
-                <ChartTooltip />
-                <Area
-                  type="monotone"
-                  dataKey="predicted"
-                  fill="var(--color-predicted)"
-                  fillOpacity={0.08}
-                  stroke="none"
-                />
+                <ChartTooltip content={<ChartTooltipContent />} />
                 <Line
                   type="monotone"
                   dataKey="actual"
@@ -338,14 +325,14 @@ export function ExchangeTimingAdvisor() {
                   dot={{ r: 3 }}
                   connectNulls={false}
                 />
-              </RechartsLineChart>
+              </ComposedChart>
             </ChartContainer>
 
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface-alt p-4">
               <div>
-                <p className="text-sm font-semibold text-foreground">Compare exchange timing scenarios</p>
+                <p className="text-sm font-semibold text-foreground">환전 타이밍 시나리오 비교</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Review projected results for today, 1 day, 3 days, and 7 days.
+                  오늘, 1일 후, 3일 후, 7일 후의 예상 결과를 비교해보세요.
                 </p>
               </div>
               <ExchangeSimulationDialog
@@ -357,20 +344,20 @@ export function ExchangeTimingAdvisor() {
             </div>
 
             <div className="rounded-lg border border-border bg-background p-4 text-xs font-medium text-muted-foreground">
-              Source: fxapi.app with currency API fallback. Refresh basis: {refreshTimeZone}, {refreshDate}. Cache:
-              {forecastQuery.data.cache.hit ? " server hit" : " fresh fetch"}.
+              출처: fxapi.app (API 백폴 포함). 기준시: {refreshTimeZone}, {refreshDate}. 캐시:
+              {forecastQuery.data.cache.hit ? " 서버 캐시 적중" : " 신규 데이터"}.
             </div>
           </>
         ) : (
           <div className="flex min-h-[320px] items-center justify-center rounded-lg border border-dashed border-border bg-surface-alt text-sm font-medium text-muted-foreground">
-            {isForecastBusy ? "Loading exchange forecast..." : "No forecast is available yet."}
+            {isForecastBusy ? "환율 예측 데이터를 불러오는 중입니다..." : "아직 예측 데이터가 없습니다."}
           </div>
         )}
 
         <div className="flex gap-2 rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <p>
-            Forecasts are estimates and are not financial advice. Confirm final exchange rates with your provider.
+            본 예측은 추정치이며 재정적 조언이 아닙니다. 실제 환전 시 이용하시는 금융기관의 최종 환율을 확인하세요.
           </p>
         </div>
       </CardContent>

@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { createGoogleFirstItinerary } from "./google-first-itinerary";
 import { selectBestRouteOption } from "./google-first-place-builder";
@@ -144,12 +144,12 @@ describe("Google-first itinerary engine", () => {
     });
     expect(places[0]).toMatchObject({
       category: "restaurant",
-      estimatedCost: "Google 媛寃⑸?: ???",
+      estimatedCost: "Google 가격: 저렴",
       estimatedMinutes: 75,
       koName: "Hakata Local Ramen",
       mealSlot: "meal",
       order: 1,
-      placeIntroduction: "Gemini ?μ냼 ?뚭컻瑜??앹꽦?섏? 紐삵뻽?듬땲??",
+      placeIntroduction: "Gemini 장소 소개를 생성하지 못했습니다.",
       placeName: "Hakata Local Ramen",
       travelFromPrevMinutes: 12,
       travelFromPrevDistance: "850m",
@@ -157,7 +157,7 @@ describe("Google-first itinerary engine", () => {
     expect(places[0].recommendationContext).toMatchObject({
       businessStatus: "OPERATIONAL",
       distanceFromDepartureMeters: expect.any(Number),
-      matchedPreference: "?꾩? 濡쒖뺄 留쏆쭛",
+      matchedPreference: "default_local_food",
       openingNow: true,
       preferenceKind: "food",
       priceLevel: "PRICE_LEVEL_INEXPENSIVE",
@@ -363,9 +363,95 @@ describe("Google-first itinerary engine", () => {
       ["10:50", "12:05"],
     ]);
     expect(places.map((place) => place.estimatedMinutes)).toEqual([90, 75]);
-    expect(places[1].description).toContain("痍⑦뼢");
-    expect(places[1].description).toContain("?됱젏 4.4");
+    expect(places[1].description).toContain("식사");
+    expect(places[1].description).toContain("평점 4.4");
     expect(places[1].description).not.toContain("Closed Ramen");
+  });
+
+  it("reorders the final day from the accommodation instead of forcing the category flow first", async () => {
+    const fetcher = async (input: string | URL, init?: RequestInit) => {
+      const url = input.toString();
+      const body = init?.body ? JSON.parse(init.body.toString()) : null;
+
+      if (url.includes("places:searchNearby") && body.includedTypes.includes("restaurant")) {
+        return okJson({
+          places: [
+            {
+              businessStatus: "OPERATIONAL",
+              displayName: { text: "Nearby Ramen" },
+              id: "nearby-ramen",
+              location: { latitude: 0, longitude: 1 },
+              primaryType: "restaurant",
+              rating: 4.5,
+              regularOpeningHours: { openNow: true },
+              userRatingCount: 500,
+            },
+          ],
+        });
+      }
+
+      if (url.includes("places:searchNearby") && body.includedTypes.includes("tourist_attraction")) {
+        return okJson({
+          places: [
+            {
+              businessStatus: "OPERATIONAL",
+              displayName: { text: "Middle Shrine" },
+              id: "middle-shrine",
+              location: { latitude: 0, longitude: 2 },
+              primaryType: "tourist_attraction",
+              rating: 4.4,
+              regularOpeningHours: { openNow: true },
+              userRatingCount: 400,
+            },
+            {
+              businessStatus: "OPERATIONAL",
+              displayName: { text: "Far Tower" },
+              id: "far-tower",
+              location: { latitude: 0, longitude: 10 },
+              primaryType: "tourist_attraction",
+              rating: 5,
+              regularOpeningHours: { openNow: true },
+              userRatingCount: 10000,
+            },
+          ],
+        });
+      }
+
+      if (url.includes("places:searchNearby")) {
+        return okJson({ places: [] });
+      }
+
+      if (url.includes("directions/v2:computeRoutes")) {
+        const origin = body.origin.location.latLng;
+        const destination = body.destination.location.latLng;
+        const distanceMeters = Math.round(
+          Math.abs(destination.longitude - origin.longitude) * 1000,
+        );
+        return okJson({
+          routes: [{ distanceMeters, duration: `${Math.max(60, distanceMeters * 0.6)}s` }],
+        });
+      }
+
+      throw new Error(`Unexpected request: ${url}`);
+    };
+
+    const places = await createGoogleFirstItinerary(
+      {
+        country: "JP",
+        departure: { lat: 0, lng: 0 },
+        startTime: "09:00",
+        targetPlaceCount: 3,
+        travelModes: ["WALK"],
+      },
+      { fetcher, googleApiKey: "google-key" },
+    );
+
+    expect(places.map((place) => place.placeName)).toEqual([
+      "Nearby Ramen",
+      "Middle Shrine",
+      "Far Tower",
+    ]);
+    expect(places.map((place) => place.order)).toEqual([1, 2, 3]);
   });
 
   it("filters out lodging/hotel place types completely from candidates", async () => {
@@ -386,10 +472,10 @@ describe("Google-first itinerary engine", () => {
             },
             {
               businessStatus: "OPERATIONAL",
-              displayName: { text: "Nearby Cafe" },
-              id: "nearby-cafe",
+              displayName: { text: "Nearby Museum" },
+              id: "nearby-museum",
               location: { latitude: 33.588, longitude: 130.403 },
-              primaryType: "cafe",
+              primaryType: "museum",
               rating: 4.5,
               userRatingCount: 500,
             },
@@ -418,8 +504,8 @@ describe("Google-first itinerary engine", () => {
 
     expect(places.length).toBeGreaterThan(0);
     expect(places.some((p) => p.placeName === "Grand Hotel")).toBe(false);
-    expect(places[0].placeName).toBe("Nearby Cafe");
-    expect(places[0].mealSlot).toBe("snack");
+    expect(places[0].placeName).toBe("Nearby Museum");
+    expect(places[0].mealSlot).toBe("none");
   });
 
   it("labels a restaurant stop as a general meal regardless of arrival time", async () => {
@@ -551,12 +637,12 @@ describe("Google-first itinerary engine", () => {
       .sort();
 
     expect(secondLegModes).toEqual(["TRANSIT", "WALK"]);
-    expect(places[0].travelMode).toBe("?以묎탳??)";
+    expect(places[0].travelMode).toBe("대중교통");
     expect(places[1]).toMatchObject({
       placeName: "Nearby Gallery",
       travelFromPrevDistance: "280m",
       travelFromPrevMinutes: 4,
-      travelMode: "?꾨낫",
+      travelMode: "도보",
     });
     expect(places[1].recommendationContext).toMatchObject({
       routeDistanceMeters: 280,
@@ -613,9 +699,9 @@ describe("Google-first itinerary engine", () => {
 
     expect(nearbyRequest?.body.locationRestriction.circle.radius).toBe(50000);
     expect(routeRequest?.body.travelMode).toBe("TRANSIT");
-    expect(places[0].travelMode).toBe("?以묎탳??)";
-    expect(places[0].description).toContain("?꾩떆? 吏??臾명솕瑜?)";
-    expect(places[0].description).toContain("?꾩? 濡쒖뺄 留쏆쭛");
+    expect(places[0].travelMode).toBe("대중교통");
+    expect(places[0].description).toContain("문화");
+    expect(places[0].description).toContain("default_local_food");
     expect(places[0].recommendationContext).toMatchObject({
       travelModes: ["TRANSIT"],
     });
@@ -692,13 +778,13 @@ describe("Google-first itinerary engine", () => {
   });
 });
 
-describe("selectBestRouteOption ???대룞?섎떒蹂??쒓컙 ?꾧퀎媛?, () => {"
-  it("?먯쟾嫄곌? ?以묎탳?듬낫??鍮좊Ⅴ?붾씪?? ?먯쟾嫄??꾧퀎媛?20遺???珥덇낵?섎㈃ ?以묎탳?듭씠 ?좏깮?쒕떎", () => {
+describe("selectBestRouteOption", () => {
+  it("자전거가 대중교통보다 빠르더라도 자전거 통행값이 20분을 초과하면 대중교통이 선택된다", () => {
     const options = [
       { mode: "WALK" as TravelMode, route: { distanceMeters: 15000, durationMinutes: 130 } },
-      // ?以묎탳?듭? 40遺?(?꾧퀎媛?60遺??대궡)
+      // 대중교통은 40분(통행값이 60분 이내)
       { mode: "TRANSIT" as TravelMode, route: { distanceMeters: 12000, durationMinutes: 40 } },
-      // ?먯쟾嫄곕뒗 30遺꾩쑝濡??以묎탳?듬낫??鍮좊Ⅴ吏留??꾧퀎媛?20遺???珥덇낵??      { mode: "BICYCLE" as TravelMode, route: { distanceMeters: 14000, durationMinutes: 30 } },
+      { mode: "BICYCLE" as TravelMode, route: { distanceMeters: 14000, durationMinutes: 30 } },
     ];
     const result = selectBestRouteOption(options);
     expect(result.mode).toBe("TRANSIT");

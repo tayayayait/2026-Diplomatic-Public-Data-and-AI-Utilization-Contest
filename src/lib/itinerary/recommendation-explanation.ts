@@ -1,4 +1,4 @@
-﻿import type { ItineraryPlace } from "@/lib/gemini/schema";
+import type { ItineraryPlace } from "@/lib/gemini/schema";
 import {
   RECOMMENDATION_SCORE_WEIGHTS,
   type TravelMode,
@@ -24,11 +24,11 @@ export interface PlaceViewModel {
 }
 
 const priceLevelLabels: Record<string, string> = {
-  PRICE_LEVEL_EXPENSIVE: "Expensive",
-  PRICE_LEVEL_FREE: "Free",
-  PRICE_LEVEL_INEXPENSIVE: "Inexpensive",
-  PRICE_LEVEL_MODERATE: "Moderate",
-  PRICE_LEVEL_VERY_EXPENSIVE: "Very expensive",
+  PRICE_LEVEL_EXPENSIVE: "비쌈",
+  PRICE_LEVEL_FREE: "무료",
+  PRICE_LEVEL_INEXPENSIVE: "저렴함",
+  PRICE_LEVEL_MODERATE: "보통",
+  PRICE_LEVEL_VERY_EXPENSIVE: "매우 비쌈",
 };
 
 export const formatDistanceForEvidence = (meters: number) =>
@@ -39,18 +39,18 @@ const getPrimaryContext = (places: ItineraryPlace[]) =>
 
 const getSourceLabel = (source?: string) => {
   if (source === "google_places") return "Google Places + Routes";
-  if (source === "gemini") return "Gemini fallback";
-  return "Recommendation basis";
+  if (source === "gemini") return "Gemini 대체 추천";
+  return "추천 기준";
 };
 
 const getDataBasisLabel = (source?: string) => {
   if (source === "google_places") {
-    return "Google place candidates scored with route efficiency and user-fit signals.";
+    return "경로 효율성과 사용자 적합도 신호로 점수를 매긴 Google 장소 후보입니다.";
   }
   if (source === "gemini") {
-    return "AI-generated fallback because Google place details are unavailable.";
+    return "Google 장소 세부 정보를 사용할 수 없어 AI가 생성한 대체 추천입니다.";
   }
-  return "Recommendation policy used for result generation.";
+  return "결과 생성에 사용된 추천 기준 정책입니다.";
 };
 
 const getBudgetPolicyLabel = (
@@ -59,18 +59,18 @@ const getBudgetPolicyLabel = (
 ) => {
   const strategy = context?.budgetStrategy ?? budgetPlan?.strategy ?? "balanced";
   const dailyBudget = budgetPlan?.dailyBudgetKrw
-    ? `, daily ${budgetPlan.dailyBudgetKrw.toLocaleString("ko-KR")} KRW`
+    ? `, 일일 ${budgetPlan.dailyBudgetKrw.toLocaleString("ko-KR")} KRW`
     : "";
 
   if (strategy === "saving") {
-    return `Budget strategy ${getBudgetStrategyLabel(strategy)}${dailyBudget}: prioritize free or low-cost places and avoid high-price candidates.`;
+    return `예산 전략 ${getBudgetStrategyLabel(strategy)}${dailyBudget}: 무료 또는 저렴한 장소를 우선시하고 비싼 후보는 피합니다.`;
   }
 
   if (strategy === "experience") {
-    return `Budget strategy ${getBudgetStrategyLabel(strategy)}${dailyBudget}: allow higher-cost candidates when rating and experience value are strong.`;
+    return `예산 전략 ${getBudgetStrategyLabel(strategy)}${dailyBudget}: 평점과 경험 가치가 높을 경우 비용이 더 드는 후보도 허용합니다.`;
   }
 
-  return `Budget strategy ${getBudgetStrategyLabel(strategy)}${dailyBudget}: balance moderate cost, rating, and route efficiency.`;
+  return `예산 전략 ${getBudgetStrategyLabel(strategy)}${dailyBudget}: 적당한 비용, 평점, 경로 효율성의 균형을 맞춥니다.`;
 };
 
 export const createRecommendationCriteriaViewModel = (
@@ -84,20 +84,20 @@ export const createRecommendationCriteriaViewModel = (
   return {
     budgetLabel: getBudgetPolicyLabel(context, budgetPlan),
     dataBasisLabel: getDataBasisLabel(context?.source),
-    exclusionLabel: "Exclude unsupported cities, missing coordinates, and unavailable place candidates.",
+    exclusionLabel: "지원되지 않는 도시, 좌표가 누락되거나 이용할 수 없는 장소 후보를 제외합니다.",
     signalLabels: [
-      `Route efficiency ${RECOMMENDATION_SCORE_WEIGHTS.routeEfficiency} pts`,
-      `Google rating/reviews ${RECOMMENDATION_SCORE_WEIGHTS.googlePopularity} pts`,
-      `Opening-hours fit ${RECOMMENDATION_SCORE_WEIGHTS.openingHoursFit} pts`,
-      `Budget fit ${RECOMMENDATION_SCORE_WEIGHTS.budgetFit} pts`,
-      `Category diversity ${RECOMMENDATION_SCORE_WEIGHTS.categoryDiversity} pts`,
+      `경로 효율성 ${RECOMMENDATION_SCORE_WEIGHTS.routeEfficiency}점`,
+      `Google 평점/리뷰 ${RECOMMENDATION_SCORE_WEIGHTS.googlePopularity}점`,
+      `영업시간 적합도 ${RECOMMENDATION_SCORE_WEIGHTS.openingHoursFit}점`,
+      `예산 적합도 ${RECOMMENDATION_SCORE_WEIGHTS.budgetFit}점`,
+      `카테고리 다양성 ${RECOMMENDATION_SCORE_WEIGHTS.categoryDiversity}점`,
     ],
     sortLabel:
       context?.sortMode === "distance"
-        ? "Closest-first order"
+        ? "가까운 순 정렬"
         : context?.sortMode === "popularity"
-          ? "Popularity and rating order"
-          : "Top-scoring candidates reordered for route efficiency.",
+          ? "인기 및 평점 순 정렬"
+          : "경로 효율성을 위해 점수가 높은 후보들을 재정렬했습니다.",
     sourceLabel: getSourceLabel(context?.source),
   };
 };
@@ -107,26 +107,26 @@ export const createPlaceEvidenceBadges = (place: ItineraryPlace) => {
   if (!context) return [];
 
   const badges = [
-    context.matchedPreference ? `Preference: ${context.matchedPreference}` : undefined,
+    context.matchedPreference ? `취향: ${context.matchedPreference}` : undefined,
     typeof context.distanceFromDepartureMeters === "number"
-      ? `From departure ${formatDistanceForEvidence(context.distanceFromDepartureMeters)}`
+      ? `출발지에서 ${formatDistanceForEvidence(context.distanceFromDepartureMeters)}`
       : undefined,
-    typeof context.rating === "number" ? `Rating ${context.rating}` : undefined,
+    typeof context.rating === "number" ? `평점 ${context.rating}` : undefined,
     typeof context.userRatingCount === "number"
-      ? `Reviews ${context.userRatingCount.toLocaleString("ko-KR")}`
+      ? `리뷰 ${context.userRatingCount.toLocaleString("ko-KR")}개`
       : undefined,
     context.openingNow === true
-      ? "Open now"
+      ? "현재 영업 중"
       : context.openingNow === false
-        ? "Opening hours unavailable"
+        ? "영업시간 정보 없음"
         : undefined,
     context.priceRangeText
-      ? `Price ${context.priceRangeText}`
+      ? `가격 ${context.priceRangeText}`
       : context.priceLevel
-        ? `Price level ${priceLevelLabels[context.priceLevel] ?? context.priceLevel}`
+        ? `가격대 ${priceLevelLabels[context.priceLevel] ?? context.priceLevel}`
         : undefined,
-    context.budgetStrategy ? `Budget ${getBudgetStrategyLabel(context.budgetStrategy)}` : undefined,
-    typeof context.score === "number" ? `Score ${context.score}` : undefined,
+    context.budgetStrategy ? `예산 ${getBudgetStrategyLabel(context.budgetStrategy)}` : undefined,
+    typeof context.score === "number" ? `점수 ${context.score}점` : undefined,
   ];
 
   return badges.filter((badge): badge is string => Boolean(badge));

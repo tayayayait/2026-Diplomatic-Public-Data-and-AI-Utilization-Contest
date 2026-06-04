@@ -1,8 +1,11 @@
 import {
   DAILY_ITINERARY_CATEGORY_TARGETS,
   RECOMMENDATION_SCORE_WEIGHTS,
+  getFarPlacePolicyForTravelModes,
+  getItineraryCompositionPolicy,
   getRadiusPolicyForTravelModes,
   getRecommendationCategoryGroup,
+  isFarPlace,
   selectTargetPlaceCount,
   type LocalItineraryRecommendationRequest,
   type RecommendationCategoryGroup,
@@ -18,6 +21,8 @@ type ScoreWeights = Record<keyof typeof RECOMMENDATION_SCORE_WEIGHTS, number>;
 
 export interface ScoredCandidate extends GooglePlaceCandidate {
   distanceMetersFromDeparture: number;
+  /** 숙소 기준 '먼 장소'로 분류되었는지 여부 */
+  isFar: boolean;
   score: number;
 }
 
@@ -73,9 +78,13 @@ const scoreCandidate = (
     request.departure as { lat: number; lng: number },
     candidate.location,
   );
+
+  // 거리 기준: farThreshold × 2를 reference로 사용하여 변별력 확보
+  // 예: TRANSIT 모드 → farThreshold=15km → reference=30km → 10km 거리 시 ratio=0.33
+  const farPolicy = getFarPlacePolicyForTravelModes(request.travelModes);
   const distanceReferenceMeters = Math.max(
-    request.searchRadiusMeters,
-    getRadiusPolicyForTravelModes(request.travelModes).hardCap,
+    farPolicy.farThresholdMeters * 2,
+    getRadiusPolicyForTravelModes(request.travelModes).default,
   );
   const distanceRatio = Math.min(distanceMetersFromDeparture / distanceReferenceMeters, 1);
   const popularityScore =
@@ -90,9 +99,12 @@ const scoreCandidate = (
     budgetScore * weights.budgetFit +
     weights.categoryDiversity;
 
+  const candidateIsFar = isFarPlace(distanceMetersFromDeparture, request.travelModes);
+
   return {
     ...candidate,
     distanceMetersFromDeparture,
+    isFar: candidateIsFar,
     score: Math.round(weightedScore * 10) / 10,
   };
 };
@@ -319,7 +331,12 @@ export const orderByDailyFlow = (
   request: LocalItineraryRecommendationRequest,
   candidates: ScoredCandidate[],
 ) => {
-  const remaining = [...candidates];
+  // 먼 장소와 가까운 장소를 분리하여 동선 최적화
+  const nearCandidates = candidates.filter((c) => !c.isFar);
+  const farCandidates = candidates.filter((c) => c.isFar);
+
+  // 1단계: 가까운 장소들을 카테고리 흐름에 따라 정렬
+  const remaining = [...nearCandidates];
   const ordered: ScoredCandidate[] = [];
   let current = request.departure as { lat: number; lng: number };
 
@@ -339,6 +356,35 @@ export const orderByDailyFlow = (
     current = next.location;
   }
 
+  // 2단계: 먼 장소를 경로의 시작 또는 끝 중 비용이 적은 위치에 삽입
+  // → 중간 삽입 시 왕복 이동 발생 방지
+  const departure = request.departure as { lat: number; lng: number };
+  for (const farCandidate of farCandidates) {
+    if (ordered.length === 0) {
+      ordered.push(farCandidate);
+      continue;
+    }
+
+    const firstPlace = ordered[0];
+    const lastPlace = ordered[ordered.length - 1];
+
+    // 시작에 넣을 때 비용: 숙소→먼곳 + 먼곳→첫번째장소
+    const costAtStart =
+      haversineMeters(departure, farCandidate.location) +
+      haversineMeters(farCandidate.location, firstPlace.location);
+
+    // 끝에 넣을 때 비용: 마지막장소→먼곳 + 먼곳→숙소(복귀)
+    const costAtEnd =
+      haversineMeters(lastPlace.location, farCandidate.location) +
+      haversineMeters(farCandidate.location, departure);
+
+    if (costAtStart <= costAtEnd) {
+      ordered.unshift(farCandidate);
+    } else {
+      ordered.push(farCandidate);
+    }
+  }
+
   return ordered;
 };
 
@@ -346,11 +392,16 @@ const selectBalancedCandidates = (
   request: LocalItineraryRecommendationRequest,
   candidates: ScoredCandidate[],
 ) => {
-  const targetCount = selectTargetPlaceCount(request.durationMinutes);
+  const targetCount = selectTargetPlaceCount(request);
+  const composition = getItineraryCompositionPolicy(request);
   const selected: ScoredCandidate[] = [];
   const selectedKeys = new Set<string>();
   const selectedMealDiversityKeys = new Set<string>();
   const categoryCounts = new Map<RecommendationCategoryGroup, number>();
+
+  // 먼 장소 일일 제한 카운터
+  const farPlacePolicy = getFarPlacePolicyForTravelModes(request.travelModes);
+  let farPlaceCount = 0;
 
   const getCategoryCount = (category: RecommendationCategoryGroup) =>
     categoryCounts.get(category) ?? 0;
@@ -370,9 +421,18 @@ const selectBalancedCandidates = (
     if (selectedKeys.has(key)) return false;
     if (selected.some((s) => isSimilarPlaceName(s.name, candidate.name))) return false;
 
+    // 먼 장소 제한: 하루 maxPerDay 초과 시 스킵
+    if (candidate.isFar && farPlaceCount >= farPlacePolicy.maxPerDay) return false;
+
     const category = getRecommendationCategoryGroup(candidate);
     const target = DAILY_ITINERARY_CATEGORY_TARGETS[category];
-    if (getCategoryCount(category) >= target.max) return false;
+    const categoryMax =
+      category === "meal"
+        ? composition.mealCount
+        : category === "cafe"
+          ? composition.snackCount
+          : target.max;
+    if (getCategoryCount(category) >= categoryMax) return false;
 
     const mealDiversityKey = inferMealDiversityKey(candidate);
     if (
@@ -385,6 +445,7 @@ const selectBalancedCandidates = (
 
     selected.push(candidate);
     selectedKeys.add(key);
+    if (candidate.isFar) farPlaceCount++;
     if (mealDiversityKey) {
       selectedMealDiversityKeys.add(mealDiversityKey);
     }
@@ -393,9 +454,14 @@ const selectBalancedCandidates = (
   };
 
   const addCategoryMinimum = (category: RecommendationCategoryGroup) => {
-    const target = DAILY_ITINERARY_CATEGORY_TARGETS[category];
+    const targetMinimum =
+      category === "meal"
+        ? composition.mealCount
+        : category === "cafe"
+          ? composition.snackCount
+          : DAILY_ITINERARY_CATEGORY_TARGETS[category].min;
     for (const candidate of candidates) {
-      if (selected.length >= targetCount || getCategoryCount(category) >= target.min) break;
+      if (selected.length >= targetCount || getCategoryCount(category) >= targetMinimum) break;
       if (getRecommendationCategoryGroup(candidate) !== category) continue;
       addCandidate(candidate);
     }

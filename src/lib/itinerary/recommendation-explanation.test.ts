@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { ItineraryPlace } from "@/lib/gemini/schema";
 import {
   createPlaceEvidenceBadges,
@@ -52,15 +52,15 @@ describe("recommendation explanation", () => {
     ]);
 
     expect(model.sourceLabel).toBe("Google Places + Routes");
-    expect(model.sortLabel).toBe("?먯닔 ?곸쐞 ?꾨낫瑜??숈꽑 ?⑥쑉 ?쒖꽌濡??ъ젙??)";
+    expect(model.sortLabel).toContain("경로 효율성");
     expect(model.signalLabels).toEqual([
-      "?숈꽑 ?⑥쑉 30??",
-      "Google ?됱젏/由щ럭 40??",
-      "?곸뾽?쒓컙 15??",
-      "媛寃⑸? 10??",
-      "移댄뀒怨좊━ ?ㅼ뼇??5??",
+      "경로 효율성 30점",
+      "Google 평점/리뷰 40점",
+      "영업시간 적합도 15점",
+      "예산 적합도 10점",
+      "카테고리 다양성 5점",
     ]);
-    expect(model.exclusionLabel).toBe("?꾩떆/?곴뎄 ?먯뾽, 醫뚰몴 ?녿뒗 ?μ냼 ?쒖쇅");
+    expect(model.exclusionLabel).toBe("지원되지 않는 도시, 좌표가 누락되거나 이용할 수 없는 장소 후보를 제외합니다.");
   });
 
   it("marks Gemini fallback results as unverified by Google Places", () => {
@@ -74,8 +74,8 @@ describe("recommendation explanation", () => {
       }),
     ]);
 
-    expect(model.sourceLabel).toBe("Gemini fallback");
-    expect(model.dataBasisLabel).toBe("Google Places ?꾨낫媛 ?녾굅???ㅺ? ?놁뼱 AI ?앹꽦 寃곌낵瑜??ъ슜");
+    expect(model.sourceLabel).toBe("Gemini 대체 추천");
+    expect(model.dataBasisLabel).toBe("Google 장소 세부 정보를 사용할 수 없어 AI가 생성한 대체 추천입니다.");
   });
 
   it("creates compact per-place evidence badges from Google metadata", () => {
@@ -98,13 +98,13 @@ describe("recommendation explanation", () => {
     );
 
     expect(badges).toEqual([
-      "痍⑦뼢: ?꾩? 濡쒖뺄 留쏆쭛",
-      "異쒕컻吏 850m",
-      "?됱젏 4.6",
-      "由щ럭 900",
-      "?곸뾽 以?",
-      "媛寃⑸? ???",
-      "?먯닔 87.3",
+      "취향: ?꾩? 濡쒖뺄 留쏆쭛",
+      "출발지에서 850m",
+      "평점 4.6",
+      "리뷰 900개",
+      "현재 영업 중",
+      "가격대 저렴함",
+      "점수 87.3점",
     ]);
   });
 });

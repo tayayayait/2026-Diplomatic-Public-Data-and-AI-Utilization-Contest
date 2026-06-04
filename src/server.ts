@@ -1,4 +1,4 @@
-﻿import "./lib/error-capture";
+import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
@@ -41,8 +41,22 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      let response = await handler.fetch(request, env, ctx);
+      response = await normalizeCatastrophicSsrResponse(response);
+      
+      // Ensure charset=utf-8 is present on html responses
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("text/html") && !contentType.toLowerCase().includes("charset")) {
+        const newHeaders = new Headers(response.headers);
+        newHeaders.set("content-type", `${contentType}; charset=utf-8`);
+        response = new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: newHeaders,
+        });
+      }
+      
+      return response;
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {

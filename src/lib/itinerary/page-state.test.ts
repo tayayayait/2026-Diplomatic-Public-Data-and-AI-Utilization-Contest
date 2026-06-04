@@ -1,4 +1,4 @@
-﻿import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { DiploLifeStore, UserProfile } from "@/lib/diplolife/state";
 import {
   canRequestItinerary,
@@ -13,16 +13,16 @@ import {
 
 const profile: UserProfile = {
   id: "user_1",
-  name: "?띻만??",
+  name: "홍길동",
   country: "JP",
-  city: "?꾩퓙",
+  city: "도쿄",
   visaType: "TOURIST",
   stayPurpose: "TRAVEL",
   stayStartDate: "2026-06-01",
   stayEndDate: "2026-06-07",
   interests: ["SAFETY"],
-  foodPreferences: ["?ㅼ떆", "?쇰찘"],
-  placeInterests: ["誘몄닠愿", "怨듭썝"],
+  foodPreferences: ["스시", "라멘"],
+  placeInterests: ["미술관", "공원"],
   accommodationLocation: "Tokyo Station",
   onboardingComplete: true,
   notificationSettings: {
@@ -51,7 +51,8 @@ describe("itinerary page state helpers", () => {
 
   it("derives smart defaults from the profile when preferences exist", () => {
     expect(getSmartDefaults(profile)).toEqual({
-      budget: "蹂댄넻",
+      durationMinutes: 480,
+      budget: "보통",
       budgetStrategy: "balanced",
       itineraryIntensity: "normal",
       startTime: "09:00",
@@ -61,7 +62,8 @@ describe("itinerary page state helpers", () => {
 
   it("uses stable fallback defaults when the profile is missing", () => {
     expect(getSmartDefaults(null)).toEqual({
-      budget: "蹂댄넻",
+      durationMinutes: 360,
+      budget: "보통",
       budgetStrategy: "balanced",
       itineraryIntensity: "normal",
       startTime: "09:00",
@@ -79,7 +81,7 @@ describe("itinerary page state helpers", () => {
     expect(getItineraryPrerequisiteState(null)).toEqual({
       canGenerate: false,
       ctaHref: "/onboarding",
-      message: "泥대쪟 援??? 湲곕낯 ?꾨줈?꾩쓣 癒쇱? ?ㅼ젙?댁빞 AI ?쇱젙???앹꽦?????덉뒿?덈떎.",
+      message: "체류 국가 등 기본 프로필을 먼저 설정해야 AI 일정을 생성할 수 있습니다.",
       status: "missing_profile",
     });
     expect(getItineraryPrerequisiteState({ ...profile, country: "" })).toMatchObject({
@@ -99,7 +101,7 @@ describe("itinerary page state helpers", () => {
 
     expect(applyBudgetKrwToItinerarySettings(defaults, 800000)).toEqual({
       ...defaults,
-      budget: "800,000???섏?",
+      budget: "800,000원 수준",
     });
     expect(applyBudgetKrwToItinerarySettings(defaults, undefined)).toBe(defaults);
   });

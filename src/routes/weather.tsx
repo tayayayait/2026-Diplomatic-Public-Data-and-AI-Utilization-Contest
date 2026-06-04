@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AlertCircle,
@@ -18,7 +18,7 @@ import { useDiploLifeStore } from "@/lib/diplolife/state";
 import type { WeatherForecastDay } from "@/lib/diplolife/api/types";
 
 export const Route = createFileRoute("/weather")({
-  head: () => ({ meta: [{ title: "?좎뵪 ?곸꽭 ??DiploLife" }] }),
+  head: () => ({ meta: [{ title: "날씨 상세 - DiploLife" }] }),
   component: WeatherPage,
 });
 
@@ -70,7 +70,7 @@ function WeatherPage() {
     : null;
   const maxUv = forecastDays.length ? Math.max(...forecastDays.map((day) => day.uvIndexMax ?? 0)) : 0;
   const sourceMeta = weatherForecast
-    ? `Open-Meteo 쨌 ${weatherForecast.timezone ?? "timezone auto"} 쨌 ${weatherForecast.fetchedAt.slice(0, 10)} 議고쉶`
+    ? `Open-Meteo · ${weatherForecast.timezone ?? "timezone auto"} · ${weatherForecast.fetchedAt.slice(0, 10)} 조회`
     : "Open-Meteo";
 
   const recommendations = useMemo(() => {
@@ -78,8 +78,8 @@ function WeatherPage() {
       return [
         {
           icon: AlertCircle,
-          title: "異쒓뎅 吏곸쟾 ?ы솗??",
-          description: weatherForecast?.summary ?? "?꾩옱 ?쒖떆???덈낫媛 ?놁뒿?덈떎.",
+          title: "출국 직전 상황",
+          description: weatherForecast?.summary ?? "현재 표시할 예보가 없습니다.",
           className: "bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400",
         },
       ];
@@ -89,26 +89,26 @@ function WeatherPage() {
       hasRain
         ? {
             icon: Umbrella,
-            title: "?곗궛 梨숆린湲?",
-            description: "?덈낫 踰붿쐞 ??鍮?媛?μ꽦???덉뒿?덈떎. ?묒씠???곗궛??以鍮꾪븯?몄슂.",
+            title: "우산 챙기기",
+            description: "예보 범위 내 비 가능성이 있습니다. 접이식 우산을 준비하세요.",
             className: "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400",
           }
         : null,
       maxUv >= 6
         ? {
             icon: SunMedium,
-            title: "?좏겕由??꾩닔",
-            description: "?먯쇅??吏?섍? ?믪쓣 ???덉뒿?덈떎. SPF 50 ?댁긽??沅뚯옣?⑸땲??",
+            title: "선크림 필수",
+            description: "자외선 지수가 높을 수 있습니다. SPF 50 이상을 권장합니다.",
             className: "bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400",
           }
         : null,
       {
         icon: Shirt,
-        title: maxTemp !== null && maxTemp > 25 ? "媛踰쇱슫 諛섑뙏 ?꾩＜" : "?щ쾶??寃됱샆",
+        title: maxTemp !== null && maxTemp > 25 ? "가벼운 반팔 위주" : "여벌의 겉옷",
         description:
           maxTemp !== null && maxTemp > 25
-            ? "理쒓퀬 湲곗삩???믪뒿?덈떎. ?듯뭾?????섎뒗 ?룹쓣 梨숆린?몄슂."
-            : "?쇨탳李⑥뿉 ?鍮꾪빐 媛踰쇱슫 寃됱샆??以鍮꾪븯?몄슂.",
+            ? "최고 기온이 높습니다. 통풍이 잘 되는 옷을 챙기세요."
+            : "일교차에 대비해 가벼운 겉옷을 준비하세요.",
         className: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400",
       },
     ].filter((item): item is NonNullable<typeof item> => Boolean(item));
@@ -116,9 +116,9 @@ function WeatherPage() {
 
   if (!stayCountry) {
     return (
-      <AppShell eyebrow="Weather Info" title="?꾩? ?좎뵪 ?곸꽭">
+      <AppShell eyebrow="Weather Info" title="현지 날씨 상세">
         <div className="flex h-64 items-center justify-center text-muted-foreground">
-          ?ы뻾 ?뺣낫媛 ?놁뒿?덈떎.
+          여행 정보가 없습니다.
         </div>
       </AppShell>
     );
@@ -128,7 +128,7 @@ function WeatherPage() {
   const endDate = stayCountry.stayEndDate ? parseISO(stayCountry.stayEndDate) : null;
 
   return (
-    <AppShell eyebrow="Weather Info" title="?꾩? ?좎뵪 ?곸꽭">
+    <AppShell eyebrow="Weather Info" title="현지 날씨 상세">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <article
           className="col-span-full rounded-3xl border border-border bg-gradient-to-br from-blue-500/10 to-indigo-500/10 p-6 shadow-sm stagger-child"
@@ -139,8 +139,8 @@ function WeatherPage() {
               {profile?.country || stayCountry.country} {stayCountry.city && `- ${stayCountry.city}`}
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              ?ы뻾 湲곌컙: {format(startDate, "yyyy.MM.dd")} ~{" "}
-              {endDate ? format(endDate, "yyyy.MM.dd") : "誘몄젙"}
+              여행 기간: {format(startDate, "yyyy.MM.dd")} ~{" "}
+              {endDate ? format(endDate, "yyyy.MM.dd") : "미정"}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">{sourceMeta}</p>
           </div>
@@ -150,7 +150,7 @@ function WeatherPage() {
           <article className="col-span-full flex items-center gap-3 rounded-3xl border border-border bg-card p-6 shadow-sm">
             <Loader2 className="h-5 w-5 animate-spin text-primary" aria-hidden="true" />
             <p className="text-sm font-medium text-muted-foreground">
-              Open-Meteo?먯꽌 ?꾩떆 醫뚰몴? ?덈낫瑜?議고쉶 以묒엯?덈떎.
+              Open-Meteo에서 현지 좌표와 예보를 조회 중입니다.
             </p>
           </article>
         )}
@@ -175,7 +175,7 @@ function WeatherPage() {
         >
           <div className="mb-6 flex items-center gap-3">
             <Info className="h-6 w-6 text-indigo-500" />
-            <h2 className="text-[18px] font-bold">?ы뻾 以鍮꾨Ъ 異붿쿇</h2>
+            <h2 className="text-[18px] font-bold">여행 준비물 추천</h2>
           </div>
 
           <div className="space-y-4">
@@ -204,13 +204,13 @@ function WeatherPage() {
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <ThermometerSun className="h-6 w-6 text-orange-500" />
-              <h2 className="text-[18px] font-bold">?쇱옄蹂??좎뵪 ?덈낫</h2>
+              <h2 className="text-[18px] font-bold">일자별 날씨 예보</h2>
             </div>
           </div>
 
           {forecastDays.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border bg-surface-alt/50 p-6 text-[14px] text-muted-foreground">
-              {isLoading ? "?덈낫瑜?遺덈윭?ㅻ뒗 以묒엯?덈떎." : (weatherForecast?.summary ?? "?뺤떎???덈낫 ?뺣낫 ?놁쓬")}
+              {isLoading ? "예보를 불러오는 중입니다." : (weatherForecast?.summary ?? "확실한 예보 정보 없음")}
             </div>
           ) : (
             <div className="space-y-3">
@@ -240,19 +240,19 @@ function WeatherPage() {
 
                     <div className="flex w-full items-center justify-between gap-5 px-2 sm:w-auto sm:justify-end sm:px-0">
                       <div className="text-center">
-                        <p className="mb-1 text-[11px] text-muted-foreground">湲곗삩</p>
+                        <p className="mb-1 text-[11px] text-muted-foreground">기온</p>
                         <p className="text-[15px] font-bold">
                           {formatWholeNumber(day.tempMinC, "째")} / {formatWholeNumber(day.tempMaxC, "째")}
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="mb-1 text-[11px] text-muted-foreground">媛뺤닔?뺣쪧</p>
+                        <p className="mb-1 text-[11px] text-muted-foreground">강수확률</p>
                         <p className="text-[15px] font-bold text-blue-500">
                           {formatWholeNumber(day.precipitationProbabilityMax, "%")}
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="mb-1 text-[11px] text-muted-foreground">?띿냽</p>
+                        <p className="mb-1 text-[11px] text-muted-foreground">풍속</p>
                         <p className="flex items-center justify-center gap-1 text-[15px] font-bold">
                           <Wind className="h-3 w-3" /> {formatOneDecimal(day.windSpeedKmhMax, "km/h")}
                         </p>

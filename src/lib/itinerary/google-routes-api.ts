@@ -1,5 +1,6 @@
-﻿import type { Fetcher } from "./google-places-api";
+import type { Fetcher } from "./google-places-api";
 import type { TravelMode } from "./recommendation-policy";
+import { routeCache, createRoutesCacheKey } from "./api-cache";
 
 export interface RouteSummary {
   distanceMeters: number;
@@ -25,17 +26,17 @@ const createRouteWaypoint = (point: { lat: number; lng: number }) => ({
 });
 
 const TRAVEL_MODE_LABELS: Record<TravelMode, string> = {
-  BICYCLE: "Bicycle",
-  DRIVE: "Drive",
-  TRANSIT: "Transit",
-  WALK: "Walk",
+  BICYCLE: "자전거",
+  DRIVE: "자동차",
+  TRANSIT: "대중교통",
+  WALK: "도보",
 };
 
-/** ?대룞?섎떒???쒓뎅???쇰꺼??諛섑솚?쒕떎. */
+/** 이동수단의 한국어 라벨을 반환합니다. */
 export const getTravelModeLabel = (mode: TravelMode = "WALK") =>
   TRAVEL_MODE_LABELS[mode] ?? TRAVEL_MODE_LABELS.WALK;
 
-/** ??醫뚰몴 媛?吏곸꽑嫄곕━(誘명꽣) ???쒗솚李몄“ 諛⑹?瑜??꾪븳 濡쒖뺄 援ы쁽 */
+/** 두 좌표 간 직선거리(미터) - 순환참조 방지를 위한 로컬 구현 */
 const haversineMetersLocal = (
   a: { lat: number; lng: number },
   b: { lat: number; lng: number },
@@ -50,9 +51,9 @@ const haversineMetersLocal = (
   return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
 };
 
-/** TRANSIT ?됯퇏 ?띾룄(?쒕궡 ?以묎탳??: 25 km/h */
+/** TRANSIT 평균 속도(시내 대중교통): 25 km/h */
 const TRANSIT_ESTIMATED_SPEED_KMH = 25;
-/** ?꾨줈 蹂댁젙 怨꾩닔 (吏곸꽑 ???ㅼ젣 寃쎈줈) */
+/** 도로 보정 계수 (직선 vs 실제 경로) */
 const ROAD_FACTOR = 1.4;
 
 const estimateTransitFallback = (
@@ -69,8 +70,8 @@ const estimateTransitFallback = (
 };
 
 /**
- * ??吏??媛?寃쎈줈瑜?Google Routes API濡?怨꾩궛?쒕떎.
- * @deprecated computeWalkingRoute???섏쐞 ?명솚??alias?낅땲?? computeRoute瑜??ъ슜?섏꽭??
+ * 두 지점 간 경로를 Google Routes API로 계산합니다.
+ * @deprecated computeWalkingRoute는 하위 호환성 alias입니다. computeRoute를 사용하세요.
  */
 export const computeWalkingRoute = (
   origin: { lat: number; lng: number },
@@ -91,25 +92,59 @@ export const computeRoute = async (
     travelMode?: TravelMode;
   },
 ): Promise<RouteSummary> => {
-  const response = await fetcher(ROUTES_COMPUTE_URL, {
-    body: JSON.stringify({
-      destination: createRouteWaypoint(destination),
-      origin: createRouteWaypoint(origin),
-      travelMode,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-      "X-Goog-Api-Key": googleApiKey,
-      "X-Goog-FieldMask": ROUTES_FIELD_MASK,
-    },
-    method: "POST",
-  });
+  const cacheKey = createRoutesCacheKey(origin, destination, travelMode);
+  const cached = routeCache.get(cacheKey);
+  if (cached) return cached;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+  let response: Response;
+  try {
+    response = await fetcher(ROUTES_COMPUTE_URL, {
+      body: JSON.stringify({
+        destination: createRouteWaypoint(destination),
+        origin: createRouteWaypoint(origin),
+        travelMode,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": googleApiKey,
+        "X-Goog-FieldMask": ROUTES_FIELD_MASK,
+      },
+      method: "POST",
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+  } catch (error) {
+    clearTimeout(timeoutId);
+    let result: RouteSummary;
+    if (travelMode === "TRANSIT") {
+      result = estimateTransitFallback(origin, destination);
+    } else {
+      const haversineDistance = haversineMetersLocal(origin, destination);
+      result = {
+        distanceMeters: Math.round(haversineDistance),
+        durationMinutes: Math.round((haversineDistance / 1000) * 15),
+      };
+    }
+    routeCache.set(cacheKey, result);
+    return result;
+  }
 
   if (!response.ok) {
+    let result: RouteSummary;
     if (travelMode === "TRANSIT") {
-      return estimateTransitFallback(origin, destination);
+      result = estimateTransitFallback(origin, destination);
+    } else {
+      const haversineDistance = haversineMetersLocal(origin, destination);
+      result = {
+        distanceMeters: Math.round(haversineDistance),
+        durationMinutes: Math.round((haversineDistance / 1000) * 15),
+      };
     }
-    return { distanceMeters: 0, durationMinutes: 0 };
+    routeCache.set(cacheKey, result);
+    return result;
   }
 
   const payload = (await response.json()) as {
@@ -120,9 +155,13 @@ export const computeRoute = async (
   const durationMinutes = parseGoogleDurationToMinutes(route?.duration);
   const distanceMeters = route?.distanceMeters ?? 0;
 
+  let result: RouteSummary;
   if (travelMode === "TRANSIT" && (durationMinutes === 0 || !route)) {
-    return estimateTransitFallback(origin, destination);
+    result = estimateTransitFallback(origin, destination);
+  } else {
+    result = { distanceMeters, durationMinutes };
   }
 
-  return { distanceMeters, durationMinutes };
+  routeCache.set(cacheKey, result);
+  return result;
 };

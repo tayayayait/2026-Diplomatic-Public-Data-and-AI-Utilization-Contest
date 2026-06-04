@@ -1,4 +1,4 @@
-﻿export const EXCHANGE_REFRESH_FALLBACK_TIME_ZONE = "UTC";
+export const EXCHANGE_REFRESH_FALLBACK_TIME_ZONE = "UTC";
 
 const COUNTRY_TIME_ZONES: Record<string, string> = {
   AU: "Australia/Sydney",

@@ -18,7 +18,7 @@ playwright-report
 .tanstack/**
 .nitro
 *.local
-
+.env
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

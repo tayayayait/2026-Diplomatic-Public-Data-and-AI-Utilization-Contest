@@ -16,11 +16,11 @@ The Gemini-guided and Google-first local itinerary generators use Google Maps Pl
 
 - Google Places Nearby Search (New) collects candidates from a departure-centered travel-mode hard-cap radius using included place types and explicit rank preference.
 - Google Places Text Search (New) is reserved for keyword-heavy preferences and uses a travel-mode hard-cap location bias.
-- Gemini-guided matching uses Gemini to draft route order, place intent, meal timing, stay duration, and the user-facing `placeIntroduction`. It replaces draft place names, coordinates, Place IDs, price fields, ratings, opening status, and route fields with Google Places and Routes data before returning the itinerary. If Gemini-guided matching returns no usable Google matches and the system falls back to the Google-first candidate engine, the server sends the confirmed Google-first places back to Gemini to generate `placeIntroduction` before returning the itinerary.
+- Gemini-guided matching uses Gemini to draft place intent, meal timing, stay duration, the Korean display name in `koName`, and the user-facing `placeIntroduction`. It preserves `koName` for timeline card titles, while replacing `placeName`, coordinates, Place IDs, price fields, ratings, opening status, and route fields with Google Places and Routes data before returning the itinerary. Gemini's draft order is not treated as final visit order: matched places are reordered from the accommodation by shortest available route leg. If Gemini-guided matching returns no usable Google matches and the system falls back to the Google-first candidate engine, the server sends the confirmed Google-first places back to Gemini to generate `placeIntroduction` before returning the itinerary.
 - If a Gemini-guided result contains fewer stops than the selected itinerary-intensity target, the server treats it as underfilled for every intensity level: relaxed 3, normal 5, and tight 7. It keeps the matched Gemini-guided stops, adds those stops to the Google-first exclusion list, and appends non-duplicate Google-first candidates until the target is filled when usable candidates are available.
 - Address-only departures are resolved with Google Places Text Search before Nearby Search.
 - Candidate responses return address, place ID, Google Maps URI, website URI, rating, review count, opening-hours status, business status, primary type, location, price range, and price level.
-- Routes API `computeRoutes` calculates distance and travel time from the accommodation or previous place to the next place for the active travel modes. The final place also receives return-to-accommodation route metadata so the timeline can show route context instead of a static closing row.
+- Routes API `computeRoutes` calculates distance and travel time from the accommodation or previous place to the next place for the active travel modes. Final visit order is built with a nearest-route-neighbor pass: start at the accommodation, evaluate every remaining stop from the current point, choose the shortest valid route leg, then repeat. The final place also receives return-to-accommodation route metadata so the timeline can show route context instead of a static closing row.
 - If Google price or route data is missing, the card shows "Google information unavailable" instead of inventing an AI price or travel time.
 
 The app uses the destination city when available, otherwise the destination country name.
@@ -67,7 +67,7 @@ The existing route enrichment field mask is limited to:
 routes.duration,routes.distanceMeters
 ```
 
-Phase 2 orders selected candidates with nearest-neighbor route efficiency before calling Routes API for each final leg. For each leg, the engine requests every user-selected travel mode, prefers walking when the walking route is at most 1.2 km and 20 minutes, and otherwise uses the fastest valid selected mode. It does not yet call `optimizeWaypointOrder`.
+Selected candidates are first chosen by score, category balance, budget fit, opening status, popularity, and duplicate-exclusion rules. Visit order is a separate step. For each leg, the engine requests every user-selected travel mode, prefers walking when the walking route is at most 1.2 km and 20 minutes, and otherwise uses the fastest valid selected mode. It does not call Google `optimizeWaypointOrder`; route optimization is implemented in app code as a leg-by-leg nearest-neighbor pass using Routes API durations and distance as the tie-breaker. If a route response has no usable duration, the optimizer falls back to straight-line distance for ranking instead of preserving score or Gemini order.
 
 ## Recommendation Policy
 
@@ -75,7 +75,7 @@ The policy lives in `src/lib/itinerary/recommendation-policy.ts`.
 
 - Search radius: default walkable 3 km, expanded walkable 5 km, urban hard cap 8 km, transit-assisted maximum 15 km. Candidate collection uses the selected travel mode's hard cap so farther high-value places can compete, while scoring still discounts longer distance.
 - Default sort mode: `route_optimized`.
-- Score weights: preference match 30, route efficiency 20, Google popularity 30, opening-hours fit 10, budget fit 5, category diversity 5.
+- Score weights: route efficiency 30, Google popularity 40, opening-hours fit 15, budget fit 10, category diversity 5.
 - Request contract: country is required; departure must contain a non-empty address or finite coordinates; start time is `HH:mm`; explicit `targetPlaceCount` is 3-7; `durationMinutes` remains a legacy soft planning field and defaults to 480 when omitted. Search radius defaults from the active travel modes. `budgetPlan` is optional but, when provided, includes total KRW budget, stay days, daily KRW budget, local daily category allocation, target currency, and strategy.
 - Preference mapping: selected food and place themes are converted into Google place search intents before candidate collection. Unknown themes fall back to localized text queries instead of being discarded.
 - Preference diversity: after satisfying the required meal/attraction/cafe mix, final selection keeps representative candidates from each selected place and food theme when capacity allows. This prevents one high-popularity theme from crowding out newly selected preferences.
@@ -137,6 +137,7 @@ Current browser console warnings are migration notices, not functional errors:
 ## Place Matching Rules
 
 - The Phase 2 Google-first engine starts from Nearby Search for mapped preferences or Text Search for unknown keyword preferences.
+- If the itinerary request does not include explicit food or place preference themes, Google-first candidate collection uses default local-food, cafe, and landmark intents so intensity replenishment can still gather enough non-duplicate candidates.
 - Text Search fallback uses a departure-centered travel-mode hard-cap `locationBias.circle` when searching preference keywords.
 - The engine deduplicates by place ID or name/address, excludes candidates that are temporarily or permanently closed, and removes candidates that match excluded places by Google Place ID, normalized name, or similar Korean/English alias tokens.
 - Address-only departure resolution uses Text Search with `pageSize: 1`; if no coordinate is returned, the Google-first path returns no places and Gemini fallback handles the request.

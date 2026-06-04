@@ -444,8 +444,12 @@ function ItineraryPage() {
 
     if (historyId) {
       const updatedHistory = await updateItineraryHistory(historyId, record);
-      setSavedHistoryId(updatedHistory.id ?? historyId);
-      return updatedHistory;
+      if (updatedHistory) {
+        setSavedHistoryId(updatedHistory.id ?? historyId);
+        return updatedHistory;
+      }
+      // update가 매칭 행을 찾지 못한 경우 — 아래 insert fallback으로 진행
+      console.warn(`History record ${historyId} not found during update, falling back to insert.`);
     }
 
     const savedHistory = await saveItineraryHistory(record);

@@ -15,9 +15,14 @@ export const ItineraryPlaceSchema = z.object({
   estimatedCost: z.string().describe("예상 비용 (사용자 예산 기준에 맞춤)"),
   travelFromPrevMinutes: z.number().int().describe("이전 장소에서 이동 소요 시간 (분). 첫 장소는 숙소에서 출발"),
   travelFromPrevDistance: z.string().describe("이전 장소까지의 거리 (예: 1.2km, 도보 15분)"),
-  mealSlot: z.enum(["breakfast", "lunch", "dinner", "snack", "none"]).describe("식사 시간대 구분"),
+  mealSlot: z.enum(["breakfast", "lunch", "dinner", "snack", "meal", "none"]).describe("식사 시간대 구분"),
   lat: z.number().describe("장소의 위도"),
-  lng: z.number().describe("장소의 경도")
+  lng: z.number().describe("장소의 경도"),
+  placeIntroduction: z.string().describe("한국어 장소 소개"),
+  photoUrl: z.string().optional(),
+  googlePlaceId: z.string().optional(),
+  travelMode: z.string().optional(),
+  recommendationContext: z.record(z.unknown()).optional()
 });
 
 export const ItineraryResponseSchema = z.array(ItineraryPlaceSchema);
@@ -42,11 +47,28 @@ export const geminiItineraryResponseSchema = {
       estimatedCost: { type: Type.STRING, description: "예상 비용 (사용자 예산 기준에 맞춤)" },
       travelFromPrevMinutes: { type: Type.INTEGER, description: "이전 장소에서 이동 소요 시간 (분). 첫 장소는 숙소에서 출발" },
       travelFromPrevDistance: { type: Type.STRING, description: "이전 장소까지의 거리 (예: 1.2km, 도보 15분)" },
-      mealSlot: { type: Type.STRING, description: "식사 시간대 구분 (breakfast, lunch, dinner, snack, none)" },
+      mealSlot: { type: Type.STRING, description: "식사 시간대 구분 (breakfast, lunch, dinner, snack, meal, none)" },
       lat: { type: Type.NUMBER, description: "장소의 위도" },
-      lng: { type: Type.NUMBER, description: "장소의 경도" }
+      lng: { type: Type.NUMBER, description: "장소의 경도" },
+      placeIntroduction: { type: Type.STRING, description: "한국어 장소 소개" }
     },
-    required: ["order", "placeName", "koName", "category", "theme", "description", "startTime", "endTime", "estimatedMinutes", "estimatedCost", "travelFromPrevMinutes", "travelFromPrevDistance", "mealSlot", "lat", "lng"]
+    required: ["order", "placeName", "koName", "category", "theme", "description", "startTime", "endTime", "estimatedMinutes", "estimatedCost", "travelFromPrevMinutes", "travelFromPrevDistance", "mealSlot", "lat", "lng", "placeIntroduction"]
   }
+};
+
+export const parseGeminiItineraryResponseText = (text: string): ItineraryPlace[] => {
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (error) {
+    throw new Error("Invalid Gemini itinerary JSON");
+  }
+
+  const result = ItineraryResponseSchema.safeParse(json);
+  if (!result.success) {
+    throw new Error("Invalid Gemini itinerary response schema\n" + result.error.message);
+  }
+  
+  return result.data;
 };
 

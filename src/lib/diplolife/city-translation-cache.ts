@@ -1,4 +1,4 @@
-﻿export interface TranslatedCity {
+export interface TranslatedCity {
   en: string;
   ko: string;
 }

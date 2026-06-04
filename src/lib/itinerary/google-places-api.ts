@@ -1,4 +1,5 @@
-﻿import type { GooglePlaceSearchIntent, LocalItineraryRecommendationRequest } from "./recommendation-policy";
+import type { GooglePlaceSearchIntent, LocalItineraryRecommendationRequest } from "./recommendation-policy";
+import { placesSearchCache } from "./api-cache";
 
 export type Fetcher = (input: string | URL, init?: RequestInit) => Promise<Response>;
 
@@ -77,15 +78,32 @@ const fetchPlaces = async (
   body: Record<string, unknown>,
   { fetcher = fetch, googleApiKey }: GoogleFirstItineraryOptions,
 ): Promise<GooglePlace[]> => {
-  const response = await fetcher(url, {
-    body: JSON.stringify(body),
-    headers: createHeaders(googleApiKey),
-    method: "POST",
-  });
+  const cacheKey = JSON.stringify({ url, body });
+  const cached = placesSearchCache.get(cacheKey);
+  if (cached) return cached as GooglePlace[];
 
-  if (!response.ok) return [];
-  const payload = (await response.json()) as { places?: GooglePlace[] };
-  return payload.places ?? [];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+  try {
+    const response = await fetcher(url, {
+      body: JSON.stringify(body),
+      headers: createHeaders(googleApiKey),
+      method: "POST",
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) return [];
+    const payload = (await response.json()) as { places?: GooglePlace[] };
+    const places = payload.places ?? [];
+    placesSearchCache.set(cacheKey, places);
+    return places;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    return [];
+  }
 };
 
 const EXCLUDED_PRIMARY_TYPES = [
@@ -119,27 +137,26 @@ export const fetchTextGooglePlaces = async (
   intent: GooglePlaceSearchIntent,
   options: GoogleFirstItineraryOptions,
 ) => {
-  const places: GooglePlace[] = [];
-
-  for (const query of intent.searchQueries) {
-    const destination = [request.city, request.country].filter(Boolean).join(" ");
-    const textQuery = [query, destination].filter(Boolean).join(" ");
-    const result = await fetchPlaces(
-      PLACES_TEXT_SEARCH_URL,
-      {
-        languageCode: "ko",
-        locationBias: {
-          circle: createSearchCircle(request, getCandidateCollectionRadius(intent)),
+  const results = await Promise.all(
+    intent.searchQueries.map(async (query) => {
+      const destination = [request.city, request.country].filter(Boolean).join(" ");
+      const textQuery = [query, destination].filter(Boolean).join(" ");
+      return fetchPlaces(
+        PLACES_TEXT_SEARCH_URL,
+        {
+          languageCode: "ko",
+          locationBias: {
+            circle: createSearchCircle(request, getCandidateCollectionRadius(intent)),
+          },
+          pageSize: 10,
+          textQuery,
         },
-        pageSize: 10,
-        textQuery,
-      },
-      options,
-    );
-    places.push(...result);
-  }
+        options,
+      );
+    }),
+  );
 
-  return places;
+  return results.flat();
 };
 
 export const resolveGooglePlaceLocation = async (

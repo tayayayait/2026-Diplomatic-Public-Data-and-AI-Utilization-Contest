@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("translateCitiesFn", () => {
   it("loads the server function module without using stale TanStack Start APIs", async () => {

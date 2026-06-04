@@ -142,20 +142,20 @@ export const collectGooglePlaceCandidates = async (
     vibeThemes: request.vibeThemes,
     travelModes: travelModes,
   });
-  const candidates: GooglePlaceCandidate[] = [];
+  const results = await Promise.all(
+    intents.map(async (intent) => {
+      const googlePlaces =
+        intent.includedTypes.length > 0
+          ? await fetchNearbyGooglePlaces(request, intent, options)
+          : await fetchTextGooglePlaces(request, intent, options);
 
-  for (const intent of intents) {
-    const googlePlaces =
-      intent.includedTypes.length > 0
-        ? await fetchNearbyGooglePlaces(request, intent, options)
-        : await fetchTextGooglePlaces(request, intent, options);
-
-    candidates.push(
-      ...googlePlaces
+      return googlePlaces
         .map((place) => normalizeGooglePlaceCandidate(place, intent))
-        .filter((candidate): candidate is GooglePlaceCandidate => candidate !== null),
-    );
-  }
+        .filter((candidate): candidate is GooglePlaceCandidate => candidate !== null);
+    })
+  );
+
+  const candidates: GooglePlaceCandidate[] = results.flat();
 
   return dedupeGooglePlaceCandidates(candidates).filter((candidate) => !isExcludedCandidate(candidate, request));
 };

@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import {
   createItineraryBudgetPlan,
@@ -67,8 +67,8 @@ describe("itinerary budget plan", () => {
       total: 7660,
       transport: 700,
     });
-    expect(formatBudgetPlanForPrompt(plan)).toContain("珥?800,000??)";
-    expect(formatBudgetPlanForPrompt(plan)).toContain("?꾨왂 ?덉빟 ?곗꽑");
+    expect(formatBudgetPlanForPrompt(plan)).toContain("800,000");
+    expect(formatBudgetPlanForPrompt(plan)).toContain("절약 우선");
   });
 
   it("does not turn budget strategy into Google Text Search price-level hard filters", () => {
@@ -99,9 +99,9 @@ describe("itinerary budget plan", () => {
   });
 
   it("falls back from legacy budget labels to a budget strategy", () => {
-    expect(resolveBudgetStrategy({ strategy: "experience" }, "???)).toBe("experience")";
-    expect(resolveBudgetStrategy(undefined, "???)).toBe("saving")";
-    expect(resolveBudgetStrategy(undefined, "800,000???섏?")).toBe("balanced");
-    expect(resolveBudgetStrategy(undefined, "?ъ쑀")).toBe("experience");
+    expect(resolveBudgetStrategy({ strategy: "experience" }, "저렴")).toBe("experience");
+    expect(resolveBudgetStrategy(undefined, "저렴")).toBe("saving");
+    expect(resolveBudgetStrategy(undefined, "800,000원")).toBe("balanced");
+    expect(resolveBudgetStrategy(undefined, "여유")).toBe("experience");
   });
 });

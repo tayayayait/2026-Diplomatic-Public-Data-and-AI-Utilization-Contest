@@ -1,4 +1,4 @@
-﻿import type { ItineraryPlace } from "@/lib/gemini/schema";
+import type { ItineraryPlace } from "@/lib/gemini/schema";
 
 import type { GoogleFirstItineraryOptions } from "./google-place-candidates";
 import { computeRoute } from "./google-routes-api";

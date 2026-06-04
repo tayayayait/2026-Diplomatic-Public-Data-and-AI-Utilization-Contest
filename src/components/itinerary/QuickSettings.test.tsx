@@ -17,15 +17,15 @@ describe("QuickSettings", () => {
       <QuickSettings defaultOpen values={values} onChange={() => undefined} />,
     );
 
-    expect(markup).toContain("Detail itinerary settings");
-    expect(markup).toContain("Start time");
-    expect(markup).toContain("Itinerary intensity");
-    expect(markup).toContain("Relaxed");
-    expect(markup).toContain("3 places");
-    expect(markup).toContain("Normal");
-    expect(markup).toContain("5 places");
-    expect(markup).toContain("Packed");
-    expect(markup).toContain("7 places");
+    expect(markup).toContain("상세 일정 설정");
+    expect(markup).toContain("시작 시간");
+    expect(markup).toContain("일정 강도");
+    expect(markup).toContain("여유롭게");
+    expect(markup).toContain("3곳");
+    expect(markup).toContain("보통");
+    expect(markup).toContain("5곳");
+    expect(markup).toContain("알차게");
+    expect(markup).toContain("7곳");
     expect(markup).not.toContain("Travel modes");
   });
 });

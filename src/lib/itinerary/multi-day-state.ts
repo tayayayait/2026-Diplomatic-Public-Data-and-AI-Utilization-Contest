@@ -1,4 +1,4 @@
-﻿import type { UserProfile } from "@/lib/diplolife/state";
+import type { UserProfile } from "@/lib/diplolife/state";
 import type { ItineraryPlace } from "@/lib/gemini/schema";
 import { calculateTripDuration } from "@/lib/itineraryUtils";
 import type { Place, TimelineSlot } from "@/store/itineraryStore";

@@ -1,7 +1,8 @@
-﻿import { useDiploLifeStore } from "@/lib/diplolife/state";
+import { useDiploLifeStore } from "@/lib/diplolife/state";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -12,8 +13,15 @@ import { CATEGORY_ICON } from "@/lib/diplolife/cost-translations";
 
 export function SmartTipsCard() {
   const costInsight = useDiploLifeStore((state) => state.costInsight);
+  const refreshDynamicInsights = useDiploLifeStore((state) => state.refreshDynamicInsights);
   const analysis = costInsight.analysis;
   const status = costInsight.status;
+
+  const isRefreshingTips = costInsight.isRefreshingTips;
+
+  const handleRefresh = () => {
+    void refreshDynamicInsights();
+  };
 
   if (status === "loading" && !analysis) {
     return (
@@ -29,21 +37,32 @@ export function SmartTipsCard() {
 
   if (!analysis || !analysis.recommendations) return null;
 
-  // 湲곕낯?곸쑝濡?泥?踰덉㎏? ??踰덉㎏ ?꾩씠???닿린
-  const defaultValue = analysis.recommendations.map((_, i) => `item-${i}`).slice(0, 2);
+  // 기본적으로 3개의 팁 모두 열어두기
+  const defaultValue = analysis.recommendations.map((_, i) => `item-${i}`).slice(0, 3);
 
   return (
     <Card className="w-full">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-lg font-bold flex items-center gap-2">
           <Lightbulb className="w-5 h-5 text-yellow-500" /> 
-          AI ?꾩? ?덉빟 ??        </CardTitle>
+          AI 현지 절약 팁
+        </CardTitle>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleRefresh}
+          disabled={isRefreshingTips}
+          className="h-8 text-xs gap-1.5"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isRefreshingTips ? "animate-spin" : ""}`} />
+          팁 재생성
+        </Button>
       </CardHeader>
       <CardContent className="space-y-6">
         {analysis.recommendations.length > 0 && (
           <Accordion type="multiple" defaultValue={defaultValue} className="w-full">
             {analysis.recommendations.map((rec, i) => {
-              const icon = CATEGORY_ICON[rec.category] || "?뮕";
+              const icon = CATEGORY_ICON[rec.category] || "💡";
               return (
                 <AccordionItem key={i} value={`item-${i}`}>
                   <AccordionTrigger className="text-sm font-medium hover:no-underline hover:bg-muted/50 px-2 rounded-md transition-colors text-left">
@@ -57,7 +76,7 @@ export function SmartTipsCard() {
                     </p>
                     {rec.estimatedSaving && (
                       <div className="mt-2 inline-block bg-primary/10 text-primary px-2 py-1 rounded text-xs font-semibold">
-                        ?덉빟 ?④낵: {rec.estimatedSaving}
+                        절약 효과: {rec.estimatedSaving}
                       </div>
                     )}
                   </AccordionContent>
@@ -67,14 +86,14 @@ export function SmartTipsCard() {
           </Accordion>
         )}
 
-        {analysis.savingTips && analysis.savingTips.length > 0 && (
+        {analysis.savingTips && (Array.isArray(analysis.savingTips) ? analysis.savingTips : [analysis.savingTips]).length > 0 && (
           <div className="space-y-3 pt-4 border-t">
-            <h4 className="font-semibold text-sm">Text</h4>
+            <h4 className="font-semibold text-sm">추가 절약 팁</h4>
             <ul className="space-y-2">
-              {analysis.savingTips.map((tip, i) => (
+              {(Array.isArray(analysis.savingTips) ? analysis.savingTips : [analysis.savingTips]).map((tip, i) => (
                 <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-primary mt-0.5">Text</span>
-                  <span className="leading-relaxed">{tip}</span>
+                  <span className="text-primary mt-0.5">•</span>
+                  <span className="leading-relaxed">{typeof tip === 'string' ? tip : JSON.stringify(tip)}</span>
                 </li>
               ))}
             </ul>

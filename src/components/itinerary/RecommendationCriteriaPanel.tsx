@@ -1,4 +1,4 @@
-﻿import { BadgeCheck, MapPinned, Route, SlidersHorizontal } from "lucide-react";
+import { BadgeCheck, MapPinned, Route, SlidersHorizontal } from "lucide-react";
 import type { ItineraryPlace } from "@/lib/gemini/schema";
 import type { ItineraryBudgetPlan } from "@/lib/itinerary/budget-plan";
 import { createRecommendationCriteriaViewModel } from "@/lib/itinerary/recommendation-explanation";
@@ -15,7 +15,7 @@ export function RecommendationCriteriaPanel({ budgetPlan, places = [] }: Recomme
     <section className="rounded-xl border border-border bg-surface p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-bold leading-5 text-foreground">異붿쿇 湲곗?</h3>
+          <h3 className="text-sm font-bold leading-5 text-foreground">추천 기준</h3>
           <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{model.dataBasisLabel}</p>
         </div>
         <span className="rounded-md bg-primary/10 px-2 py-1 text-[11px] font-semibold leading-4 text-primary">

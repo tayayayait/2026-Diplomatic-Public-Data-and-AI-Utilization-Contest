@@ -1,17 +1,17 @@
-﻿import { useMemo } from "react";
+import { useMemo } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, Building2, Flame, HeartPulse, Phone, ShieldAlert, X } from "lucide-react";
 import { useDiploLifeStore, type SOSContact } from "@/lib/diplolife/state";
 
 export const Route = createFileRoute("/sos")({
-  head: () => ({ meta: [{ title: "SOS 湲닿툒 ?붿껌 ??DiploLife" }] }),
+  head: () => ({ meta: [{ title: "SOS 긴급 요청 | DiploLife" }] }),
   component: SosPage,
 });
 
 const EMERGENCY_GUIDES = [
-  { icon: ShieldAlert, label: "踰붿즲 ?쇳빐", desc: "?꾩? 寃쎌같???좉퀬 ???곸궗愿???곕씫?섏뿬 ?듭뿭/蹂?몄궗 ?덈궡瑜??붿껌?섏꽭??" },
-  { icon: HeartPulse, label: "?묎툒 ?섏옄", desc: "?꾩? ?묎툒踰덊샇 ?몄텧 ?? ??ш????듯빐 ?섎즺吏??뚰넻 吏?먯쓣 諛쏆쑝?몄슂." },
-  { icon: Flame, label: "?щ궃/?뚮윭", desc: "利됱떆 ???????ш? 諛??곸궗肄쒖꽱?곗뿉 蹂몄씤???덉쟾 ?곹깭瑜?蹂닿퀬?섏꽭??" },
+  { icon: ShieldAlert, label: "범죄 피해", desc: "현지 경찰에 신고 후 영사관에 연락하여 통역/변호사 안내를 요청하세요." },
+  { icon: HeartPulse, label: "응급 환자", desc: "현지 응급번호 호출 후 대사관을 통해 의료진 소통 지원을 받으세요." },
+  { icon: Flame, label: "재난/테러", desc: "즉시 대피처로 대피하고 대사관 및 영사콜센터에 본인의 안전 상태를 보고하세요." },
 ];
 
 function SosPage() {
@@ -20,10 +20,10 @@ function SosPage() {
   const visibleContacts = useMemo(() => {
     const contacts: SOSContact[] = [];
     
-    // ?곸궗肄쒖꽱??(湲곕낯 怨좎젙)
+    // 영사콜센터 (기본 고정)
     contacts.push({
       id: "consular-center",
-      label: "?곸궗肄쒖꽱??(24?쒓컙)",
+      label: "영사콜센터 (24시간)",
       phone: "+82-2-3210-0404",
       type: "consular",
       availableOffline: true,
@@ -36,7 +36,7 @@ function SosPage() {
         if (phone) {
           contacts.push({
             id: `embassy`,
-            label: emb.embassy_kor_nm || "??쒕?援???ш?",
+            label: emb.embassy_kor_nm || "대한민국 대사관",
             phone,
             type: "embassy",
             availableOffline: true,
@@ -44,21 +44,13 @@ function SosPage() {
         }
       }
       
-      if (publicData.local_contact) {
-        const lc = publicData.local_contact;
-        contacts.push({
-          id: `local`,
-          label: "?꾩? 湲닿툒 ?곕씫泥?(?곸꽭 李몄“)",
-          phone: "?덉쟾 硫붾돱 ?뺤씤", // LocalContact 紐⑤뜽???⑥씪 ?꾪솕踰덊샇媛 ?놁뼱 ?덈궡濡??泥?          type: "police",
-          availableOffline: true,
-        });
-      }
+
     }
 
-    if (contacts.length === 1) { // ?곗씠?곌? ?놁쓣 寃쎌슦
+    if (contacts.length === 1) { // 데이터가 없을 경우
       contacts.push({
         id: "local-embassy-fallback",
-        label: "??쒕?援???ш? (?꾩?)",
+        label: "대한민국 대사관 (현지)",
         phone: "112 / 911", // Placeholder
         type: "embassy",
         availableOffline: true,
@@ -76,12 +68,12 @@ function SosPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-danger shadow-md">
             <AlertTriangle className="h-6 w-6" />
           </div>
-          <span className="text-xl font-bold tracking-tight">湲닿툒 SOS</span>
+          <span className="text-xl font-bold tracking-tight">긴급 SOS</span>
         </div>
         <Link
           to="/dashboard"
           className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 transition-colors hover:bg-white/30"
-          aria-label="?リ린"
+          aria-label="닫기"
         >
           <X className="h-6 w-6" />
         </Link>
@@ -90,10 +82,10 @@ function SosPage() {
       {/* Main Content */}
       <div className="flex flex-1 flex-col px-6 pb-12 pt-6 sm:px-8">
         <h1 className="text-[32px] font-bold leading-tight sm:text-[48px]">
-          ?꾩????꾩슂?섏떊媛??
+          도움이 필요하신가요?
         </h1>
         <p className="mt-4 text-[18px] text-white/90">
-          移⑥갑?섍쾶 ?꾨옒 ?곕씫泥섎줈 ?꾩????붿껌?섏꽭??
+          침착하게 아래 연락처로 도움을 요청하세요.
         </p>
 
         {/* Contacts Grid */}
@@ -114,8 +106,8 @@ function SosPage() {
               </div>
               
               <a
-                href={contact.phone !== "?덉쟾 硫붾돱 ?뺤씤" ? `tel:${contact.phone.replace(/[^0-9+]/g, '')}` : '#'}
-                onClick={(e) => { if(contact.phone === "?덉쟾 硫붾돱 ?뺤씤") e.preventDefault(); }}
+                href={contact.phone !== "안전 메뉴 확인" ? `tel:${contact.phone.replace(/[^0-9+]/g, '')}` : '#'}
+                onClick={(e) => { if(contact.phone === "안전 메뉴 확인") e.preventDefault(); }}
                 className="mt-8 flex h-[72px] w-full items-center justify-center gap-3 rounded-2xl bg-danger px-6 text-[22px] font-black tracking-wide text-white shadow-lg shadow-danger/30 transition-all duration-200 hover:bg-red-700 hover:shadow-danger/50 active:scale-95 relative z-10"
               >
                 <Phone className="h-7 w-7 animate-pulse" />
@@ -127,7 +119,7 @@ function SosPage() {
 
         {/* Emergency Guides */}
         <div className="mt-12 stagger-child" style={{ "--index": 2 } as any}>
-          <h2 className="mb-6 text-[20px] font-bold">Text</h2>
+          <h2 className="mb-6 text-[20px] font-bold">긴급 대처 가이드</h2>
           <div className="grid gap-4 sm:grid-cols-3">
             {EMERGENCY_GUIDES.map((item) => {
               const Icon = item.icon;
@@ -148,7 +140,7 @@ function SosPage() {
 
         {/* Bottom Notice */}
         <div className="mt-auto pt-12 text-center text-[13px] text-white/60 stagger-child" style={{ "--index": 3 } as any}>
-          ?꾩? ?듭떊 ?ъ젙???곕씪 ?곌껐??吏?곕맆 ???덉뒿?덈떎. ?명꽣?룹씠 遺덇???寃쎌슦 ?곸궗肄쒖꽱??24?쒓컙 ?깆쓣 ?ъ슜?섏꽭??
+          현지 통신 사정에 따라 연결이 지연될 수 있습니다. 인터넷이 불가한 경우 영사콜센터 24시간 앱을 사용하세요.
         </div>
       </div>
     </main>

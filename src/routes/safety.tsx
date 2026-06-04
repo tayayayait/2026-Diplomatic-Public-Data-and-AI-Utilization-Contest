@@ -6,11 +6,11 @@ import { AppShell } from "@/components/diplolife/AppShell";
 import { useDiploLifeStore } from "@/lib/diplolife/state";
 
 export const Route = createFileRoute("/safety")({
-  head: () => ({ meta: [{ title: "Safety | DiploLife" }] }),
+  head: () => ({ meta: [{ title: "안전 | DiploLife" }] }),
   component: SafetyPage,
 });
 
-const UNKNOWN_TEXT = "No confirmed information";
+const UNKNOWN_TEXT = "확실한 정보 없음";
 const CONSULAR_CENTER_PHONE = "+82-2-3210-0404";
 
 export interface UniversalContactGroup {
@@ -21,24 +21,37 @@ export interface UniversalContactGroup {
 export function parseUniversalContacts(value?: string | null): UniversalContactGroup[] {
   if (!value) return [];
 
-  const groups: UniversalContactGroup[] = [];
-  let current: UniversalContactGroup = { title: "General", items: [] };
+  // Normalize text: add newlines before [ and ㅇ to properly split it if they are missing newlines.
+  const normalizedValue = value
+    .replace(/\[/g, '\n[')
+    .replace(/ㅇ\s/g, '\nㅇ ')
+    .replace(/\n+/g, '\n')
+    .trim();
 
-  for (const rawLine of value.split(/\r?\n/)) {
+  const groups: UniversalContactGroup[] = [];
+  let current: UniversalContactGroup = { title: "기본 정보", items: [] };
+
+  for (const rawLine of normalizedValue.split(/\r?\n/)) {
     const line = rawLine.trim();
     if (line.length < 3) continue;
 
-    const isTitle = /^\[.*\]$/.test(line);
-    if (isTitle) {
+    const titleMatch = line.match(/\[(.*?)\]/);
+    if (titleMatch) {
       if (current.items.length > 0) groups.push(current);
-      current = { title: line.replace(/^\[|\]$/g, "").trim() || "General", items: [] };
+      current = { title: titleMatch[1].trim() || "기본 정보", items: [] };
       continue;
     }
 
-    const [rawLabel, ...rest] = line.split(":");
-    const hasLabel = rest.length > 0 && rawLabel.length <= 32;
-    const label = hasLabel ? rawLabel.trim() : "Info";
-    const text = hasLabel ? rest.join(":").trim() : line;
+    const cleanLine = line.replace(/^ㅇ\s*/, '').replace(/^-/, '').trim();
+    const colonIndex = cleanLine.indexOf(':');
+    let label = "정보";
+    let text = cleanLine;
+
+    if (colonIndex > -1 && colonIndex <= 32) {
+      label = cleanLine.substring(0, colonIndex).trim();
+      text = cleanLine.substring(colonIndex + 1).trim();
+    }
+
     const lower = `${label} ${text}`.toLowerCase();
     const type = lower.includes("@")
       ? "email"
@@ -46,7 +59,7 @@ export function parseUniversalContacts(value?: string | null): UniversalContactG
         ? "link"
         : /\+?\d[\d\s().-]{4,}\d/.test(text)
           ? "phone"
-          : lower.includes("address")
+          : lower.includes("address") || lower.includes("주소")
             ? "address"
             : "other";
 
@@ -127,7 +140,7 @@ function SafetyPage() {
     }
   }, [fetchDashboardData, profile?.country, profile?.countryCode]);
 
-  const countryName = publicData?.travel_alarm?.country_nm || profile?.country || "Selected country";
+  const countryName = publicData?.travel_alarm?.country_nm || profile?.country || "선택된 국가";
   const embassy = publicData?.embassy;
   const embassyPhone = embassy?.urgency_tel_no || embassy?.tel_no;
   const representativePhone = embassy?.tel_no;
@@ -138,20 +151,20 @@ function SafetyPage() {
   );
 
   return (
-    <AppShell eyebrow="Safety" title={`${countryName} safety dashboard`} tone="danger">
+    <AppShell eyebrow="안전" title={`${countryName} 안전 대시보드`} tone="danger">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
         <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Travel alert level</p>
+              <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">여행 경보 단계</p>
               <h2 className="mt-2 text-[36px] font-black text-foreground">
-                {safetyLevel ? `Level ${safetyLevel}` : UNKNOWN_TEXT}
+                {safetyLevel ? `${safetyLevel}단계` : UNKNOWN_TEXT}
               </h2>
             </div>
             <ShieldCheck className="h-12 w-12 text-primary" aria-hidden="true" />
           </div>
           <p className="mt-4 text-[14px] leading-6 text-muted-foreground">
-            Check official Ministry of Foreign Affairs updates and local emergency contacts before moving around the area.
+            해당 지역으로 이동하기 전에 외교부의 공식 업데이트 및 현지 긴급 연락처를 확인하세요.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             {publicData?.travel_alarm?.written_dt && <InfoBadge>{formatDate(publicData.travel_alarm.written_dt)}</InfoBadge>}
@@ -162,7 +175,7 @@ function SafetyPage() {
         <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3">
             <AlertTriangle className="h-5 w-5 text-danger" aria-hidden="true" />
-            <h2 className="text-[18px] font-bold">Current advisory</h2>
+            <h2 className="text-[18px] font-bold">현재 주의보</h2>
           </div>
           <p className="mt-4 whitespace-pre-wrap text-[14px] leading-6 text-muted-foreground">
             {publicData?.travel_alarm?.remark || publicData?.accident?.content || UNKNOWN_TEXT}
@@ -173,30 +186,30 @@ function SafetyPage() {
       <section className="mt-6 rounded-lg border border-border bg-card p-6 shadow-sm">
         <div className="mb-5 flex items-center gap-3">
           <PhoneCall className="h-5 w-5 text-primary" aria-hidden="true" />
-          <h2 className="text-[18px] font-bold">Emergency contacts</h2>
+          <h2 className="text-[18px] font-bold">긴급 연락처</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <ContactAction
             icon={PhoneCall}
-            label="Consular call center"
+            label="영사 콜센터"
             value={CONSULAR_CENTER_PHONE}
-            hint="Overseas incident, accident, arrest, or urgent consultation"
+            hint="해외 사건, 사고, 체포 또는 긴급 상담"
             href={telHref(CONSULAR_CENTER_PHONE)}
           />
           {embassyPhone && (
             <ContactAction
               icon={Building2}
-              label={embassy?.embassy_kor_nm || "Embassy emergency phone"}
+              label={embassy?.embassy_kor_nm || "대사관 긴급 전화"}
               value={embassyPhone}
               hint={embassy?.embassy_addr}
               href={telHref(embassyPhone)}
             />
           )}
           {representativePhone && representativePhone !== embassyPhone && (
-            <ContactAction icon={PhoneCall} label="Embassy representative phone" value={representativePhone} href={telHref(representativePhone)} />
+            <ContactAction icon={PhoneCall} label="대사관 대표 전화" value={representativePhone} href={telHref(representativePhone)} />
           )}
           {freePhone && (
-            <ContactAction icon={MessageCircle} label="Free or local consultation number" value={freePhone} href={telHref(freePhone)} />
+            <ContactAction icon={MessageCircle} label="무료 또는 현지 상담 전화" value={freePhone} href={telHref(freePhone)} />
           )}
         </div>
       </section>
@@ -204,7 +217,7 @@ function SafetyPage() {
       <section className="mt-6 rounded-lg border border-border bg-card p-6 shadow-sm">
         <div className="mb-5 flex items-center gap-3">
           <Map className="h-5 w-5 text-primary" aria-hidden="true" />
-          <h2 className="text-[18px] font-bold">Local contact guide</h2>
+          <h2 className="text-[18px] font-bold">현지 연락처 안내</h2>
         </div>
         {contactGroups.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2">
@@ -225,7 +238,7 @@ function SafetyPage() {
         ) : (
           <div className="flex items-center gap-3 rounded-lg border border-dashed border-border bg-surface-alt p-5 text-[14px] text-muted-foreground">
             <Info className="h-5 w-5" aria-hidden="true" />
-            Local contact data is not available yet.
+            현지 연락처 정보가 아직 제공되지 않습니다.
           </div>
         )}
       </section>

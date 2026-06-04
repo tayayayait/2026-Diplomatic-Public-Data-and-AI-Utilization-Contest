@@ -24,68 +24,71 @@ function LandingPage() {
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen bg-background text-foreground">
       <section className="relative flex min-h-[88vh] overflow-hidden">
-        <img
-          src="/home-hero-animation.webp"
-          alt="해외 체류 안전 확인을 상징하는 산악 도시 풍경"
+        <video
+          src="/home-hero-video.mp4"
           className="absolute inset-0 h-full w-full object-cover"
-          fetchPriority="high"
+          autoPlay
+          loop
+          muted
+          playsInline
         />
         <div className="absolute inset-0 bg-slate-950/45" />
-        <div className="relative z-10 flex w-full flex-col px-5 py-6 sm:px-8 lg:px-12">
-          <header className="flex items-center justify-between text-white">
-            <Link to="/" className="text-[18px] font-bold tracking-normal">
-              DiploLife
-            </Link>
-            <Link
-              to="/dashboard"
-              className="inline-flex h-11 items-center rounded-full border border-white/30 bg-white/15 px-4 text-sm font-semibold backdrop-blur-md hover:bg-white/20"
-            >
-              대시보드
-            </Link>
-          </header>
-
-          <div className="flex flex-1 items-center">
-            <div className="max-w-3xl text-white">
-              <p className="mb-4 inline-flex rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] backdrop-blur-md">
-                Public Data Living Companion
-              </p>
-              <h1 className="text-balance text-[48px] font-bold leading-[1.15] tracking-normal sm:text-[64px] lg:text-[78px]">
+        
+        {/* 전체 콘텐츠를 감싸는 중앙 정렬 컨테이너 */}
+        <div className="relative z-10 flex w-full flex-col">
+          <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-5 py-6 sm:px-8">
+            <header className="flex items-center justify-between text-white">
+              <Link to="/" className="text-[18px] font-bold tracking-normal">
                 DiploLife
-              </h1>
-              <p className="mt-5 max-w-2xl text-[16px] leading-7 text-white/88 sm:text-[18px]">
-                해외 체류 중 필요한 안전, 비자, 환율, 날씨, 공지, SOS 정보를 한 화면에서 확인합니다.
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  to="/onboarding"
-                  className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-white shadow-raised hover:bg-primary-hover hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  시작하기
-                  <ArrowRight className="h-5 w-5" aria-hidden="true" />
-                </Link>
-                <Link
-                  to="/chat"
-                  className="inline-flex h-14 items-center justify-center rounded-full border border-white/35 bg-white/12 px-8 text-base font-semibold text-white backdrop-blur-md hover:bg-white/20"
-                >
-                  AI 상담 열기
-                </Link>
+              </Link>
+            </header>
+
+            <div className="flex flex-1 items-center mt-12 sm:mt-0">
+              <div className="max-w-3xl text-white">
+                <p className="mb-4 inline-flex rounded-full bg-white/15 px-4 py-1 text-[12px] font-semibold uppercase tracking-[0.12em] backdrop-blur-md">
+                  Public Data Living Companion
+                </p>
+                <h1 className="text-balance text-[48px] font-bold leading-[1.15] tracking-tight sm:text-[64px] lg:text-[82px]">
+                  DiploLife
+                </h1>
+                <p className="mt-6 max-w-2xl text-[16px] leading-relaxed text-white/90 sm:text-[18px]">
+                  해외 체류 중 필요한 안전, 비자, 환율, 날씨, 공지, SOS 정보를 한 화면에서 확인합니다.
+                </p>
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                  <Link
+                    to="/onboarding"
+                    className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-white shadow-raised transition-transform hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    시작하기
+                    <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                  </Link>
+                  <Link
+                    to="/chat"
+                    className="inline-flex h-14 items-center justify-center rounded-full border border-white/35 bg-white/10 px-8 text-base font-semibold text-white backdrop-blur-md transition-colors hover:bg-white/20"
+                  >
+                    AI 상담 열기
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto -mt-10 grid w-[calc(100%-32px)] max-w-7xl gap-4 pb-16 md:grid-cols-3">
+      {/* 카드 섹션: max-w를 히어로 섹션과 통일하고 좌우 패딩을 동일하게 맞춤 */}
+      <section className="relative z-20 mx-auto -mt-16 grid w-full max-w-7xl gap-6 px-5 sm:px-8 pb-16 md:grid-cols-3">
         {SIGNALS.map((item) => {
           const Icon = item.icon;
           return (
             <article
               key={item.label}
-              className="rounded-[20px] border border-border bg-surface p-5 shadow-card"
+              className="flex flex-col rounded-[24px] border border-border/60 bg-surface/95 p-6 shadow-card backdrop-blur-sm transition-shadow hover:shadow-lg"
             >
-              <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-              <h2 className="mt-4 text-[18px] font-semibold leading-[1.4]">{item.label}</h2>
-              <p className="mt-1 text-[14px] leading-6 text-muted-foreground">{item.value}</p>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <Icon className="h-6 w-6 text-primary" aria-hidden="true" />
+              </div>
+              <h2 className="mt-5 text-[19px] font-semibold leading-[1.4] text-foreground">{item.label}</h2>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{item.value}</p>
             </article>
           );
         })}

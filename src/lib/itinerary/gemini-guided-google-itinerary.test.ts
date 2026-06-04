@@ -92,7 +92,7 @@ describe("Gemini-guided Google itinerary matching", () => {
 
     const places = await createGeminiGuidedGoogleItinerary(
       baseRequest,
-      [makeDraftPlace({})],
+      [makeDraftPlace({ koName: "커낼시티 하카타" })],
       { fetcher, googleApiKey: "google-key" },
     );
 
@@ -100,14 +100,17 @@ describe("Gemini-guided Google itinerary matching", () => {
     expect(textSearchRequest?.body.textQuery).toBe("Canal City Hakata Fukuoka JP");
     expect(places).toHaveLength(1);
     expect(places[0]).toMatchObject({
+      category: "shopping",
       estimatedCost: "Google price: free",
       estimatedMinutes: 70,
       googlePlaceId: "canal-city-google-id",
+      koName: "커낼시티 하카타",
       lat: 33.5898,
       lng: 130.4111,
       placeIntroduction:
-        "Canal City Hakata is a large shopping and entertainment complex in central Fukuoka. Travelers can combine shopping, food, and a city landmark stop in one place.",
+        "[AI 추천: 커낼시티 하카타] Canal City Hakata is a large shopping and entertainment complex in central Fukuoka. Travelers can combine shopping, food, and a city landmark stop in one place.",
       placeName: "Canal City Hakata",
+      mealSlot: "none",
       startTime: "09:10",
       endTime: "10:20",
       travelFromPrevDistance: "900m",
@@ -124,6 +127,92 @@ describe("Gemini-guided Google itinerary matching", () => {
       source: "google_places",
       userRatingCount: 12000,
     });
+  });
+
+  it("reorders matched Gemini draft stops by the route from the accommodation", async () => {
+    const fetcher = async (input: string | URL, init?: RequestInit) => {
+      const url = input.toString();
+      const body = init?.body ? JSON.parse(init.body.toString()) : null;
+
+      if (url.includes("places:searchText")) {
+        const textQuery = body.textQuery as string;
+        const placeByQuery = textQuery.startsWith("Far Tower")
+          ? {
+              displayName: { text: "Far Tower" },
+              id: "far-tower-id",
+              location: { latitude: 0, longitude: 10 },
+              primaryType: "tourist_attraction",
+            }
+          : textQuery.startsWith("Nearby Ramen")
+            ? {
+                displayName: { text: "Nearby Ramen" },
+                id: "nearby-ramen-id",
+                location: { latitude: 0, longitude: 1 },
+                primaryType: "restaurant",
+              }
+            : {
+                displayName: { text: "Middle Shrine" },
+                id: "middle-shrine-id",
+                location: { latitude: 0, longitude: 2 },
+                primaryType: "tourist_attraction",
+              };
+
+        return okJson({
+          places: [
+            {
+              businessStatus: "OPERATIONAL",
+              rating: 4.5,
+              regularOpeningHours: { openNow: true },
+              userRatingCount: 500,
+              ...placeByQuery,
+            },
+          ],
+        });
+      }
+
+      if (url.includes("directions/v2:computeRoutes")) {
+        const origin = body.origin.location.latLng;
+        const destination = body.destination.location.latLng;
+        const distanceMeters = Math.round(
+          Math.abs(destination.longitude - origin.longitude) * 1000,
+        );
+
+        return okJson({
+          routes: [{ distanceMeters, duration: `${Math.max(60, distanceMeters * 0.6)}s` }],
+        });
+      }
+
+      throw new Error(`Unexpected request: ${url}`);
+    };
+
+    const places = await createGeminiGuidedGoogleItinerary(
+      {
+        ...baseRequest,
+        departure: { lat: 0, lng: 0 },
+        startTime: "09:00",
+        targetPlaceCount: 3,
+      },
+      [
+        makeDraftPlace({ order: 1, placeName: "Far Tower", koName: "Far Tower" }),
+        makeDraftPlace({
+          category: "restaurant",
+          mealSlot: "meal",
+          order: 2,
+          placeName: "Nearby Ramen",
+          koName: "Nearby Ramen",
+        }),
+        makeDraftPlace({ order: 3, placeName: "Middle Shrine", koName: "Middle Shrine" }),
+      ],
+      { fetcher, googleApiKey: "google-key" },
+    );
+
+    expect(places.map((place) => place.placeName)).toEqual([
+      "Nearby Ramen",
+      "Middle Shrine",
+      "Far Tower",
+    ]);
+    expect(places.map((place) => place.order)).toEqual([1, 2, 3]);
+    expect(places.map((place) => place.travelFromPrevMinutes)).toEqual([10, 10, 80]);
   });
 
   it("does not reuse excluded or already matched Google places across Gemini draft slots", async () => {
@@ -213,7 +302,7 @@ describe("Gemini-guided Google itinerary matching", () => {
       "asian-art-id",
     ]);
     expect(places.map((place) => place.placeName)).toEqual([
-      "Old Market",
+      "Yanagibashi Rengo Market",
       "Fukuoka Asian Art Museum",
     ]);
   });
@@ -329,6 +418,78 @@ describe("Gemini-guided Google itinerary matching", () => {
       "famous-reservation-restaurant-id",
     ]);
     expect(places[0].mealSlot).toBe("meal");
+  });
+
+  it("caps matched Gemini draft meals and cafes to the selected normal intensity composition", async () => {
+    const typeByName = new Map([
+      ["Ramen One", "restaurant"],
+      ["Sushi Two", "restaurant"],
+      ["Izakaya Three", "restaurant"],
+      ["Cafe One", "cafe"],
+      ["Dessert Two", "cafe"],
+      ["Observation Deck", "tourist_attraction"],
+      ["City Museum", "museum"],
+      ["Local Market", "market"],
+      ["Riverside Park", "park"],
+    ]);
+    const fetcher = async (input: string | URL, init?: RequestInit) => {
+      const url = input.toString();
+      const body = init?.body ? JSON.parse(init.body.toString()) : null;
+
+      if (url.includes("places:searchText")) {
+        const matchedName = [...typeByName.keys()].find((name) =>
+          body.textQuery.startsWith(name),
+        );
+        if (!matchedName) throw new Error(`Unexpected text query: ${body.textQuery}`);
+
+        return okJson({
+          places: [
+            {
+              businessStatus: "OPERATIONAL",
+              displayName: { text: matchedName },
+              id: `${matchedName.toLowerCase().replaceAll(" ", "-")}-id`,
+              location: { latitude: 33.59, longitude: 130.41 },
+              primaryType: typeByName.get(matchedName),
+              rating: 4.5,
+              regularOpeningHours: { openNow: true },
+              userRatingCount: 1000,
+            },
+          ],
+        });
+      }
+
+      if (url.includes("directions/v2:computeRoutes")) {
+        return okJson({
+          routes: [{ distanceMeters: 300, duration: "300s" }],
+        });
+      }
+
+      throw new Error(`Unexpected request: ${url}`);
+    };
+
+    const places = await createGeminiGuidedGoogleItinerary(
+      {
+        ...baseRequest,
+        targetPlaceCount: 5,
+      },
+      [
+        makeDraftPlace({ category: "restaurant", mealSlot: "meal", order: 1, placeName: "Ramen One", koName: "Ramen One" }),
+        makeDraftPlace({ category: "restaurant", mealSlot: "meal", order: 2, placeName: "Sushi Two", koName: "Sushi Two" }),
+        makeDraftPlace({ category: "restaurant", mealSlot: "meal", order: 3, placeName: "Izakaya Three", koName: "Izakaya Three" }),
+        makeDraftPlace({ category: "cafe", mealSlot: "snack", order: 4, placeName: "Cafe One", koName: "Cafe One" }),
+        makeDraftPlace({ category: "cafe", mealSlot: "snack", order: 5, placeName: "Dessert Two", koName: "Dessert Two" }),
+        makeDraftPlace({ category: "attraction", mealSlot: "none", order: 6, placeName: "Observation Deck", koName: "Observation Deck" }),
+        makeDraftPlace({ category: "culture", mealSlot: "none", order: 7, placeName: "City Museum", koName: "City Museum" }),
+        makeDraftPlace({ category: "shopping", mealSlot: "none", order: 8, placeName: "Local Market", koName: "Local Market" }),
+        makeDraftPlace({ category: "nature", mealSlot: "none", order: 9, placeName: "Riverside Park", koName: "Riverside Park" }),
+      ],
+      { fetcher, googleApiKey: "google-key" },
+    );
+
+    expect(places).toHaveLength(5);
+    expect(places.filter((place) => place.category === "restaurant")).toHaveLength(1);
+    expect(places.filter((place) => place.category === "cafe")).toHaveLength(1);
+    expect(places.map((place) => place.order)).toEqual([1, 2, 3, 4, 5]);
   });
 });
 

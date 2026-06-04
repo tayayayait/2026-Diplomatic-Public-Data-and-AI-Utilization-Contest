@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Loader2, LogIn, ShieldCheck, UserPlus } from "lucide-react";
 
 import { useSupabaseAuth } from "@/lib/auth-context";
@@ -38,7 +38,7 @@ const normalizeRedirectTo = (value: unknown): RedirectTarget => {
 };
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "濡쒓렇??| DiploLife" }] }),
+  head: () => ({ meta: [{ title: "로그인 | DiploLife" }] }),
   validateSearch: (search: Record<string, unknown>): AuthSearch => ({
     mode: search.mode === "signup" ? "signup" : "signin",
     redirectTo: normalizeRedirectTo(search.redirectTo),
@@ -47,7 +47,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate();
   const search = Route.useSearch();
   const { signIn, signUp, status } = useSupabaseAuth();
   const [mode, setMode] = useState<AuthMode>(search.mode);
@@ -102,7 +102,7 @@ function AuthPage() {
         });
 
         if (result.needsEmailConfirmation) {
-          setMessage("?뺤씤 硫붿씪??諛쒖넚?덉뒿?덈떎. ?대찓???몄쬆 ??濡쒓렇?명븯?몄슂.");
+          setMessage("확인 메일이 발송되었습니다. 이메일 인증 후 로그인하세요.");
           return;
         }
       } else {
@@ -111,7 +111,7 @@ function AuthPage() {
 
       await navigate({ replace: true, to: normalizeRedirectTo(search.redirectTo) });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "?몄쬆 ?붿껌???ㅽ뙣?덉뒿?덈떎.");
+      setErrorMessage(error instanceof Error ? error.message : "인증 요청에 실패했습니다.");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +123,7 @@ function AuthPage() {
         <section className="relative hidden overflow-hidden lg:block">
           <img
             src="/home-hero-animation.webp"
-            alt="DiploLife ?몄쬆 諛곌꼍"
+            alt="DiploLife 인증 배경"
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-slate-950/55" />
@@ -138,10 +138,10 @@ function AuthPage() {
                 Supabase Auth
               </div>
               <h1 className="text-[48px] font-bold leading-[1.15]">
-                ?몄뀡???좎??섍퀬 媛쒖씤?붾맂 泥대쪟 ?뺣낫瑜?蹂댄샇?⑸땲??
+                인증을 통해 안전하게 체류 정보를 보호하세요.
               </h1>
               <p className="mt-5 max-w-lg text-[16px] leading-7 text-white/85">
-                ?대찓??湲곕컲 ?몄쬆?쇰줈 泥대쪟 ?꾨줈?? ?쇱젙, ?뚮┝ ?ㅼ젙???ъ슜??怨꾩젙???곌껐?⑸땲??
+                이메일 기반 인증으로 체류 프로필, 일정, 알림 설정을 사용자 계정에 연결합니다.
               </p>
             </div>
           </div>
@@ -163,7 +163,7 @@ function AuthPage() {
                 </div>
                 <h2 className="text-[28px] font-bold tracking-normal">{title}</h2>
                 <p className="mt-2 text-[14px] leading-6 text-muted-foreground">
-                  Supabase Auth濡?怨꾩젙???앹꽦?섍퀬 濡쒓렇???몄뀡???좎??⑸땲??
+                  Supabase Auth로 계정을 생성하고 로그인 세션을 유지합니다.
                 </p>
               </div>
 
@@ -176,7 +176,8 @@ function AuthPage() {
                     !isSignup ? "bg-card text-foreground shadow-sm" : "text-muted-foreground",
                   )}
                 >
-                  濡쒓렇??                </button>
+                  로그인
+                </button>
                 <button
                   type="button"
                   onClick={() => switchMode("signup")}
@@ -185,18 +186,19 @@ function AuthPage() {
                     isSignup ? "bg-card text-foreground shadow-sm" : "text-muted-foreground",
                   )}
                 >
-                  ?뚯썝媛??                </button>
+                  회원가입
+                </button>
               </div>
 
               <form className="space-y-4" onSubmit={handleSubmit}>
                 {isSignup && (
                   <label className="block">
-                    <span className="mb-2 block text-sm font-semibold">?대쫫</span>
+                    <span className="mb-2 block text-sm font-semibold">이름</span>
                     <input
                       autoComplete="name"
                       className="h-12 w-full rounded-lg border border-border bg-background px-3 text-[15px] outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
                       onChange={(event) => setDisplayName(event.target.value)}
-                      placeholder="Placeholder"
+                      placeholder="홍길동"
                       type="text"
                       value={displayName}
                     />
@@ -204,7 +206,7 @@ function AuthPage() {
                 )}
 
                 <label className="block">
-                  <span className="mb-2 block text-sm font-semibold">Text</span>
+                  <span className="mb-2 block text-sm font-semibold">이메일</span>
                   <input
                     autoComplete="email"
                     className="h-12 w-full rounded-lg border border-border bg-background px-3 text-[15px] outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -217,13 +219,13 @@ function AuthPage() {
                 </label>
 
                 <label className="block">
-                  <span className="mb-2 block text-sm font-semibold">鍮꾨?踰덊샇</span>
+                  <span className="mb-2 block text-sm font-semibold">비밀번호</span>
                   <input
                     autoComplete={isSignup ? "new-password" : "current-password"}
                     className="h-12 w-full rounded-lg border border-border bg-background px-3 text-[15px] outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
                     minLength={6}
                     onChange={(event) => setPassword(event.target.value)}
-                    placeholder="6???댁긽"
+                    placeholder="6자 이상"
                     required
                     type="password"
                     value={password}

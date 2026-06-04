@@ -1,4 +1,4 @@
-﻿import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createCostInsightCacheKey,
   createDefaultDiploLifeState,
@@ -135,6 +135,7 @@ const countryCost = {
 
 const makeCachedCostInsight = (cacheKey: string, updatedAt: string): CostInsight => ({
   ...createDefaultDiploLifeState().costInsight,
+  totalBudgetKrw: 800000,
   analysis: cachedAnalysis,
   cacheKey,
   cityPrices,
@@ -279,6 +280,7 @@ describe("DiploLife state model", () => {
     vi.setSystemTime(new Date("2026-05-31T09:00:00+09:00"));
 
     useDiploLifeStore.getState().completeOnboarding(gbProfile);
+    useDiploLifeStore.getState().setTotalBudgetKrw(800000);
     const state = useDiploLifeStore.getState();
     const cacheKey = createCostInsightCacheKey({
       stayCountry: state.stayCountry!,
@@ -305,6 +307,7 @@ describe("DiploLife state model", () => {
     geminiCostMock.analyzeLivingCost.mockResolvedValue(refreshedAnalysis);
 
     useDiploLifeStore.getState().completeOnboarding(gbProfile);
+    useDiploLifeStore.getState().setTotalBudgetKrw(800000);
     useDiploLifeStore.getState().setExchangeRate({
       changePercent: 0.4,
       fromCurrency: "GBP",
@@ -356,6 +359,7 @@ describe("DiploLife state model", () => {
     geminiCostMock.analyzeLivingCost.mockResolvedValue(null);
 
     useDiploLifeStore.getState().completeOnboarding(gbProfile);
+    useDiploLifeStore.getState().setTotalBudgetKrw(800000);
     useDiploLifeStore.getState().setExchangeRate({
       changePercent: 0.4,
       fromCurrency: "GBP",

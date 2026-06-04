@@ -1,4 +1,4 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 
 /** Google Routes API媛 吏?먰븯???대룞?섎떒 */
 export type TravelMode = "WALK" | "DRIVE" | "TRANSIT" | "BICYCLE";
@@ -21,12 +21,16 @@ export interface RadiusPolicy {
   label: string;
 }
 
-/** ?대룞?섎떒蹂?寃??諛섍꼍 ?뺤콉 (誘명꽣 ?⑥쐞) */
+/** 이동수단별 검색 반경 정책 (미터 단위)
+ *  - default: 스코어링 기준 거리 (이 범위 내 장소가 높은 routeEfficiency 점수)
+ *  - expanded: 확장 검색 시 사용
+ *  - hardCap: Google Places 후보 수집용 최대 반경 (넓게 유지)
+ */
 export const TRAVEL_MODE_RADIUS_POLICY: Record<TravelMode, RadiusPolicy> = {
-  BICYCLE: { default: 50000, expanded: 50000, hardCap: 50000, label: "Bicycle" },
-  DRIVE: { default: 50000, expanded: 50000, hardCap: 50000, label: "Drive" },
-  TRANSIT: { default: 50000, expanded: 50000, hardCap: 50000, label: "Transit" },
-  WALK: { default: 50000, expanded: 50000, hardCap: 50000, label: "Walk" },
+  BICYCLE: { default: 5000, expanded: 8000, hardCap: 15000, label: "Bicycle" },
+  DRIVE: { default: 10000, expanded: 20000, hardCap: 50000, label: "Drive" },
+  TRANSIT: { default: 8000, expanded: 15000, hardCap: 50000, label: "Transit" },
+  WALK: { default: 3000, expanded: 5000, hardCap: 8000, label: "Walk" },
 } as const;
 
 /** ?대룞?섎떒??留욌뒗 諛섍꼍 ?뺤콉??諛섑솚?쒕떎. ?????녿뒗 紐⑤뱶硫?WALK fallback. */
@@ -53,6 +57,41 @@ export const getRadiusPolicyForTravelModes = (modes?: TravelMode[]): RadiusPolic
   };
 };
 
+/** 먼 장소(Far Place) 판정 및 일일 제한 정책 */
+export interface FarPlacePolicy {
+  /** 이 거리(미터) 초과 시 '먼 장소'로 분류 */
+  farThresholdMeters: number;
+  /** 하루 일정에 포함 가능한 먼 장소 최대 수 */
+  maxPerDay: number;
+}
+
+/** 이동수단별 먼 장소 기준 */
+export const FAR_PLACE_POLICY: Record<TravelMode, FarPlacePolicy> = {
+  BICYCLE: { farThresholdMeters: 8000, maxPerDay: 1 },
+  DRIVE: { farThresholdMeters: 20000, maxPerDay: 1 },
+  TRANSIT: { farThresholdMeters: 15000, maxPerDay: 1 },
+  WALK: { farThresholdMeters: 5000, maxPerDay: 1 },
+};
+
+/** 여러 이동수단 중 가장 관대한(가장 큰 threshold) 먼 장소 정책 반환 */
+export const getFarPlacePolicyForTravelModes = (modes?: TravelMode[]): FarPlacePolicy => {
+  if (!modes || modes.length === 0) return FAR_PLACE_POLICY["WALK"];
+
+  const sortedPolicies = modes
+    .map((mode) => FAR_PLACE_POLICY[mode])
+    .sort((a, b) => b.farThresholdMeters - a.farThresholdMeters);
+
+  return sortedPolicies[0];
+};
+
+/** 숙소로부터의 거리가 먼 장소 기준을 초과하는지 판정 */
+export const isFarPlace = (
+  distanceMeters: number,
+  travelModes: TravelMode[],
+): boolean => {
+  return distanceMeters > getFarPlacePolicyForTravelModes(travelModes).farThresholdMeters;
+};
+
 export const RECOMMENDATION_SCORE_WEIGHTS = {
   routeEfficiency: 30,
   googlePopularity: 40,
@@ -75,9 +114,9 @@ export const ITINERARY_INTENSITY_OPTIONS: Array<{
   targetPlaceCount: number;
   value: ItineraryIntensity;
 }> = [
-  { label: "Relaxed", targetPlaceCount: 3, value: "relaxed" },
-  { label: "Normal", targetPlaceCount: 5, value: "normal" },
-  { label: "Packed", targetPlaceCount: 7, value: "tight" },
+  { label: "여유롭게", targetPlaceCount: 3, value: "relaxed" },
+  { label: "보통", targetPlaceCount: 5, value: "normal" },
+  { label: "알차게", targetPlaceCount: 7, value: "tight" },
 ];
 
 const targetPlaceCountByIntensity: Record<ItineraryIntensity, number> = {
@@ -140,6 +179,44 @@ export const selectTargetPlaceCount = (
   return targetPlaceCountByIntensity.normal;
 };
 
+export interface ItineraryCompositionPolicy {
+  mealCount: number;
+  nonFoodCount: number;
+  snackCount: number;
+  targetPlaceCount: number;
+}
+
+export const getItineraryCompositionPolicy = (
+  input:
+    | number
+    | { durationMinutes?: number; includeMeals?: boolean; targetPlaceCount?: number },
+): ItineraryCompositionPolicy => {
+  const targetPlaceCount = selectTargetPlaceCount(input);
+  const includeMeals = typeof input === "number" ? true : input.includeMeals !== false;
+
+  if (!includeMeals) {
+    return {
+      mealCount: 0,
+      nonFoodCount: targetPlaceCount,
+      snackCount: 0,
+      targetPlaceCount,
+    };
+  }
+
+  const foodCounts =
+    targetPlaceCount <= 3
+      ? { mealCount: 1, snackCount: 0 }
+      : targetPlaceCount <= 5
+        ? { mealCount: 1, snackCount: 1 }
+        : { mealCount: 2, snackCount: 1 };
+
+  return {
+    ...foodCounts,
+    nonFoodCount: targetPlaceCount - foodCounts.mealCount - foodCounts.snackCount,
+    targetPlaceCount,
+  };
+};
+
 export type RecommendationCategoryGroup = keyof typeof DAILY_ITINERARY_CATEGORY_TARGETS;
 export type GooglePlacesRankPreference = "DISTANCE" | "POPULARITY";
 export type ItinerarySortMode = "route_optimized" | "distance" | "popularity";
@@ -166,15 +243,22 @@ export const getRecommendationCategoryGroup = ({
   }
 
   const isMarketOrStreet =
-    normalizedName.includes("?쒖옣") ||
+    normalizedName.includes("시장") ||
     normalizedName.includes("market") ||
-    normalizedName.includes("?쇱떆??) ||"
-    normalizedName.includes("嫄곕━") ||
+    normalizedName.includes("야시장") ||
+    normalizedName.includes("거리") ||
     normalizedName.includes("street") ||
-    normalizedName.includes("?몃뱶肄뷀듃") ||
+    normalizedName.includes("푸드코트") ||
     matchesPlaceType(normalizedType, ["food_court", "food_truck"]);
+  const isShoppingComplex =
+    normalizedName.includes("canal city") ||
+    normalizedName.includes("mall") ||
+    normalizedName.includes("shopping") ||
+    normalizedName.includes("department store") ||
+    normalizedName.includes("plaza") ||
+    matchesPlaceType(normalizedType, ["shopping_mall"]);
 
-  if (isMarketOrStreet) {
+  if (isMarketOrStreet || isShoppingComplex) {
     return "shoppingOrExperience";
   }
 
@@ -266,27 +350,37 @@ interface SearchIntentTemplate {
 }
 
 const foodSearchIntentByTheme: Record<string, SearchIntentTemplate> = {
-  "媛꾪렪??湲멸굅由??뚯떇 / ?⑥뒪?명뫖??: {"
-    includedTypes: ["meal_takeaway", "fast_food_restaurant"],
-    rankPreference: "DISTANCE",
-    searchQueries: ["street food", "fast food"],
-  },
-  "濡쒖뺄 ??& 諛?(?쇨컙 ?쇱젙??": {
-    includedTypes: ["bar", "pub"],
-    rankPreference: "POPULARITY",
-    searchQueries: ["local pub", "bar"],
-  },
-  "?몃젋?뷀븳 移댄럹/?붿???: {"
+  default_cafe: {
     includedTypes: ["cafe", "bakery"],
     rankPreference: "POPULARITY",
     searchQueries: ["cafe dessert"],
   },
-  "?뚯씤 ?ㅼ씠??/ 怨좉툒 ?덉뒪?좊옉": {
+  default_local_food: {
+    includedTypes: ["restaurant"],
+    rankPreference: "POPULARITY",
+    searchQueries: ["local restaurant", "regional food"],
+  },
+  "간편한 길거리 음식 / 패스트푸드": {
+    includedTypes: ["meal_takeaway", "fast_food_restaurant"],
+    rankPreference: "DISTANCE",
+    searchQueries: ["street food", "fast food"],
+  },
+  "로컬 펍 & 바 (야간 일정)": {
+    includedTypes: ["bar", "pub"],
+    rankPreference: "POPULARITY",
+    searchQueries: ["local pub", "bar"],
+  },
+  "트렌디한 카페/디저트": {
+    includedTypes: ["cafe", "bakery"],
+    rankPreference: "POPULARITY",
+    searchQueries: ["cafe dessert"],
+  },
+  "파인 다이닝 / 고급 레스토랑": {
     includedTypes: ["fine_dining_restaurant", "restaurant"],
     rankPreference: "POPULARITY",
     searchQueries: ["fine dining restaurant"],
   },
-  "?꾩? 濡쒖뺄 留쏆쭛": {
+  "현지 로컬 맛집": {
     includedTypes: ["restaurant"],
     rankPreference: "POPULARITY",
     searchQueries: ["local restaurant", "regional food"],
@@ -294,27 +388,32 @@ const foodSearchIntentByTheme: Record<string, SearchIntentTemplate> = {
 };
 
 const placeSearchIntentByTheme: Record<string, SearchIntentTemplate> = {
-  "臾명솕 / ?덉닠 / 諛뺣Ъ愿": {
-    includedTypes: ["museum", "art_gallery"],
-    rankPreference: "POPULARITY",
-    searchQueries: ["museum art gallery"],
-  },
-  "濡쒖뺄 ?쒖옣 & ????쇳븨紐?: {"
-    includedTypes: ["market", "shopping_mall"],
-    rankPreference: "POPULARITY",
-    searchQueries: ["market shopping mall"],
-  },
-  "?먯뿰 ???댁떇 (怨듭썝/諛붾떎)": {
-    includedTypes: ["park", "tourist_attraction"],
-    rankPreference: "DISTANCE",
-    searchQueries: ["park waterfront"],
-  },
-  "?꾩닔 ?쒕뱶留덊겕 & 紐낆냼": {
+  default_landmark: {
     includedTypes: ["tourist_attraction"],
     rankPreference: "POPULARITY",
     searchQueries: ["landmark attraction"],
   },
-  "?ロ뵆?덉씠??/ 踰덊솕媛 嫄룰린": {
+  "문화 / 예술 / 박물관": {
+    includedTypes: ["museum", "art_gallery"],
+    rankPreference: "POPULARITY",
+    searchQueries: ["museum art gallery"],
+  },
+  "로컬 시장 & 대형 쇼핑몰": {
+    includedTypes: ["market", "shopping_mall"],
+    rankPreference: "POPULARITY",
+    searchQueries: ["market shopping mall"],
+  },
+  "자연 속 휴식 (공원/바다)": {
+    includedTypes: ["park", "tourist_attraction"],
+    rankPreference: "DISTANCE",
+    searchQueries: ["park waterfront"],
+  },
+  "필수 랜드마크 & 명소": {
+    includedTypes: ["tourist_attraction"],
+    rankPreference: "POPULARITY",
+    searchQueries: ["landmark attraction"],
+  },
+  "핫플레이스 / 번화가 걷기": {
     includedTypes: ["tourist_attraction", "shopping_mall"],
     rankPreference: "POPULARITY",
     searchQueries: ["popular district", "hot place"],
@@ -386,6 +485,9 @@ const uniqueThemes = (themes: string[]) => [
   ...new Set(themes.map((theme) => theme.trim()).filter(Boolean)),
 ];
 
+const defaultFoodThemes = ["default_local_food", "default_cafe"];
+const defaultVibeThemes = ["default_landmark"];
+
 export const buildGooglePlaceSearchIntents = ({
   foodThemes = [],
   vibeThemes = [],
@@ -394,25 +496,34 @@ export const buildGooglePlaceSearchIntents = ({
   foodThemes?: string[];
   vibeThemes?: string[];
   travelModes?: TravelMode[];
-} = {}): GooglePlaceSearchIntent[] => [
-  ...uniqueThemes(foodThemes).map((theme) =>
-    createIntent(
-      theme,
-      "food",
-      foodSearchIntentByTheme[theme] ?? {
-        includedTypes: [],
-        rankPreference: "POPULARITY",
-        searchQueries: [theme],
-      },
-      travelModes,
+} = {}): GooglePlaceSearchIntent[] => {
+  const normalizedFoodThemes = uniqueThemes(foodThemes);
+  const normalizedVibeThemes = uniqueThemes(vibeThemes);
+  const effectiveFoodThemes =
+    normalizedFoodThemes.length > 0 ? normalizedFoodThemes : defaultFoodThemes;
+  const effectiveVibeThemes =
+    normalizedVibeThemes.length > 0 ? normalizedVibeThemes : defaultVibeThemes;
+
+  return [
+    ...effectiveFoodThemes.map((theme) =>
+      createIntent(
+        theme,
+        "food",
+        foodSearchIntentByTheme[theme] ?? {
+          includedTypes: [],
+          rankPreference: "POPULARITY",
+          searchQueries: [theme],
+        },
+        travelModes,
+      ),
     ),
-  ),
-  ...uniqueThemes(vibeThemes).map((theme) =>
-    placeSearchIntentByTheme[theme]
-      ? createIntent(theme, "place", placeSearchIntentByTheme[theme], travelModes)
-      : createFallbackIntent(theme, "place", travelModes),
-  ),
-];
+    ...effectiveVibeThemes.map((theme) =>
+      placeSearchIntentByTheme[theme]
+        ? createIntent(theme, "place", placeSearchIntentByTheme[theme], travelModes)
+        : createFallbackIntent(theme, "place", travelModes),
+    ),
+  ];
+};
 
 const localItineraryRecommendationRequestBaseSchema = z.object({
   budget: z.string().trim().optional(),
@@ -429,6 +540,8 @@ const localItineraryRecommendationRequestBaseSchema = z.object({
   durationMinutes: z.number().int().min(60).max(720).default(480),
   excludedGooglePlaceIds: z.array(z.string()).default([]),
   excludedPlaceNames: z.array(z.string()).default([]),
+  foodThemes: z.array(z.string().trim()).default([]),
+  includeMeals: z.boolean().default(true),
   searchRadiusMeters: z
     .number()
     .int()
@@ -439,6 +552,7 @@ const localItineraryRecommendationRequestBaseSchema = z.object({
   startTime: z.string().regex(startTimePattern, "Invalid time format (HH:mm)"),
   targetPlaceCount: z.number().int().min(3).max(7).optional(),
   travelModes: z.array(travelModeSchema).min(1).default(["WALK", "TRANSIT"]),
+  vibeThemes: z.array(z.string().trim()).default([]),
 });
 
 export const localItineraryRecommendationRequestSchema =

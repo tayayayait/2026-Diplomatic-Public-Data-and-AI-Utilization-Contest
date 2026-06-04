@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { UserProfile } from "@/lib/diplolife/state";
 import type { ItineraryPlace } from "@/lib/gemini/schema";
 import { createItineraryStoreSeed } from "./multi-day-state";

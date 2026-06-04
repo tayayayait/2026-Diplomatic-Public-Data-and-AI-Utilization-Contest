@@ -151,10 +151,12 @@ export interface CostInsight {
   userBudget?: number;
   monthlyEstimateKrw: number | null;
   localCurrency: string | null;
+  localCurrencyKrwRate: number | null;
   usdToKrwRate: number | null;
   estimationData: CostEstimationResult | null;
   updatedAt: string | null;
   status: LoadingStatus;
+  isRefreshingTips?: boolean;
 }
 
 export interface Attachment {
@@ -222,7 +224,6 @@ export interface DiploLifeActions {
   fetchWeatherData: () => Promise<DestinationWeatherForecast | null>;
   fetchCostEstimationData: (force?: boolean) => Promise<void>;
   fetchExchangeRateData: (force?: boolean) => Promise<void>;
-  refreshDynamicInsights: () => Promise<void>;
   fetchUserProfileFromSupabase: () => Promise<void>;
   syncUserProfileToSupabase: (profile: UserProfile) => Promise<void>;
 }
@@ -263,7 +264,7 @@ export const createDefaultDiploLifeState = (): DiploLifeState => ({
   weatherForecast: null,
   sos: { contacts: [], selectedType: null },
   costInsight: {
-    totalBudgetKrw: 800000,
+    totalBudgetKrw: 0,
     cityPrices: null,
     countryCost: null,
     analysis: null,
@@ -271,10 +272,12 @@ export const createDefaultDiploLifeState = (): DiploLifeState => ({
     
     monthlyEstimateKrw: null,
     localCurrency: null,
+    localCurrencyKrwRate: null,
     usdToKrwRate: null,
     estimationData: null,
     updatedAt: null,
     status: "idle",
+    isRefreshingTips: false,
   },
   publicData: null,
 });
@@ -383,7 +386,7 @@ export const createCostInsightCacheKey = ({
   userProfile: UserProfile;
 }) =>
   [
-    "cost-insight",
+    "cost-insight-v5",
     normalizeCacheSegment(stayCountry.country),
     normalizeCacheSegment(stayCountry.city ?? userProfile.city),
     normalizeCacheSegment(userProfile.stayPurpose),
@@ -772,7 +775,6 @@ export const useDiploLifeStore = create<DiploLifeStore>()(
 
     try {
       const { fetchCityPrices, fetchCountryCostOfLiving } = await import("./api/wherenext");
-      const { analyzeLivingCost } = await import("./api/gemini-cost");
       
       const cityPrices = await fetchCityPrices({ data: { countryCode: stayCountry.country, cityName: stayCountry.city } });
       const countryCost = await fetchCountryCostOfLiving({ data: { countryCode: stayCountry.country } });
@@ -813,8 +815,14 @@ export const useDiploLifeStore = create<DiploLifeStore>()(
         exchangeRate,
         targetCurrency,
       };
-      const analysis =
-        (await analyzeLivingCost(analysisContext)) ?? createFallbackCostAnalysis(analysisContext);
+      let analysis: CostAnalysisResult | null = null;
+      if (costInsight.totalBudgetKrw > 0) {
+        const { analyzeLivingCost } = await import("./api/gemini-cost");
+        analysis = await analyzeLivingCost(analysisContext);
+        if (!analysis) {
+          analysis = createFallbackCostAnalysis(analysisContext);
+        }
+      }
 
       set((state) => ({
         costInsight: {
@@ -824,6 +832,7 @@ export const useDiploLifeStore = create<DiploLifeStore>()(
           analysis,
           cacheKey,
           localCurrency: targetCurrency,
+          localCurrencyKrwRate: currentDashboard.exchangeRate.rate,
           usdToKrwRate,
           status: "success",
           updatedAt: new Date().toISOString(),
@@ -837,38 +846,21 @@ export const useDiploLifeStore = create<DiploLifeStore>()(
     }
   },
   refreshDynamicInsights: async () => {
-    const { stayCountry, userProfile, costInsight } = useDiploLifeStore.getState();
-    if (!stayCountry || !userProfile || !costInsight.cityPrices || !costInsight.countryCost) {
-      // 데이터가 없는 상태면 전체 갱신 호출
-      return useDiploLifeStore.getState().fetchCostEstimationData(true);
-    }
-
+    const state = useDiploLifeStore.getState();
+    const { costInsight, userProfile } = state;
+    if (!userProfile) return;
+    
     set((state) => ({
-      costInsight: { ...state.costInsight, status: "loading" },
+      costInsight: { ...state.costInsight, isRefreshingTips: true },
     }));
-
+    
     try {
       const { analyzeLivingCost } = await import("./api/gemini-cost");
       
-      const startDate = new Date(userProfile.stayStartDate);
-      const endDate = userProfile.stayEndDate ? new Date(userProfile.stayEndDate) : new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-      const stayDays = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
-      
-      // 환율 데이터 강제 갱신
-      await useDiploLifeStore.getState().fetchExchangeRateData(true);
-      const currentDashboard = useDiploLifeStore.getState().dashboard;
-
-      const exchangeRate = currentDashboard.exchangeRate.rate || 10;
-      const targetCurrency = currentDashboard.exchangeRate.fromCurrency || "USD";
-      const usdToKrwRate = await resolveUsdToKrwRate({
-        currentCurrency: targetCurrency,
-        currentRate: currentDashboard.exchangeRate.rate,
-      });
-
-      // WhereNext API는 생략하고 AI 분석만 재호출
-      const analysisContext: CostAnalysisContext = {
-        cityPrices: costInsight.cityPrices.data,
-        countryCost: costInsight.countryCost,
+      const stayDays = Math.max(1, Math.ceil(((userProfile.stayEndDate ? new Date(userProfile.stayEndDate).getTime() : new Date(userProfile.stayStartDate).getTime() + 7 * 24 * 60 * 60 * 1000) - new Date(userProfile.stayStartDate).getTime()) / (1000 * 60 * 60 * 24)));
+      const analysisContext = {
+        cityPrices: costInsight.cityPrices?.data,
+        countryCost: costInsight.countryCost || undefined,
         userProfile: {
           stayPurpose: userProfile.stayPurpose,
           stayDays,
@@ -876,24 +868,28 @@ export const useDiploLifeStore = create<DiploLifeStore>()(
           city: userProfile.city,
           country: userProfile.country,
         },
-        exchangeRate,
-        targetCurrency,
+        exchangeRate: costInsight.localCurrencyKrwRate || 10,
+        targetCurrency: costInsight.localCurrency || "USD",
       };
-      const analysis =
-        (await analyzeLivingCost(analysisContext)) ?? createFallbackCostAnalysis(analysisContext);
-
-      set((state) => ({
-        costInsight: {
-          ...state.costInsight,
-          analysis,
-          localCurrency: targetCurrency,
-          usdToKrwRate,
-          status: "success",
-          updatedAt: new Date().toISOString(),
-        },
-      }));
-    } catch (error) {
-      console.error("Dynamic insights refresh error:", error);
+      
+      const analysis = await analyzeLivingCost(analysisContext);
+      
+      if (analysis) {
+        set((state) => ({
+          costInsight: {
+            ...state.costInsight,
+            analysis,
+            isRefreshingTips: false,
+            updatedAt: new Date().toISOString(),
+          }
+        }));
+      } else {
+        set((state) => ({
+          costInsight: { ...state.costInsight, status: "error" },
+        }));
+      }
+    } catch (e) {
+      console.error("refreshDynamicInsights failed", e);
       set((state) => ({
         costInsight: { ...state.costInsight, status: "error" },
       }));

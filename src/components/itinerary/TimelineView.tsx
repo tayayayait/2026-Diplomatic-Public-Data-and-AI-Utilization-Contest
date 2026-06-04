@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Clock, Home, Map as MapIcon, MapPin, Navigation, Route, Star, Wallet } from "lucide-react";
 
 import type { ItineraryPlace } from "@/lib/gemini/schema";
@@ -19,11 +19,11 @@ interface TimelineViewProps {
 
 const createRatingLabel = (place: ItineraryPlace) => {
   const rating = place.recommendationContext?.rating;
-  if (typeof rating !== "number") return "No rating";
+  if (typeof rating !== "number") return "평점 없음";
 
   const reviewCount = place.recommendationContext?.userRatingCount;
   const reviewLabel =
-    typeof reviewCount === "number" ? ` Reviews ${reviewCount.toLocaleString("ko-KR")}` : "";
+    typeof reviewCount === "number" ? ` 리뷰 ${reviewCount.toLocaleString("ko-KR")}` : "";
 
   return `${rating.toFixed(1)}${reviewLabel}`;
 };
@@ -54,7 +54,7 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
         <div className="mb-2 mt-2 flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-bold text-foreground">
             <Navigation className="h-4 w-4 text-primary" />
-            Full route
+            전체 경로
           </div>
           <button
             type="button"
@@ -62,7 +62,7 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
             className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/20"
           >
             <MapIcon className="h-3.5 w-3.5" />
-            View route on map
+            지도에서 경로 보기
           </button>
         </div>
       )}
@@ -72,15 +72,15 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
           <Home className="h-4 w-4" />
         </div>
         <div className="min-w-0">
-          <div className="text-sm font-bold leading-5 text-foreground">Start from accommodation</div>
-          <div className="text-xs leading-5 text-muted-foreground">The first recommendation is connected from your base location.</div>
+          <div className="text-sm font-bold leading-5 text-foreground">숙소에서 출발</div>
+          <div className="text-xs leading-5 text-muted-foreground">첫 번째 추천 장소는 숙소 위치를 기준으로 연결됩니다.</div>
         </div>
       </div>
 
       {timelinePlaces.map((item) => {
         const isSelected = selectedIndex === item.index;
         const travelMode = createTravelModeLabel(item.place);
-        const travelSummary = `${travelMode} · ${item.travelMinutes} min`;
+        const travelSummary = `${travelMode} · ${item.travelMinutes}분`;
         const googleMapsUrl = buildGoogleMapsPlaceUrl({
           name: item.place.placeName,
           googlePlaceId: item.place.googlePlaceId,
@@ -142,7 +142,7 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
                 />
                 <div className="min-w-0">
                   <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    Place
+                    장소
                   </span>
                   <h3 className="break-keep text-base font-bold leading-6">{item.title}</h3>
                   <div className="mt-1 flex flex-wrap items-center gap-1">
@@ -154,10 +154,10 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
                           : "border border-border bg-background text-muted-foreground",
                       )}
                     >
-                      Map marker {item.order}
+                      지도 마커 {item.order}
                     </span>
                     <span className="inline-flex items-center rounded-md border border-border bg-background px-2 py-0.5 text-[11px] font-semibold leading-5 text-muted-foreground">
-                      Place type
+                      장소 유형
                     </span>
                     <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-semibold leading-5 text-primary">
                       {item.categoryLabel}
@@ -170,7 +170,7 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
                   </div>
                   <span className="mt-1 inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-semibold leading-5 text-primary">
                     <Clock className="h-3 w-3" />
-                    Travel mode {travelSummary}
+                    이동 수단 {travelSummary}
                   </span>
                 </div>
               </div>
@@ -190,7 +190,7 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
               <div>
                 <div className="mb-1 flex items-center gap-1.5 text-xs font-bold text-foreground">
                   <MapPin className="h-3.5 w-3.5 text-primary" />
-                  Place introduction
+                  장소 소개
                 </div>
                 <p className="break-keep text-xs leading-5 text-foreground/80">
                   {item.placeIntroduction}
@@ -201,10 +201,10 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
                 <div className="rounded-md bg-background px-3 py-2">
                   <div className="mb-0.5 flex items-center gap-1.5 text-xs font-bold text-foreground">
                     <Clock className="h-3.5 w-3.5 text-primary" />
-                    Estimated stay
+                    예상 체류 시간
                   </div>
                   <p className="break-keep text-xs leading-5 text-muted-foreground">
-                    {item.estimatedMinutes} min
+                    {item.estimatedMinutes}분
                   </p>
                 </div>
               </div>
@@ -213,7 +213,7 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
                 <div className="rounded-md bg-background px-3 py-2">
                   <div className="mb-0.5 flex items-center gap-1.5 text-xs font-bold text-foreground">
                     <Star className="h-3.5 w-3.5 text-primary" />
-                    Rating
+                    평점
                   </div>
                   <p className="break-keep text-xs leading-5 text-muted-foreground">
                     {createRatingLabel(item.place)}
@@ -222,17 +222,17 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
                 <div className="rounded-md bg-background px-3 py-2">
                   <div className="mb-0.5 flex items-center gap-1.5 text-xs font-bold text-foreground">
                     <Wallet className="h-3.5 w-3.5 text-primary" />
-                    Estimated cost
+                    예상 비용
                   </div>
                   <p className="break-all text-xs leading-5 text-muted-foreground">{item.estimatedCost}</p>
                 </div>
                 <div className="rounded-md bg-background px-3 py-2">
                   <div className="mb-0.5 flex items-center gap-1.5 text-xs font-bold text-foreground">
                     <Clock className="h-3.5 w-3.5 text-primary" />
-                    Travel from previous stop
+                    이전 장소에서 이동
                   </div>
                   <p className="break-keep text-xs leading-5 text-muted-foreground">
-                    {travelSummary} 쨌 {item.travelDistance}
+                    {travelSummary} · {item.travelDistance}
                   </p>
                 </div>
               </div>
@@ -240,7 +240,7 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
               <div>
                 <div className="mb-1 flex items-center gap-1.5 text-xs font-bold text-foreground">
                   <Route className="h-3.5 w-3.5 text-primary" />
-                  Map location and route
+                  지도 위치 및 경로
                 </div>
                 <a
                   href={googleMapsUrl}
@@ -250,7 +250,7 @@ export function TimelineView({ places, selectedIndex, onSelect, onShowMapRoute }
                   className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
                 >
                   <MapIcon className="h-3.5 w-3.5" />
-                  Open in Google Maps
+                  구글 지도로 열기
                 </a>
               </div>
             </div>

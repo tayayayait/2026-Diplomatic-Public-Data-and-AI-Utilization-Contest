@@ -63,7 +63,7 @@ export function AppShell({
       <main
         id="main-content"
         tabIndex={-1}
-        className="mx-auto min-h-screen w-full max-w-7xl px-4 pb-[88px] pt-[72px] sm:px-6 lg:px-8 lg:pb-8 lg:pt-20"
+        className="mx-auto min-h-screen w-full max-w-7xl 2xl:max-w-[1440px] px-4 pb-[88px] pt-[72px] sm:px-6 lg:px-8 lg:pb-8 lg:pt-20"
       >
         <header className="mb-8">
           <p
@@ -97,7 +97,7 @@ export function AppShell({
 function DesktopHeader({ pathname }: { pathname: string }) {
   return (
     <header className="fixed inset-x-0 top-0 z-20 hidden h-16 border-b border-border bg-white/80 backdrop-blur-xl lg:flex">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-8">
+      <div className="mx-auto flex w-full max-w-7xl 2xl:max-w-[1440px] items-center justify-between px-8">
         <Link to="/dashboard" className="flex items-center gap-2 text-[18px] font-bold tracking-normal text-foreground">
           <img src="/cat-logo.png" alt="DiploLife Logo" className="h-8 w-8 object-cover mix-blend-multiply" />
           DiploLife
