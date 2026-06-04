@@ -13,7 +13,22 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  nitro: {
+    preset: "vercel",
+    externals: {
+      external: ["ws", "https", "node:https", "http", "node:http", "stream", "node:stream", "zlib", "node:zlib", "url", "node:url"]
+    },
+    sourceMap: false
+  },
   vite: {
+    build: {
+      rollupOptions: {
+        external: [/^(node:)?(http|https|zlib|stream|url|events|crypto|tls|net|dns)$/]
+      }
+    },
+    ssr: {
+      external: ["ws"]
+    },
     // @ts-ignore
     test: {
       exclude: ["node_modules/**", "dist/**", "tests/e2e/**"],

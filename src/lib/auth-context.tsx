@@ -40,8 +40,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let active = true;
 
     getCurrentAuthSession()
-      .then((nextSession) => {
-        if (active) applySession(nextSession);
+      .then(async (nextSession) => {
+        if (active) {
+          if (!nextSession) {
+            try {
+              // 심사위원용 임시 자동 로그인
+              const result = await signInWithEmail({ email: "dbcdkwo629@naver.com", password: "12341234" });
+              if (result.session) {
+                applySession(result.session);
+                return;
+              }
+            } catch (err) {
+              console.error("Auto login failed", err);
+            }
+          }
+          applySession(nextSession);
+        }
       })
       .catch((error) => {
         console.error("Failed to load Supabase session:", error);
