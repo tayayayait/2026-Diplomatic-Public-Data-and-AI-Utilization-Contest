@@ -16,6 +16,7 @@ playwright-report
 .output
 .vinxi
 .tanstack/**
+.vercel
 .nitro
 *.local
 .env

@@ -7,6 +7,8 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const vercelOutputDir = ".vercel/output";
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
@@ -15,6 +17,11 @@ export default defineConfig({
   },
   nitro: {
     preset: "vercel",
+    output: {
+      dir: vercelOutputDir,
+      publicDir: `${vercelOutputDir}/static`,
+      serverDir: `${vercelOutputDir}/functions/__server.func`,
+    },
     externals: {
       external: ["ws", "https", "node:https", "http", "node:http", "stream", "node:stream", "zlib", "node:zlib", "url", "node:url"]
     },

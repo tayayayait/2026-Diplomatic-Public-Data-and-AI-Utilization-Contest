@@ -75,6 +75,25 @@ Run a production build:
 pnpm build
 ```
 
+## Vercel Deployment
+
+This app is a TanStack Start SSR app, not a static Vite SPA. Production builds
+must emit Vercel Build Output API artifacts under `.vercel/output`.
+
+Use these Vercel build settings:
+
+```text
+Framework Preset: TanStack Start
+Install Command: pnpm install
+Build Command: pnpm build
+Output Directory: leave unset
+Root Directory: repository root
+```
+
+Do not set the output directory to `dist` or `dist/client`. Those folders do
+not contain a static `index.html`, so Vercel will serve a platform `404:
+NOT_FOUND` page instead of invoking the SSR function.
+
 ## End-to-End Tests
 
 Playwright is installed for later UI and accessibility coverage.
